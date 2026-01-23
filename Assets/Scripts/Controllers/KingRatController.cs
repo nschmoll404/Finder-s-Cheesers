@@ -95,6 +95,7 @@ namespace FindersCheesers
         private bool isMoving;
         private float currentHeight;
         private Quaternion currentTilt;
+        private Quaternion currentYawRotation;
         private bool canMove;
 
         private void Awake()
@@ -165,6 +166,7 @@ namespace FindersCheesers
             // Initialize height and tilt
             currentHeight = minHeight;
             currentTilt = Quaternion.identity;
+            currentYawRotation = Quaternion.identity;
 
             // Configure Rigidbody
             if (rb != null)
@@ -291,12 +293,8 @@ namespace FindersCheesers
             position.y = currentHeight;
             rb.MovePosition(position);
 
-            // Get the current Y rotation (yaw)
-            Quaternion yawRotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
-
-            // Apply tilt rotation combined with yaw rotation
-            // The tilt is applied as a roll around the forward direction
-            rb.MoveRotation(yawRotation * currentTilt);
+            // Apply the combined rotation: yaw (facing direction) * tilt (support imbalance)
+            rb.MoveRotation(currentYawRotation * currentTilt);
         }
 
         /// <summary>
@@ -355,9 +353,9 @@ namespace FindersCheesers
             {
                 Quaternion targetRotation = Quaternion.LookRotation(movementDirection, Vector3.up);
                 
-                // Smoothly rotate towards target rotation
-                rb.rotation = Quaternion.Slerp(
-                    rb.rotation,
+                // Smoothly rotate towards target rotation (yaw only)
+                currentYawRotation = Quaternion.Slerp(
+                    currentYawRotation,
                     targetRotation,
                     rotationSpeed * Time.fixedDeltaTime
                 );
