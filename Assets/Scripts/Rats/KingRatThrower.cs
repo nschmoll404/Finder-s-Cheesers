@@ -52,9 +52,13 @@ namespace FindersCheesers
         [SerializeField]
         private int arcSegments = 30;
 
-        [Tooltip("Color of the arc line")]
+        [Tooltip("Color of the arc line when target is within valid distance")]
         [SerializeField]
         private Color arcColor = Color.yellow;
+
+        [Tooltip("Color of the arc line when target is beyond valid distance")]
+        [SerializeField]
+        private Color invalidDistanceColor = Color.red;
 
         [Header("Target Reticle")]
         [Tooltip("UI Document prefab for the target reticle (world space UI)")]
@@ -86,6 +90,23 @@ namespace FindersCheesers
         [SerializeField]
         private float launchHeightOffset = 1f;
 
+        [Header("Distance Settings")]
+        [Tooltip("Base throw distance without any rats")]
+        [SerializeField]
+        private float baseThrowDistance = 5f;
+
+        [Tooltip("Additional throw distance per rat in inventory")]
+        [SerializeField]
+        private float distancePerRat = 1f;
+
+        [Tooltip("Maximum throw distance")]
+        [SerializeField]
+        private float maxThrowDistance = 20f;
+
+        [Tooltip("Lock target to max distance when it exceeds the valid range")]
+        [SerializeField]
+        private bool lockTargetToMaxDistance = false;
+
         [Header("Debug")]
         [Tooltip("Show debug information in the console")]
         [SerializeField]
@@ -112,6 +133,8 @@ namespace FindersCheesers
         private Vector3[] arcPoints;
         private Vector3 kingRatOriginalPosition;
         private Quaternion kingRatOriginalRotation;
+        private bool isTargetValid;
+        private Vector3 clampedTargetPosition;
 
         /// <summary>
         /// Event fired when the King Rat is thrown.
@@ -323,11 +346,34 @@ namespace FindersCheesers
             
             if (groundPlane.Raycast(ray, out float distance))
             {
-                targetPosition = ray.GetPoint(distance);
+                Vector3 rawTarget = ray.GetPoint(distance);
+                Vector3 launchPos = GetLaunchPosition();
+                
+                // Calculate horizontal distance to target
+                float targetDistance = Vector3.Distance(new Vector3(launchPos.x, 0, launchPos.z), new Vector3(rawTarget.x, 0, rawTarget.z));
+                float maxDistance = CalculateMaxThrowDistance();
+                
+                // Check if target is within valid range
+                isTargetValid = targetDistance <= maxDistance;
+                
+                if (lockTargetToMaxDistance && !isTargetValid)
+                {
+                    // Clamp target to max distance
+                    Vector3 direction = (rawTarget - launchPos).normalized;
+                    clampedTargetPosition = launchPos + direction * maxDistance;
+                    clampedTargetPosition.y = rawTarget.y;
+                    targetPosition = clampedTargetPosition;
+                }
+                else
+                {
+                    targetPosition = rawTarget;
+                    clampedTargetPosition = rawTarget;
+                }
             }
             else
             {
                 targetPosition = null;
+                isTargetValid = false;
             }
         }
 
@@ -339,6 +385,16 @@ namespace FindersCheesers
             int ratCount = (ratInventory != null) ? ratInventory.Count : 0;
             float speed = baseLaunchSpeed + (ratCount * speedPerRat);
             return Mathf.Min(speed, maxLaunchSpeed);
+        }
+
+        /// <summary>
+        /// Calculates the maximum throw distance based on the number of rats in the inventory.
+        /// </summary>
+        private float CalculateMaxThrowDistance()
+        {
+            int ratCount = (ratInventory != null) ? ratInventory.Count : 0;
+            float distance = baseThrowDistance + (ratCount * distancePerRat);
+            return Mathf.Min(distance, maxThrowDistance);
         }
 
         /// <summary>
@@ -364,6 +420,18 @@ namespace FindersCheesers
                 for (int i = 0; i < arcPoints.Length; i++)
                 {
                     arcLineRenderer.SetPosition(i, arcPoints[i]);
+                }
+                
+                // Set arc color based on target validity
+                if (lockTargetToMaxDistance || isTargetValid)
+                {
+                    arcLineRenderer.startColor = arcColor;
+                    arcLineRenderer.endColor = arcColor;
+                }
+                else
+                {
+                    arcLineRenderer.startColor = invalidDistanceColor;
+                    arcLineRenderer.endColor = invalidDistanceColor;
                 }
                 
                 arcLineRenderer.enabled = true;
@@ -464,6 +532,17 @@ namespace FindersCheesers
                 if (debugMode)
                 {
                     Debug.LogWarning("[KingRatThrower] No target position set!");
+                }
+                return;
+            }
+
+            // Check if target is within valid range (unless locked to max distance)
+            if (!lockTargetToMaxDistance && !isTargetValid)
+            {
+                if (debugMode)
+                {
+                    float maxDistance = CalculateMaxThrowDistance();
+                    Debug.LogWarning($"[KingRatThrower] Target is beyond maximum throw distance of {maxDistance:F2}!");
                 }
                 return;
             }
@@ -634,6 +713,54 @@ namespace FindersCheesers
             throwDuration = Mathf.Max(0.1f, duration);
         }
 
+        /// <summary>
+        /// Gets the current maximum throw distance based on rat count.
+        /// </summary>
+        public float GetMaxThrowDistance()
+        {
+            return CalculateMaxThrowDistance();
+        }
+
+        /// <summary>
+        /// Sets the base throw distance.
+        /// </summary>
+        public void SetBaseThrowDistance(float distance)
+        {
+            baseThrowDistance = Mathf.Max(1f, distance);
+        }
+
+        /// <summary>
+        /// Sets the additional throw distance per rat.
+        /// </summary>
+        public void SetDistancePerRat(float distance)
+        {
+            distancePerRat = Mathf.Max(0f, distance);
+        }
+
+        /// <summary>
+        /// Sets the maximum throw distance.
+        /// </summary>
+        public void SetMaxThrowDistance(float distance)
+        {
+            maxThrowDistance = Mathf.Max(1f, distance);
+        }
+
+        /// <summary>
+        /// Sets whether to lock the target to max distance.
+        /// </summary>
+        public void SetLockTargetToMaxDistance(bool lockTarget)
+        {
+            lockTargetToMaxDistance = lockTarget;
+        }
+
+        /// <summary>
+        /// Gets whether the current target is within valid throw distance.
+        /// </summary>
+        public bool IsTargetValid()
+        {
+            return isTargetValid;
+        }
+
         private void OnDrawGizmos()
         {
             if (!visualizeTarget || !targetPosition.HasValue)
@@ -642,14 +769,21 @@ namespace FindersCheesers
             }
 
             // Draw target position
-            Gizmos.color = Color.red;
+            Gizmos.color = isTargetValid ? Color.green : Color.red;
             Gizmos.DrawWireSphere(targetPosition.Value, 0.3f);
             Gizmos.DrawLine(transform.position + Vector3.up * launchHeightOffset, targetPosition.Value);
+
+            // Draw max throw distance circle (in editor or play mode)
+            float maxDistance = Application.isPlaying ? CalculateMaxThrowDistance() : (baseThrowDistance + (ratInventory != null ? ratInventory.Count * distancePerRat : 0));
+            maxDistance = Mathf.Min(maxDistance, maxThrowDistance);
+            Vector3 launchPos = transform.position + Vector3.up * launchHeightOffset;
+            Gizmos.color = new Color(1f, 1f, 0f, 0.3f); // Semi-transparent yellow
+            Gizmos.DrawWireSphere(launchPos, maxDistance);
 
             // Draw arc if in play mode
             if (Application.isPlaying && arcPoints != null && arcPoints.Length > 0)
             {
-                Gizmos.color = Color.yellow;
+                Gizmos.color = isTargetValid ? Color.yellow : Color.red;
                 for (int i = 0; i < arcPoints.Length - 1; i++)
                 {
                     Gizmos.DrawLine(arcPoints[i], arcPoints[i + 1]);
@@ -674,6 +808,11 @@ namespace FindersCheesers
             launchHeightOffset = 1f;
             arcSegments = 30;
             arcColor = Color.yellow;
+            baseThrowDistance = 5f;
+            distancePerRat = 1f;
+            maxThrowDistance = 20f;
+            lockTargetToMaxDistance = false;
+            invalidDistanceColor = Color.red;
         }
 
         private void OnDestroy()
