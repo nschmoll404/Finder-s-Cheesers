@@ -56,6 +56,11 @@ namespace FindersCheesers
         [SerializeField]
         private Color arcColor = Color.yellow;
 
+        [Header("Target Reticle")]
+        [Tooltip("UI Document prefab for the target reticle (world space UI)")]
+        [SerializeField]
+        private GameObject targetReticlePrefab;
+
         [Header("Throw Settings")]
         [Tooltip("Base launch speed for the King Rat")]
         [SerializeField]
@@ -95,6 +100,7 @@ namespace FindersCheesers
         private InputAction pointerAction;
         private InputAction throwAction;
         private Rigidbody kingRatRigidbody;
+        private GameObject targetReticleInstance;
 
         // Current state
         private Vector2 pointerPosition;
@@ -140,6 +146,13 @@ namespace FindersCheesers
             arcLineRenderer.startColor = arcColor;
             arcLineRenderer.endColor = arcColor;
             arcLineRenderer.enabled = false;
+
+            // Instantiate target reticle prefab if assigned
+            if (targetReticlePrefab != null)
+            {
+                targetReticleInstance = Instantiate(targetReticlePrefab);
+                targetReticleInstance.SetActive(false);
+            }
         }
 
         private void Start()
@@ -284,6 +297,9 @@ namespace FindersCheesers
             // Update arc visualization
             UpdateArcVisualization();
 
+            // Update target reticle position
+            UpdateTargetReticle();
+
             // Update throw animation
             if (isThrowing)
             {
@@ -355,6 +371,31 @@ namespace FindersCheesers
             else
             {
                 arcLineRenderer.enabled = false;
+            }
+        }
+
+        /// <summary>
+        /// Updates the target reticle position to follow the target destination.
+        /// </summary>
+        private void UpdateTargetReticle()
+        {
+            if (targetReticleInstance == null)
+            {
+                return;
+            }
+
+            // Show reticle when we have a target and King Rat is being grabbed
+            if (targetPosition.HasValue && kingRatGrabber != null && kingRatGrabber.IsGrabbing && !isThrowing)
+            {
+                targetReticleInstance.SetActive(true);
+                // Position the reticle at the target destination with a slight offset to prevent clipping
+                targetReticleInstance.transform.position = targetPosition.Value + Vector3.up * 0.01f;
+                // Make the reticle face upward (billboard style)
+                targetReticleInstance.transform.rotation = Quaternion.LookRotation(Vector3.up, Vector3.forward);
+            }
+            else
+            {
+                targetReticleInstance.SetActive(false);
             }
         }
 
@@ -633,6 +674,15 @@ namespace FindersCheesers
             launchHeightOffset = 1f;
             arcSegments = 30;
             arcColor = Color.yellow;
+        }
+
+        private void OnDestroy()
+        {
+            // Clean up target reticle instance
+            if (targetReticleInstance != null)
+            {
+                Destroy(targetReticleInstance);
+            }
         }
     }
 }
