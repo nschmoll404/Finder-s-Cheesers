@@ -3,8 +3,8 @@ using UnityEngine;
 namespace FindersCheesers
 {
     /// <summary>
-    /// Represents a rat that can support the King Rat.
-    /// Rats can be registered with the King Rat to help hold him up.
+    /// Represents a rat that can support the Rat Pack.
+    /// Rats can be registered with the Rat Pack to help carry it.
     /// </summary>
     [AddComponentMenu("Finders Cheesers/Rat")]
     public class Rat : MonoBehaviour
@@ -14,7 +14,7 @@ namespace FindersCheesers
         [SerializeField]
         private string ratId;
 
-        [Tooltip("Is this rat currently supporting the King Rat?")]
+        [Tooltip("Is this rat currently supporting the Rat Pack?")]
         [SerializeField]
         private bool isSupportingKing = false;
 
@@ -22,7 +22,7 @@ namespace FindersCheesers
         [SerializeField]
         private RatInventory currentRatInventory;
 
-        [Tooltip("The strength of this rat for supporting the King Rat")]
+        [Tooltip("The strength of this rat for supporting the Rat Pack")]
         [SerializeField]
         private float supportStrength = 1f;
 
@@ -46,7 +46,7 @@ namespace FindersCheesers
         }
 
         /// <summary>
-        /// Gets or sets whether this rat is currently supporting the King Rat.
+        /// Gets or sets whether this rat is currently supporting the Rat Pack.
         /// </summary>
         public bool IsSupportingKing
         {

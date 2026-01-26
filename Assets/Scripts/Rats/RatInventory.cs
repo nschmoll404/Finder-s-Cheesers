@@ -5,7 +5,7 @@ namespace FindersCheesers
 {
     /// <summary>
     /// A component that manages an inventory of rats.
-    /// This can be used by King Rat and other mechanics that need to track rats.
+    /// This can be used by Rat Pack and other mechanics that need to track rats.
     /// </summary>
     [AddComponentMenu("Finders Cheesers/Rat Inventory")]
     public class RatInventory : MonoBehaviour
@@ -37,10 +37,10 @@ namespace FindersCheesers
         [SerializeField]
         private List<Rat> ratsToAddOnStart = new List<Rat>();
 
-        [Header("King Rat Reference")]
-        [Tooltip("Reference to the King Rat controller (for positioning rats in front)")]
+        [Header("Rat Pack Reference")]
+        [Tooltip("Reference to the Rat Pack controller (for positioning rats in front)")]
         [SerializeField]
-        private KingRatController kingRatController;
+        private RatPackController ratPackController;
 
         // Inventory of rats
         private readonly List<Rat> rats = new List<Rat>();
@@ -91,10 +91,10 @@ namespace FindersCheesers
 
         private void Start()
         {
-            // Get King Rat controller reference
-            if (kingRatController == null)
+            // Get Rat Pack controller reference
+            if (ratPackController == null)
             {
-                kingRatController = GetComponentInParent<KingRatController>();
+                ratPackController = GetComponentInParent<RatPackController>();
             }
 
             // Add rats from inspector list to inventory
@@ -118,8 +118,8 @@ namespace FindersCheesers
 
         /// <summary>
         /// Updates the positions of rats to be evenly distributed in the support radius.
-        /// Rats move instantly to follow the King Rat, and the King Rat trails slightly behind.
-        /// Rats are positioned in front of the King Rat (so King Rat trails behind).
+        /// Rats move instantly to follow the Rat Pack, and the Rat Pack trails slightly behind.
+        /// Rats are positioned in front of the Rat Pack (so Rat Pack trails behind).
         /// </summary>
         private void UpdateRatPositions()
         {
@@ -128,15 +128,15 @@ namespace FindersCheesers
                 return;
             }
 
-            // Get King Rat's movement direction and speed
-            Vector3 kingMovementDirection = Vector3.zero;
-            float kingSpeed = 0f;
+            // Get Rat Pack's movement direction and speed
+            Vector3 packMovementDirection = Vector3.zero;
+            float packSpeed = 0f;
             
-            if (kingRatController != null)
+            if (ratPackController != null)
             {
-                kingMovementDirection = kingRatController.GetVelocity();
-                kingMovementDirection.y = 0f; // Ignore vertical movement
-                kingSpeed = kingMovementDirection.magnitude;
+                packMovementDirection = ratPackController.GetVelocity();
+                packMovementDirection.y = 0f; // Ignore vertical movement
+                packSpeed = packMovementDirection.magnitude;
             }
 
             // Calculate target positions for each rat in a circle
@@ -156,11 +156,11 @@ namespace FindersCheesers
                 targetPosition.x += Mathf.Cos(angle) * supportRadius;
                 targetPosition.z += Mathf.Sin(angle) * supportRadius;
 
-                // If King Rat is moving, position rats in front of movement direction
-                // This makes King Rat trail behind the rats (rats carry King Rat)
-                if (kingSpeed > 0.1f && kingMovementDirection != Vector3.zero)
+                // If Rat Pack is moving, position rats in front of movement direction
+                // This makes Rat Pack trail behind the rats (rats carry Rat Pack)
+                if (packSpeed > 0.1f && packMovementDirection != Vector3.zero)
                 {
-                    Vector3 movementDirection = kingMovementDirection.normalized;
+                    Vector3 movementDirection = packMovementDirection.normalized;
                     targetPosition += movementDirection * 0.5f; // Rats are slightly in front
                 }
 

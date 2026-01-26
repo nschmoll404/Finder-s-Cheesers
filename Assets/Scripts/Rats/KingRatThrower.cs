@@ -4,11 +4,12 @@ using UnityEngine.InputSystem;
 namespace FindersCheesers
 {
     /// <summary>
-    /// A component that throws rats from the RatInventory to a destination using a physics arc.
+    /// A component that throws the King Rat to a destination using a physics arc.
     /// Uses pointer input for point-and-click targeting and visualizes the arc with a LineRenderer.
+    /// The throw distance is based on the number of rats in the inventory - more rats = further throw.
     /// </summary>
-    [AddComponentMenu("Finders Cheesers/Rat Thrower")]
-    public class RatThrower : MonoBehaviour
+    [AddComponentMenu("Finders Cheesers/King Rat Thrower")]
+    public class KingRatThrower : MonoBehaviour
     {
         [Header("Input References")]
         [Tooltip("Reference to the Pointer input action for getting mouse position")]
@@ -28,10 +29,19 @@ namespace FindersCheesers
         [SerializeField]
         private Camera mainCamera;
 
-        [Header("Rat Inventory")]
+        [Header("Rat Pack")]
+        [Tooltip("Reference to the RatPackController component")]
+        [SerializeField]
+        private RatPackController ratPackController;
+
         [Tooltip("Reference to the RatInventory component")]
         [SerializeField]
         private RatInventory ratInventory;
+
+        [Header("King Rat")]
+        [Tooltip("Reference to the KingRatGrabber component")]
+        [SerializeField]
+        private KingRatGrabber kingRatGrabber;
 
         [Header("Arc Visualization")]
         [Tooltip("LineRenderer for visualizing the throw arc")]
@@ -47,9 +57,17 @@ namespace FindersCheesers
         private Color arcColor = Color.yellow;
 
         [Header("Throw Settings")]
-        [Tooltip("Launch speed for the rat")]
+        [Tooltip("Base launch speed for the King Rat")]
         [SerializeField]
-        private float launchSpeed = 15f;
+        private float baseLaunchSpeed = 10f;
+
+        [Tooltip("Additional launch speed per rat in inventory")]
+        [SerializeField]
+        private float speedPerRat = 2f;
+
+        [Tooltip("Maximum launch speed")]
+        [SerializeField]
+        private float maxLaunchSpeed = 30f;
 
         [Tooltip("Launch angle in degrees")]
         [SerializeField]
@@ -76,26 +94,28 @@ namespace FindersCheesers
         private PlayerInput playerInput;
         private InputAction pointerAction;
         private InputAction throwAction;
+        private Rigidbody kingRatRigidbody;
 
         // Current state
         private Vector2 pointerPosition;
         private Vector3? targetPosition;
         private bool isThrowing;
-        private Rat currentThrownRat;
         private Vector3 throwStartPosition;
         private Vector3 throwEndPosition;
         private float throwTimer;
         private Vector3[] arcPoints;
+        private Vector3 kingRatOriginalPosition;
+        private Quaternion kingRatOriginalRotation;
 
         /// <summary>
-        /// Event fired when a rat is thrown.
+        /// Event fired when the King Rat is thrown.
         /// </summary>
-        public event System.Action<Rat, Vector3> OnRatThrown;
+        public event System.Action<Vector3> OnKingRatThrown;
 
         /// <summary>
-        /// Event fired when a rat lands.
+        /// Event fired when the King Rat lands.
         /// </summary>
-        public event System.Action<Rat, Vector3> OnRatLanded;
+        public event System.Action<Vector3> OnKingRatLanded;
 
         private void Awake()
         {
@@ -133,12 +153,12 @@ namespace FindersCheesers
                     
                     if (debugMode)
                     {
-                        Debug.Log("[RatThrower] Using PlayerInputSingleton for input.");
+                        Debug.Log("[KingRatThrower] Using PlayerInputSingleton for input.");
                     }
                 }
                 else
                 {
-                    Debug.LogError("[RatThrower] PlayerInputSingleton is not initialized!");
+                    Debug.LogError("[KingRatThrower] PlayerInputSingleton is not initialized!");
                 }
             }
             else
@@ -147,7 +167,7 @@ namespace FindersCheesers
                 
                 if (playerInput == null)
                 {
-                    Debug.LogError("[RatThrower] PlayerInput component not found on this GameObject!");
+                    Debug.LogError("[KingRatThrower] PlayerInput component not found on this GameObject!");
                 }
             }
 
@@ -158,12 +178,12 @@ namespace FindersCheesers
                 
                 if (pointerAction == null)
                 {
-                    Debug.LogError("[RatThrower] Pointer action not found in PlayerInput actions!");
+                    Debug.LogError("[KingRatThrower] Pointer action not found in PlayerInput actions!");
                 }
             }
             else if (pointerActionReference == null)
             {
-                Debug.LogError("[RatThrower] Pointer Action Reference is not assigned!");
+                Debug.LogError("[KingRatThrower] Pointer Action Reference is not assigned!");
             }
 
             // Get the throw action using the ID from InputActionReference
@@ -173,12 +193,23 @@ namespace FindersCheesers
                 
                 if (throwAction == null)
                 {
-                    Debug.LogError("[RatThrower] Throw action not found in PlayerInput actions!");
+                    Debug.LogError("[KingRatThrower] Throw action not found in PlayerInput actions!");
                 }
             }
             else if (throwActionReference == null)
             {
-                Debug.LogError("[RatThrower] Throw Action Reference is not assigned!");
+                Debug.LogError("[KingRatThrower] Throw Action Reference is not assigned!");
+            }
+
+            // Get RatPackController component
+            if (ratPackController == null)
+            {
+                ratPackController = GetComponent<RatPackController>();
+                
+                if (ratPackController == null)
+                {
+                    Debug.LogError("[KingRatThrower] RatPackController component not found on this GameObject!");
+                }
             }
 
             // Get RatInventory component
@@ -193,7 +224,7 @@ namespace FindersCheesers
 
                 if (ratInventory == null)
                 {
-                    Debug.LogError("[RatThrower] RatInventory component not found!");
+                    Debug.LogError("[KingRatThrower] RatInventory component not found!");
                 }
             }
 
@@ -201,6 +232,34 @@ namespace FindersCheesers
             if (mainCamera == null)
             {
                 mainCamera = Camera.main;
+            }
+
+            // Get KingRatGrabber component
+            if (kingRatGrabber == null)
+            {
+                kingRatGrabber = GetComponent<KingRatGrabber>();
+                
+                if (kingRatGrabber == null)
+                {
+                    kingRatGrabber = GetComponentInParent<KingRatGrabber>();
+                }
+
+                if (kingRatGrabber == null)
+                {
+                    Debug.LogError("[KingRatThrower] KingRatGrabber component not found!");
+                }
+            }
+
+            // Get King Rat Rigidbody from KingRatGrabber
+            if (kingRatGrabber != null && kingRatGrabber.KingRat != null)
+            {
+                kingRatRigidbody = kingRatGrabber.KingRat.GetComponent<Rigidbody>();
+                kingRatOriginalPosition = kingRatGrabber.KingRat.transform.position;
+                kingRatOriginalRotation = kingRatGrabber.KingRat.transform.rotation;
+            }
+            else
+            {
+                Debug.LogError("[KingRatThrower] King Rat is not assigned in KingRatGrabber!");
             }
         }
 
@@ -218,7 +277,7 @@ namespace FindersCheesers
             {
                 if (throwAction.WasPressedThisFrame())
                 {
-                    TryThrowRat();
+                    TryThrowKingRat();
                 }
             }
 
@@ -257,6 +316,16 @@ namespace FindersCheesers
         }
 
         /// <summary>
+        /// Gets the current launch speed based on the number of rats in the inventory.
+        /// </summary>
+        private float GetLaunchSpeed()
+        {
+            int ratCount = (ratInventory != null) ? ratInventory.Count : 0;
+            float speed = baseLaunchSpeed + (ratCount * speedPerRat);
+            return Mathf.Min(speed, maxLaunchSpeed);
+        }
+
+        /// <summary>
         /// Updates the arc visualization.
         /// </summary>
         private void UpdateArcVisualization()
@@ -266,8 +335,8 @@ namespace FindersCheesers
                 return;
             }
 
-            // Only show arc if we have a target and rats available
-            if (targetPosition.HasValue && ratInventory != null && ratInventory.Count > 0 && !isThrowing)
+            // Only show arc if we have a target and King Rat is being grabbed
+            if (targetPosition.HasValue && kingRatGrabber != null && kingRatGrabber.IsGrabbing && !isThrowing)
             {
                 Vector3 start = GetLaunchPosition();
                 Vector3 end = targetPosition.Value;
@@ -290,7 +359,7 @@ namespace FindersCheesers
         }
 
         /// <summary>
-        /// Gets the launch position for the rat.
+        /// Gets the launch position for the King Rat.
         /// </summary>
         private Vector3 GetLaunchPosition()
         {
@@ -299,45 +368,52 @@ namespace FindersCheesers
 
         /// <summary>
         /// Calculates arc points for visualization.
+        /// Uses a quadratic Bezier curve to ensure the arc always completes from start to end.
         /// </summary>
         private void CalculateArcPoints(Vector3 start, Vector3 end, Vector3[] points)
         {
+            // Calculate horizontal distance
             float distance = Vector3.Distance(new Vector3(start.x, 0, start.z), new Vector3(end.x, 0, end.z));
-            float heightDifference = end.y - start.y;
             
-            // Calculate initial velocity components
-            float angleRad = launchAngle * Mathf.Deg2Rad;
-            float vx = launchSpeed * Mathf.Cos(angleRad);
-            float vy = launchSpeed * Mathf.Sin(angleRad);
+            // Calculate control point for the arc (midpoint horizontally, elevated vertically)
+            Vector3 midPoint = Vector3.Lerp(start, end, 0.5f);
+            float arcHeight = Mathf.Max(distance * 0.3f, GetLaunchSpeed() * 0.15f);
+            Vector3 controlPoint = new Vector3(midPoint.x, Mathf.Max(start.y, end.y) + arcHeight, midPoint.z);
             
-            // Calculate flight time
-            float flightTime = distance / vx;
-            
-            // Generate arc points
+            // Generate arc points using quadratic Bezier curve
             for (int i = 0; i < points.Length; i++)
             {
                 float t = (float)i / (points.Length - 1);
-                float time = t * flightTime;
                 
-                // Calculate position at time t using projectile motion equations
-                float x = start.x + (end.x - start.x) * t;
-                float z = start.z + (end.z - start.z) * t;
-                float y = start.y + vy * time - 0.5f * 9.81f * time * time;
+                // Quadratic Bezier formula: (1-t)² * P0 + 2(1-t)t * P1 + t² * P2
+                float oneMinusT = 1f - t;
+                Vector3 point = (oneMinusT * oneMinusT * start) + 
+                                (2f * oneMinusT * t * controlPoint) + 
+                                (t * t * end);
                 
-                points[i] = new Vector3(x, y, z);
+                points[i] = point;
             }
         }
 
         /// <summary>
-        /// Attempts to throw a rat to the target position.
+        /// Attempts to throw the King Rat to the target position.
         /// </summary>
-        private void TryThrowRat()
+        private void TryThrowKingRat()
         {
-            if (ratInventory == null || ratInventory.Count == 0)
+            if (kingRatGrabber == null)
             {
                 if (debugMode)
                 {
-                    Debug.LogWarning("[RatThrower] No rats available to throw!");
+                    Debug.LogWarning("[KingRatThrower] KingRatGrabber is not assigned!");
+                }
+                return;
+            }
+
+            if (!kingRatGrabber.IsGrabbing)
+            {
+                if (debugMode)
+                {
+                    Debug.LogWarning("[KingRatThrower] King Rat is not being grabbed!");
                 }
                 return;
             }
@@ -346,46 +422,47 @@ namespace FindersCheesers
             {
                 if (debugMode)
                 {
-                    Debug.LogWarning("[RatThrower] No target position set!");
+                    Debug.LogWarning("[KingRatThrower] No target position set!");
                 }
                 return;
             }
-
-            // Get the first rat from inventory
-            Rat rat = ratInventory.GetRat(0);
-            if (rat == null)
-            {
-                if (debugMode)
-                {
-                    Debug.LogWarning("[RatThrower] Failed to get rat from inventory!");
-                }
-                return;
-            }
-
-            // Remove rat from inventory
-            ratInventory.RemoveRat(rat);
 
             // Start throw animation
-            StartThrowAnimation(rat, targetPosition.Value);
+            StartThrowAnimation(targetPosition.Value);
         }
 
         /// <summary>
-        /// Starts the throw animation for a rat.
+        /// Starts the throw animation for the King Rat.
         /// </summary>
-        private void StartThrowAnimation(Rat rat, Vector3 destination)
+        private void StartThrowAnimation(Vector3 destination)
         {
             isThrowing = true;
-            currentThrownRat = rat;
             throwStartPosition = GetLaunchPosition();
             throwEndPosition = destination;
             throwTimer = 0f;
 
+            // Release King Rat from grabber before throwing
+            if (kingRatGrabber != null)
+            {
+                kingRatGrabber.ReleaseKingRat();
+            }
+
+            // Move King Rat to launch position
+            if (kingRatGrabber != null && kingRatGrabber.KingRat != null)
+            {
+                kingRatGrabber.KingRat.transform.position = throwStartPosition;
+                kingRatOriginalPosition = throwStartPosition;
+                kingRatOriginalRotation = kingRatGrabber.KingRat.transform.rotation;
+            }
+
             // Fire event
-            OnRatThrown?.Invoke(rat, destination);
+            OnKingRatThrown?.Invoke(destination);
 
             if (debugMode)
             {
-                Debug.Log($"[RatThrower] Throwing rat to {destination}");
+                int ratCount = (ratInventory != null) ? ratInventory.Count : 0;
+                float launchSpeed = GetLaunchSpeed();
+                Debug.Log($"[KingRatThrower] Throwing King Rat to {destination} (Rats: {ratCount}, Speed: {launchSpeed:F2})");
             }
         }
 
@@ -394,7 +471,7 @@ namespace FindersCheesers
         /// </summary>
         private void UpdateThrowAnimation()
         {
-            if (currentThrownRat == null)
+            if (kingRatGrabber == null || kingRatGrabber.KingRat == null)
             {
                 isThrowing = false;
                 return;
@@ -405,7 +482,7 @@ namespace FindersCheesers
 
             // Calculate arc position
             Vector3 position = CalculateArcPosition(throwStartPosition, throwEndPosition, t);
-            currentThrownRat.transform.position = position;
+            kingRatGrabber.KingRat.transform.position = position;
 
             // Check if throw is complete
             if (t >= 1f)
@@ -428,7 +505,7 @@ namespace FindersCheesers
 
             // Parabolic arc for Y
             float height = Mathf.Lerp(start.y, end.y, t);
-            float arcHeight = Mathf.Sin(t * Mathf.PI) * launchSpeed * 0.2f;
+            float arcHeight = Mathf.Sin(t * Mathf.PI) * GetLaunchSpeed() * 0.2f;
 
             return new Vector3(flatPosition.x, height + arcHeight, flatPosition.z);
         }
@@ -438,19 +515,18 @@ namespace FindersCheesers
         /// </summary>
         private void FinishThrowAnimation()
         {
-            if (currentThrownRat != null)
+            if (kingRatGrabber != null && kingRatGrabber.KingRat != null)
             {
                 // Fire event
-                OnRatLanded?.Invoke(currentThrownRat, throwEndPosition);
+                OnKingRatLanded?.Invoke(throwEndPosition);
 
                 if (debugMode)
                 {
-                    Debug.Log($"[RatThrower] Rat landed at {throwEndPosition}");
+                    Debug.Log($"[KingRatThrower] King Rat landed at {throwEndPosition}");
                 }
             }
 
             isThrowing = false;
-            currentThrownRat = null;
         }
 
         /// <summary>
@@ -462,7 +538,7 @@ namespace FindersCheesers
         }
 
         /// <summary>
-        /// Gets whether a rat is currently being thrown.
+        /// Gets whether the King Rat is currently being thrown.
         /// </summary>
         public bool IsThrowing()
         {
@@ -470,19 +546,35 @@ namespace FindersCheesers
         }
 
         /// <summary>
-        /// Gets the currently thrown rat.
+        /// Gets the current launch speed based on rat count.
         /// </summary>
-        public Rat GetCurrentThrownRat()
+        public float GetCurrentLaunchSpeed()
         {
-            return currentThrownRat;
+            return GetLaunchSpeed();
         }
 
         /// <summary>
-        /// Sets the launch speed.
+        /// Sets the base launch speed.
         /// </summary>
-        public void SetLaunchSpeed(float speed)
+        public void SetBaseLaunchSpeed(float speed)
         {
-            launchSpeed = Mathf.Max(1f, speed);
+            baseLaunchSpeed = Mathf.Max(1f, speed);
+        }
+
+        /// <summary>
+        /// Sets the additional launch speed per rat.
+        /// </summary>
+        public void SetSpeedPerRat(float speed)
+        {
+            speedPerRat = Mathf.Max(0f, speed);
+        }
+
+        /// <summary>
+        /// Sets the maximum launch speed.
+        /// </summary>
+        public void SetMaxLaunchSpeed(float speed)
+        {
+            maxLaunchSpeed = Mathf.Max(1f, speed);
         }
 
         /// <summary>
@@ -522,11 +614,20 @@ namespace FindersCheesers
                     Gizmos.DrawLine(arcPoints[i], arcPoints[i + 1]);
                 }
             }
+
+            // Draw King Rat indicator
+            if (kingRatGrabber != null && kingRatGrabber.KingRat != null)
+            {
+                Gizmos.color = isThrowing ? Color.magenta : (kingRatGrabber.IsGrabbing ? Color.green : Color.gray);
+                Gizmos.DrawWireSphere(kingRatGrabber.KingRat.transform.position, 0.5f);
+            }
         }
 
         private void Reset()
         {
-            launchSpeed = 15f;
+            baseLaunchSpeed = 10f;
+            speedPerRat = 2f;
+            maxLaunchSpeed = 30f;
             launchAngle = 45f;
             throwDuration = 1f;
             launchHeightOffset = 1f;
