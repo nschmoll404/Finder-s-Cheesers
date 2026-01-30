@@ -10,6 +10,16 @@ namespace FindersCheesers
     [AddComponentMenu("Finders Cheesers/Rat Inventory")]
     public class RatInventory : MonoBehaviour
     {
+        /// <summary>
+        /// Defines when rat positioning updates occur.
+        /// </summary>
+        public enum RatPositioningUpdateMode
+        {
+            Update,
+            FixedUpdate,
+            LateUpdate
+        }
+
         [Header("Inventory Settings")]
         [Tooltip("Maximum number of rats that can be stored in this inventory")]
         [SerializeField]
@@ -22,6 +32,10 @@ namespace FindersCheesers
         [Tooltip("How quickly rats move to their target positions")]
         [SerializeField]
         private float ratPositioningSpeed = 5f;
+
+        [Tooltip("When to update rat positions")]
+        [SerializeField]
+        private RatPositioningUpdateMode ratPositioningUpdateMode = RatPositioningUpdateMode.Update;
 
         [Header("Debug")]
         [Tooltip("Show debug information in the console")]
@@ -89,6 +103,11 @@ namespace FindersCheesers
         /// </summary>
         public float TotalSupportStrength => totalSupportStrength;
 
+        /// <summary>
+        /// Gets the current rat positioning update mode.
+        /// </summary>
+        public RatPositioningUpdateMode UpdateMode => ratPositioningUpdateMode;
+
         private void Start()
         {
             // Get Rat Pack controller reference
@@ -112,8 +131,31 @@ namespace FindersCheesers
 
         private void Update()
         {
-            UpdateRatPositions();
+            // Update rat positions in Update if that mode is selected
+            if (ratPositioningUpdateMode == RatPositioningUpdateMode.Update)
+            {
+                UpdateRatPositions();
+            }
+
             CalculateSupportMetrics();
+        }
+
+        private void FixedUpdate()
+        {
+            // Update rat positions in FixedUpdate if that mode is selected
+            if (ratPositioningUpdateMode == RatPositioningUpdateMode.FixedUpdate)
+            {
+                UpdateRatPositions();
+            }
+        }
+
+        private void LateUpdate()
+        {
+            // Update rat positions in LateUpdate if that mode is selected
+            if (ratPositioningUpdateMode == RatPositioningUpdateMode.LateUpdate)
+            {
+                UpdateRatPositions();
+            }
         }
 
         /// <summary>
@@ -127,6 +169,11 @@ namespace FindersCheesers
             {
                 return;
             }
+
+            // Get the appropriate delta time based on the update mode
+            float deltaTime = ratPositioningUpdateMode == RatPositioningUpdateMode.FixedUpdate 
+                ? Time.fixedDeltaTime 
+                : Time.deltaTime;
 
             // Get Rat Pack's movement direction and speed
             Vector3 packMovementDirection = Vector3.zero;
@@ -168,7 +215,7 @@ namespace FindersCheesers
                 rat.transform.position = Vector3.Lerp(
                     rat.transform.position,
                     targetPosition,
-                    ratPositioningSpeed * Time.deltaTime
+                    ratPositioningSpeed * deltaTime
                 );
             }
         }
@@ -421,6 +468,19 @@ namespace FindersCheesers
             ratPositioningSpeed = Mathf.Max(0f, speed);
         }
 
+        /// <summary>
+        /// Sets the rat positioning update mode.
+        /// </summary>
+        /// <param name="mode">The new update mode.</param>
+        public void SetRatPositioningUpdateMode(RatPositioningUpdateMode mode)
+        {
+            ratPositioningUpdateMode = mode;
+            if (debugMode)
+            {
+                Debug.Log($"[RatInventory] Rat positioning update mode set to: {mode}");
+            }
+        }
+
         private void OnDrawGizmos()
         {
             if (!visualizeRats)
@@ -465,6 +525,7 @@ namespace FindersCheesers
             maxCapacity = 8;
             supportRadius = 1.5f;
             ratPositioningSpeed = 5f;
+            ratPositioningUpdateMode = RatPositioningUpdateMode.Update;
         }
     }
 }

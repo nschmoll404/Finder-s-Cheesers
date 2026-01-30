@@ -20,6 +20,11 @@ namespace FindersCheesers
         [SerializeField]
         private bool usePlayerInputSingleton = false;
 
+        [Header("Camera Settings")]
+        [Tooltip("Camera to use for relative movement direction")]
+        [SerializeField]
+        private Camera mainCamera;
+
         [Header("Movement Settings")]
         [Tooltip("Maximum movement speed")]
         [SerializeField]
@@ -136,6 +141,12 @@ namespace FindersCheesers
                 }
             }
 
+            // Get camera if not assigned
+            if (mainCamera == null)
+            {
+                mainCamera = Camera.main;
+            }
+
             // Initialize rotation
             currentRotation = transform.rotation;
 
@@ -173,6 +184,7 @@ namespace FindersCheesers
 
         /// <summary>
         /// Handles movement physics using velocity-based approach.
+        /// Movement direction is relative to the camera's Y rotation.
         /// </summary>
         private void HandleMovement()
         {
@@ -180,8 +192,18 @@ namespace FindersCheesers
 
             if (isMoving)
             {
-                // Calculate target velocity in world space (XZ plane for top-down)
-                targetVelocity = new Vector3(moveInput.x, 0f, moveInput.y) * maxSpeed;
+                // Calculate input direction in local space
+                Vector3 inputDirection = new Vector3(moveInput.x, 0f, moveInput.y);
+                
+                // Rotate input direction by camera's Y rotation for camera-relative movement
+                if (mainCamera != null)
+                {
+                    float cameraYRotation = mainCamera.transform.eulerAngles.y;
+                    inputDirection = Quaternion.Euler(0f, cameraYRotation, 0f) * inputDirection;
+                }
+                
+                // Calculate target velocity in world space
+                targetVelocity = inputDirection * maxSpeed;
                 
                 // Smoothly interpolate current velocity towards target velocity
                 currentVelocity = Vector3.Lerp(
@@ -211,6 +233,7 @@ namespace FindersCheesers
 
         /// <summary>
         /// Handles rotation to face the movement direction.
+        /// Rotation direction is relative to the camera's Y rotation.
         /// </summary>
         private void HandleRotation()
         {
@@ -219,8 +242,15 @@ namespace FindersCheesers
                 return;
             }
 
-            // Calculate target rotation based on movement direction
+            // Calculate input direction in local space
             Vector3 movementDirection = new Vector3(moveInput.x, 0f, moveInput.y);
+            
+            // Rotate input direction by camera's Y rotation for camera-relative rotation
+            if (mainCamera != null)
+            {
+                float cameraYRotation = mainCamera.transform.eulerAngles.y;
+                movementDirection = Quaternion.Euler(0f, cameraYRotation, 0f) * movementDirection;
+            }
             
             if (movementDirection != Vector3.zero)
             {

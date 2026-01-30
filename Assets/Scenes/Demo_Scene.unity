@@ -128,7 +128,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 66062289}
+  - component: {fileID: 66062290}
   - component: {fileID: 66062288}
+  - component: {fileID: 66062291}
+  - component: {fileID: 66062292}
   m_Layer: 6
   m_Name: KingRat
   m_TagString: KingRat
@@ -175,6 +178,65 @@ Transform:
   - {fileID: 248993082}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &66062290
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 66062287}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 3
+--- !u!114 &66062291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 66062287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8253c3f2d53b4d64291ad6b82e5c49a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.KingRatThrowable
+  throwDuration: 1
+  launchSpeed: 10
+  debugMode: 0
+--- !u!114 &66062292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 66062287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f8a9b2c3d4e5f6a7b8c9d0e1f2a3b4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.Health
+  maxHealth: 100
+  currentHealth: 100
+  destroyOnDeath: 0
+  destroyDelay: 0
+  debugMode: 0
 --- !u!1 &94278670
 GameObject:
   m_ObjectHideFlags: 0
@@ -187,8 +249,8 @@ GameObject:
   - component: {fileID: 94278672}
   - component: {fileID: 94278671}
   - component: {fileID: 94278675}
-  - component: {fileID: 94278676}
   - component: {fileID: 94278674}
+  - component: {fileID: 94278677}
   m_Layer: 7
   m_Name: RatPackController
   m_TagString: Untagged
@@ -260,6 +322,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 902877248}
+  - {fileID: 1910279121}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &94278674
@@ -277,6 +340,7 @@ MonoBehaviour:
   maxCapacity: 8
   supportRadius: 0.6
   ratPositioningSpeed: 5
+  ratPositioningUpdateMode: 1
   debugMode: 0
   visualizeRats: 1
   ratsToAddOnStart:
@@ -297,6 +361,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.RatPackController
   moveActionReference: {fileID: -1680190386980627800, guid: 855a47865bf910d4f9b7cf9ee07a6ac6, type: 3}
   usePlayerInputSingleton: 1
+  mainCamera: {fileID: 696505769}
   maxSpeed: 5
   acceleration: 8
   deceleration: 8
@@ -306,7 +371,7 @@ MonoBehaviour:
   drag: 3
   debugMode: 0
   visualizeMovement: 1
---- !u!114 &94278676
+--- !u!114 &94278677
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -315,24 +380,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 94278670}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a324059af85133f40827d382cc25424b, type: 3}
+  m_Script: {fileID: 11500000, guid: 0b64c39b643b4ae458fa715e85de37be, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.KingRatGrabber
-  grabActionReference: {fileID: 1781555164194001046, guid: 855a47865bf910d4f9b7cf9ee07a6ac6, type: 3}
-  usePlayerInputSingleton: 1
-  kingRatThrower: {fileID: 902877250}
-  kingRat: {fileID: 66062287}
-  kingRatLayerMask:
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.RatInteracter
+  detectionSize: {x: 2, y: 2, z: 2}
+  detectionOffset: {x: 0, y: 0, z: 1.5}
+  interactableLayerMask:
     serializedVersion: 2
-    m_Bits: 64
-  kingRatTag: KingRat
-  detectionBoxSize: {x: 1, y: 1, z: 1}
-  detectionBoxOffset: {x: 0, y: 0, z: 1}
-  carryOffset: {x: 0, y: 1, z: 0}
-  carrySmoothSpeed: 20
+    m_Bits: 1
+  interactActionReference: {fileID: 1781555164194001046, guid: 855a47865bf910d4f9b7cf9ee07a6ac6, type: 3}
+  ratInventory: {fileID: 94278674}
   debugMode: 0
-  visualizeGrab: 1
-  visualizeDetectionBox: 1
+  visualizeDetection: 1
 --- !u!1 &160989957
 GameObject:
   m_ObjectHideFlags: 0
@@ -645,6 +704,79 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 325187877}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &364464604
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1712629095}
+    m_Modifications:
+    - target: {fileID: 307497606201383593, guid: 73b3d38ce1615474e8044adf630edc0a, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.9131433
+      objectReference: {fileID: 0}
+    - target: {fileID: 307497606201383593, guid: 73b3d38ce1615474e8044adf630edc0a, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.9131433
+      objectReference: {fileID: 0}
+    - target: {fileID: 307497606201383593, guid: 73b3d38ce1615474e8044adf630edc0a, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.9131433
+      objectReference: {fileID: 0}
+    - target: {fileID: 307497606201383593, guid: 73b3d38ce1615474e8044adf630edc0a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 307497606201383593, guid: 73b3d38ce1615474e8044adf630edc0a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 307497606201383593, guid: 73b3d38ce1615474e8044adf630edc0a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.017
+      objectReference: {fileID: 0}
+    - target: {fileID: 307497606201383593, guid: 73b3d38ce1615474e8044adf630edc0a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.000000067055225
+      objectReference: {fileID: 0}
+    - target: {fileID: 307497606201383593, guid: 73b3d38ce1615474e8044adf630edc0a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.000000052065758
+      objectReference: {fileID: 0}
+    - target: {fileID: 307497606201383593, guid: 73b3d38ce1615474e8044adf630edc0a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.7071069
+      objectReference: {fileID: 0}
+    - target: {fileID: 307497606201383593, guid: 73b3d38ce1615474e8044adf630edc0a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.70710677
+      objectReference: {fileID: 0}
+    - target: {fileID: 307497606201383593, guid: 73b3d38ce1615474e8044adf630edc0a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 307497606201383593, guid: 73b3d38ce1615474e8044adf630edc0a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 307497606201383593, guid: 73b3d38ce1615474e8044adf630edc0a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -180
+      objectReference: {fileID: 0}
+    - target: {fileID: 1085266204942843923, guid: 73b3d38ce1615474e8044adf630edc0a, type: 3}
+      propertyPath: m_Name
+      value: RATPrefab(justhavingfun) (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1445479203099468230, guid: 73b3d38ce1615474e8044adf630edc0a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 0888759b760e4974a88fe2f9ec482478, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 73b3d38ce1615474e8044adf630edc0a, type: 3}
 --- !u!1 &393250645
 GameObject:
   m_ObjectHideFlags: 0
@@ -1023,7 +1155,7 @@ MonoBehaviour:
   IgnoreTimeScale: 0
   WorldUpOverride: {fileID: 0}
   ChannelMask: -1
-  UpdateMethod: 2
+  UpdateMethod: 1
   BlendUpdateMethod: 1
   LensModeOverride:
     Enabled: 0
@@ -1244,8 +1376,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 696505765}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
-  m_LocalPosition: {x: 0, y: 15, z: -15}
+  m_LocalRotation: {x: 0.34317783, y: -0.6011106, z: 0.31852183, w: 0.6476411}
+  m_LocalPosition: {x: 13.4, y: 19.8, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1774,6 +1906,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!4 &865761183 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 307497606201383593, guid: 73b3d38ce1615474e8044adf630edc0a, type: 3}
+  m_PrefabInstance: {fileID: 364464604}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &894611841
 GameObject:
   m_ObjectHideFlags: 0
@@ -2015,16 +2152,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 902877247}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 811bda2e287d27f4b8dcf3d90eb213a9, type: 3}
+  m_Script: {fileID: 11500000, guid: 34c1d427ec1807245add714df12c2e8f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.KingRatThrower
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.KingRatController
+  grabActionReference: {fileID: 1781555164194001046, guid: 855a47865bf910d4f9b7cf9ee07a6ac6, type: 3}
+  kingRatLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  kingRatTag: KingRat
+  detectionBoxSize: {x: 2, y: 2, z: 2}
+  detectionBoxOffset: {x: 0, y: 0, z: 1}
+  carryOffset: {x: 0, y: 1, z: 0}
+  carrySmoothSpeed: 10
   pointerActionReference: {fileID: 4004371835555017464, guid: 855a47865bf910d4f9b7cf9ee07a6ac6, type: 3}
-  throwActionReference: {fileID: 1120369429361536294, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  usePlayerInputSingleton: 1
-  mainCamera: {fileID: 0}
+  throwActionReference: {fileID: 1120369429361536294, guid: 855a47865bf910d4f9b7cf9ee07a6ac6, type: 3}
+  mainCamera: {fileID: 696505769}
+  targetLayerMask:
+    serializedVersion: 2
+    m_Bits: 9
   ratPackController: {fileID: 94278675}
   ratInventory: {fileID: 94278674}
-  kingRatGrabber: {fileID: 94278676}
   arcLineRenderer: {fileID: 902877249}
   arcSegments: 30
   arcColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
@@ -2040,7 +2187,10 @@ MonoBehaviour:
   distancePerRat: 1
   maxThrowDistance: 20
   lockTargetToMaxDistance: 0
+  usePlayerInputSingleton: 1
   debugMode: 0
+  visualizeGrab: 1
+  visualizeDetectionBox: 1
   visualizeTarget: 1
 --- !u!1 &909780687
 GameObject:
@@ -2854,8 +3004,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1618321344}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
-  m_LocalPosition: {x: 0, y: 15, z: -15}
+  m_LocalRotation: {x: 0.34317783, y: -0.6011106, z: 0.31852183, w: 0.6476411}
+  m_LocalPosition: {x: 13.4, y: 19.8, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2879,7 +3029,7 @@ MonoBehaviour:
     AngularDampingMode: 0
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
-  FollowOffset: {x: 0, y: 15, z: -15}
+  FollowOffset: {x: 13.4, y: 19.8, z: -1}
 --- !u!114 &1618321348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2893,6 +3043,226 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineHardLookAt
   LookAtOffset: {x: 0, y: 0, z: 0}
+--- !u!1 &1712629094
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1712629095}
+  - component: {fileID: 1712629097}
+  - component: {fileID: 1712629096}
+  m_Layer: 0
+  m_Name: Sphere
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1712629095
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1712629094}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.70710677, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.5227, y: 0.5227, z: 0.5227}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 865761183}
+  m_Father: {fileID: 1910279121}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+--- !u!23 &1712629096
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1712629094}
+  m_Enabled: 0
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 20ccff87eb8d1b44cb120b28c5ff103d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1712629097
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1712629094}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1713105622
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1713105627}
+  - component: {fileID: 1713105626}
+  - component: {fileID: 1713105625}
+  - component: {fileID: 1713105624}
+  - component: {fileID: 1713105623}
+  m_Layer: 0
+  m_Name: RatInteractable
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1713105623
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1713105622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f524f6110741b5948b2b28f919af5a00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.RatInteractable
+  interactionDescription: Deposit a rat
+  ratCost: 2
+  maxRatsToAccept: 2
+  canAcceptRats: 1
+  allowWithdrawal: 1
+  debugMode: 0
+--- !u!65 &1713105624
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1713105622}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &1713105625
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1713105622}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 73c176f402d2c2f4d929aa5da7585d17, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1713105626
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1713105622}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1713105627
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1713105622}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 7.5, y: 0.44, z: -5.01}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1770472352
 GameObject:
   m_ObjectHideFlags: 0
@@ -3140,6 +3510,38 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1789967791}
   m_CullTransparentMesh: 1
+--- !u!1 &1910279120
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1910279121}
+  m_Layer: 7
+  m_Name: Skin
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1910279121
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1910279120}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1712629095}
+  m_Father: {fileID: 94278673}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2090967324
 GameObject:
   m_ObjectHideFlags: 0
@@ -3340,3 +3742,4 @@ SceneRoots:
   - {fileID: 682620799}
   - {fileID: 160989961}
   - {fileID: 1277967241}
+  - {fileID: 1713105627}
