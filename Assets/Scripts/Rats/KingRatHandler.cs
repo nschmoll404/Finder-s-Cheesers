@@ -4,12 +4,22 @@ using UnityEngine.InputSystem;
 namespace FindersCheesers
 {
     /// <summary>
+    /// Defines when to update the grabbed King Rat's position.
+    /// </summary>
+    public enum KingRatUpdateMode
+    {
+        Update,
+        FixedUpdate,
+        LateUpdate
+    }
+
+    /// <summary>
     /// A unified component that handles both grabbing and throwing King Rat.
     /// Manages King Rat's grab state, detection, and throw mechanics with physics arc visualization.
-    /// The throw distance is based on the number of rats in the inventory - more rats = further throw.
+    /// The throw distance is based on number of rats in the inventory - more rats = further throw.
     /// </summary>
-    [AddComponentMenu("Finders Cheesers/King Rat Controller")]
-    public class KingRatController : MonoBehaviour
+    [AddComponentMenu("Finders Cheesers/King Rat Handler")]
+    public class KingRatHandler : MonoBehaviour
     {
         #region Grab Settings
 
@@ -43,6 +53,10 @@ namespace FindersCheesers
         [Tooltip("How smoothly King Rat moves to the carry position")]
         [SerializeField]
         private float carrySmoothSpeed = 5f;
+
+        [Tooltip("When to update the grabbed King Rat's position")]
+        [SerializeField]
+        private KingRatUpdateMode updateMode = KingRatUpdateMode.Update;
 
         #endregion
 
@@ -318,7 +332,6 @@ namespace FindersCheesers
             if (pointerAction != null)
             {
                 pointerPosition = pointerAction.ReadValue<Vector2>();
-                UpdateTargetPosition();
             }
 
             // Check for throw input
@@ -330,15 +343,10 @@ namespace FindersCheesers
                 }
             }
 
-            // Update King Rat position if being grabbed
-            if (isGrabbing && detectedKingRat != null)
+            // Update King Rat position if being grabbed (only in Update mode)
+            if (updateMode == KingRatUpdateMode.Update)
             {
-                Vector3 targetPosition = transform.position + carryOffset;
-                detectedKingRat.transform.position = Vector3.Lerp(
-                    detectedKingRat.transform.position,
-                    targetPosition,
-                    carrySmoothSpeed * Time.deltaTime
-                );
+                UpdateKingRatPosition();
             }
 
             // Update detection collider size and offset
@@ -353,6 +361,48 @@ namespace FindersCheesers
 
             // Update target reticle position
             UpdateTargetReticle();
+        }
+
+        private void FixedUpdate()
+        {
+            // Update King Rat position if being grabbed (only in FixedUpdate mode)
+            if (updateMode == KingRatUpdateMode.FixedUpdate)
+            {
+                UpdateKingRatPosition();
+            }
+
+            // Update target position
+            UpdateTargetPosition();
+        }
+
+        private void LateUpdate()
+        {
+            // Update King Rat position if being grabbed (only in LateUpdate mode)
+            if (updateMode == KingRatUpdateMode.LateUpdate)
+            {
+                UpdateKingRatPosition();
+            }
+
+            // Update target position
+            UpdateTargetPosition();
+        }
+
+        /// <summary>
+        /// Updates the King Rat's position when being grabbed.
+        /// Uses Time.deltaTime for Update mode and Time.fixedDeltaTime for FixedUpdate mode.
+        /// </summary>
+        private void UpdateKingRatPosition()
+        {
+            if (isGrabbing && detectedKingRat != null)
+            {
+                Vector3 targetPosition = transform.position + carryOffset;
+                float deltaTime = (updateMode == KingRatUpdateMode.FixedUpdate) ? Time.fixedDeltaTime : Time.deltaTime;
+                detectedKingRat.transform.position = Vector3.Lerp(
+                    detectedKingRat.transform.position,
+                    targetPosition,
+                    carrySmoothSpeed * deltaTime
+                );
+            }
         }
 
         private void OnTriggerEnter(Collider other)
@@ -374,7 +424,7 @@ namespace FindersCheesers
 
                 if (debugMode)
                 {
-                    Debug.Log($"[KingRatController] King Rat detected in range!");
+                    Debug.Log($"[KingRatHandler] King Rat detected in range!");
                 }
             }
         }
@@ -398,10 +448,10 @@ namespace FindersCheesers
                     kingRatThrowable = null;
                     kingRatInRange = false;
 
-                    if (debugMode)
-                    {
-                        Debug.Log($"[KingRatController] King Rat left range!");
-                    }
+                if (debugMode)
+                {
+                    Debug.Log($"[KingRatHandler] King Rat left range!");
+                }
                 }
                 else
                 {
@@ -524,12 +574,12 @@ namespace FindersCheesers
 
                     if (debugMode)
                     {
-                        Debug.Log("[KingRatController] Using PlayerInputSingleton for input.");
+                        Debug.Log("[KingRatHandler] Using PlayerInputSingleton for input.");
                     }
                 }
                 else
                 {
-                    Debug.LogError("[KingRatController] PlayerInputSingleton is not initialized!");
+                    Debug.LogError("[KingRatHandler] PlayerInputSingleton is not initialized!");
                 }
             }
             else
@@ -538,7 +588,7 @@ namespace FindersCheesers
 
                 if (playerInput == null)
                 {
-                    Debug.LogError("[KingRatController] PlayerInput component not found on this GameObject!");
+                    Debug.LogError("[KingRatHandler] PlayerInput component not found on this GameObject!");
                 }
             }
         }
@@ -552,12 +602,12 @@ namespace FindersCheesers
 
                 if (grabAction == null)
                 {
-                    Debug.LogError("[KingRatController] Grab action not found in PlayerInput actions!");
+                    Debug.LogError("[KingRatHandler] Grab action not found in PlayerInput actions!");
                 }
             }
             else if (grabActionReference == null)
             {
-                Debug.LogError("[KingRatController] Grab Action Reference is not assigned!");
+                Debug.LogError("[KingRatHandler] Grab Action Reference is not assigned!");
             }
 
             // Get the pointer action using the ID from InputActionReference
@@ -567,12 +617,12 @@ namespace FindersCheesers
 
                 if (pointerAction == null)
                 {
-                    Debug.LogError("[KingRatController] Pointer action not found in PlayerInput actions!");
+                    Debug.LogError("[KingRatHandler] Pointer action not found in PlayerInput actions!");
                 }
             }
             else if (pointerActionReference == null)
             {
-                Debug.LogError("[KingRatController] Pointer Action Reference is not assigned!");
+                Debug.LogError("[KingRatHandler] Pointer Action Reference is not assigned!");
             }
 
             // Get the throw action using the ID from InputActionReference
@@ -582,12 +632,12 @@ namespace FindersCheesers
 
                 if (throwAction == null)
                 {
-                    Debug.LogError("[KingRatController] Throw action not found in PlayerInput actions!");
+                    Debug.LogError("[KingRatHandler] Throw action not found in PlayerInput actions!");
                 }
             }
             else if (throwActionReference == null)
             {
-                Debug.LogError("[KingRatController] Throw Action Reference is not assigned!");
+                Debug.LogError("[KingRatHandler] Throw Action Reference is not assigned!");
             }
         }
 
@@ -600,7 +650,7 @@ namespace FindersCheesers
 
                 if (ratPackController == null)
                 {
-                    Debug.LogError("[KingRatController] RatPackController component not found on this GameObject!");
+                    Debug.LogError("[KingRatHandler] RatPackController component not found on this GameObject!");
                 }
             }
 
@@ -616,7 +666,7 @@ namespace FindersCheesers
 
                 if (ratInventory == null)
                 {
-                    Debug.LogError("[KingRatController] RatInventory component not found!");
+                    Debug.LogError("[KingRatHandler] RatInventory component not found!");
                 }
             }
 
@@ -658,7 +708,7 @@ namespace FindersCheesers
             {
                 if (debugMode)
                 {
-                    Debug.LogWarning("[KingRatController] King Rat is not in range!");
+                    Debug.LogWarning("[KingRatHandler] King Rat is not in range!");
                 }
                 return false;
             }
@@ -667,7 +717,7 @@ namespace FindersCheesers
             {
                 if (debugMode)
                 {
-                    Debug.LogWarning("[KingRatController] Already grabbing King Rat!");
+                    Debug.LogWarning("[KingRatHandler] Already grabbing King Rat!");
                 }
                 return false;
             }
@@ -688,7 +738,7 @@ namespace FindersCheesers
 
             if (debugMode)
             {
-                Debug.Log("[KingRatController] King Rat grabbed!");
+                Debug.Log("[KingRatHandler] King Rat grabbed!");
             }
 
             return true;
@@ -702,7 +752,7 @@ namespace FindersCheesers
         {
             if (detectedKingRat == null)
             {
-                Debug.LogWarning("[KingRatController] King Rat is not assigned!");
+                Debug.LogWarning("[KingRatHandler] King Rat is not assigned!");
                 return false;
             }
 
@@ -710,7 +760,7 @@ namespace FindersCheesers
             {
                 if (debugMode)
                 {
-                    Debug.LogWarning("[KingRatController] Not currently grabbing King Rat!");
+                    Debug.LogWarning("[KingRatHandler] Not currently grabbing King Rat!");
                 }
                 return false;
             }
@@ -740,7 +790,7 @@ namespace FindersCheesers
 
             if (debugMode)
             {
-                Debug.Log("[KingRatController] King Rat released!");
+                Debug.Log("[KingRatHandler] King Rat released!");
             }
 
             return true;
@@ -958,7 +1008,7 @@ namespace FindersCheesers
             {
                 if (debugMode)
                 {
-                    Debug.LogWarning("[KingRatController] King Rat is not being grabbed!");
+                    Debug.LogWarning("[KingRatHandler] King Rat is not being grabbed!");
                 }
                 return;
             }
@@ -967,7 +1017,7 @@ namespace FindersCheesers
             {
                 if (debugMode)
                 {
-                    Debug.LogWarning("[KingRatController] No target position set!");
+                    Debug.LogWarning("[KingRatHandler] No target position set!");
                 }
                 return;
             }
@@ -978,7 +1028,7 @@ namespace FindersCheesers
                 if (debugMode)
                 {
                     float maxDistance = CalculateMaxThrowDistance();
-                    Debug.LogWarning($"[KingRatController] Target is beyond maximum throw distance of {maxDistance:F2}!");
+                    Debug.LogWarning($"[KingRatHandler] Target is beyond maximum throw distance of {maxDistance:F2}!");
                 }
                 return;
             }
@@ -1013,7 +1063,7 @@ namespace FindersCheesers
             }
             else
             {
-                Debug.LogError("[KingRatController] KingRatThrowable component not found on King Rat!");
+                Debug.LogError("[KingRatHandler] KingRatThrowable component not found on King Rat!");
             }
 
             // Fire event
@@ -1023,7 +1073,7 @@ namespace FindersCheesers
             {
                 int ratCount = (ratInventory != null) ? ratInventory.Count : 0;
                 float launchSpeed = GetLaunchSpeed();
-                Debug.Log($"[KingRatController] Throwing King Rat to {destination} (Rats: {ratCount}, Speed: {launchSpeed:F2})");
+                Debug.Log($"[KingRatHandler] Throwing King Rat to {destination} (Rats: {ratCount}, Speed: {launchSpeed:F2})");
             }
         }
 
