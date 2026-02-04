@@ -190,7 +190,7 @@ namespace FindersCheesers
         private InputAction pointerAction;
         private InputAction throwAction;
         private GameObject targetReticleInstance;
-        private KingRatThrowable kingRatThrowable;
+        private IThrowable throwable;
 
         #endregion
 
@@ -263,7 +263,7 @@ namespace FindersCheesers
         /// <summary>
         /// Gets whether the King Rat is currently being thrown.
         /// </summary>
-        public bool IsThrowing => kingRatThrowable != null && kingRatThrowable.IsThrowing;
+        public bool IsThrowing => throwable != null && throwable.IsThrowing;
 
         #endregion
 
@@ -338,7 +338,7 @@ namespace FindersCheesers
             }
 
             // Check for throw input
-            if (throwAction != null && !(kingRatThrowable != null && kingRatThrowable.IsThrowing))
+            if (throwAction != null && !(throwable != null && throwable.IsThrowing))
             {
                 if (throwAction.WasPressedThisFrame())
                 {
@@ -441,12 +441,12 @@ namespace FindersCheesers
             {
                 detectedKingRat = newDetectedKingRat;
                 kingRatRigidbody = detectedKingRat.GetComponent<Rigidbody>();
-                kingRatThrowable = detectedKingRat.GetComponent<KingRatThrowable>();
+                throwable = detectedKingRat.GetComponent<IThrowable>();
 
-                // Subscribe to KingRatThrowable events
-                if (kingRatThrowable != null)
+                // Subscribe to IThrowable events
+                if (throwable != null)
                 {
-                    kingRatThrowable.OnLanded += OnKingRatLanded;
+                    throwable.OnLanded += OnKingRatLanded;
                 }
 
                 if (debugMode)
@@ -457,15 +457,15 @@ namespace FindersCheesers
             // Handle King Rat leaving range (only if not currently grabbing)
             else if (!kingRatInRange && wasInRange && !isGrabbing)
             {
-                // Unsubscribe from KingRatThrowable events
-                if (kingRatThrowable != null)
+                // Unsubscribe from IThrowable events
+                if (throwable != null)
                 {
-                    kingRatThrowable.OnLanded -= OnKingRatLanded;
+                    throwable.OnLanded -= OnKingRatLanded;
                 }
 
                 detectedKingRat = null;
                 kingRatRigidbody = null;
-                kingRatThrowable = null;
+                throwable = null;
 
                 if (debugMode)
                 {
@@ -490,10 +490,10 @@ namespace FindersCheesers
                 Destroy(targetReticleInstance);
             }
 
-            // Unsubscribe from KingRatThrowable events
-            if (kingRatThrowable != null)
+            // Unsubscribe from IThrowable events
+            if (throwable != null)
             {
-                kingRatThrowable.OnLanded -= OnKingRatLanded;
+                throwable.OnLanded -= OnKingRatLanded;
             }
 
             // Unsubscribe from RatInventory events
@@ -558,7 +558,7 @@ namespace FindersCheesers
             // Draw King Rat indicator
             if (detectedKingRat != null)
             {
-                bool isThrowing = kingRatThrowable != null && kingRatThrowable.IsThrowing;
+                bool isThrowing = throwable != null && throwable.IsThrowing;
                 Gizmos.color = isThrowing ? Color.magenta : (isGrabbing ? Color.green : Color.gray);
                 Gizmos.DrawWireSphere(detectedKingRat.transform.position, 0.5f);
             }
@@ -812,9 +812,9 @@ namespace FindersCheesers
             }
 
             // Drop the King Rat (ensures rigidbody is not kinematic so it falls)
-            if (kingRatThrowable != null)
+            if (throwable != null)
             {
-                kingRatThrowable.Drop();
+                throwable.Drop();
             }
             else if (kingRatRigidbody != null)
             {
@@ -827,15 +827,15 @@ namespace FindersCheesers
             // Clear King Rat reference if out of range
             if (!kingRatInRange)
             {
-                // Unsubscribe from KingRatThrowable events
-                if (kingRatThrowable != null)
+                // Unsubscribe from IThrowable events
+                if (throwable != null)
                 {
-                    kingRatThrowable.OnLanded -= OnKingRatLanded;
+                    throwable.OnLanded -= OnKingRatLanded;
                 }
 
                 detectedKingRat = null;
                 kingRatRigidbody = null;
-                kingRatThrowable = null;
+                throwable = null;
             }
 
             if (debugMode)
@@ -957,7 +957,7 @@ namespace FindersCheesers
             }
 
             // Only show arc if we have a target and King Rat is being grabbed
-            if (targetPosition.HasValue && isGrabbing && !(kingRatThrowable != null && kingRatThrowable.IsThrowing))
+            if (targetPosition.HasValue && isGrabbing && !(throwable != null && throwable.IsThrowing))
             {
                 Vector3 start = GetLaunchPosition();
                 Vector3 end = targetPosition.Value;
@@ -1002,7 +1002,7 @@ namespace FindersCheesers
             }
 
             // Show reticle when we have a target and King Rat is being grabbed
-            if (targetPosition.HasValue && isGrabbing && !(kingRatThrowable != null && kingRatThrowable.IsThrowing))
+            if (targetPosition.HasValue && isGrabbing && !(throwable != null && throwable.IsThrowing))
             {
                 targetReticleInstance.SetActive(true);
                 // Position the reticle at the target destination with a slight offset to prevent clipping
@@ -1128,16 +1128,16 @@ namespace FindersCheesers
                 kingRatOriginalRotation = detectedKingRat.transform.rotation;
             }
 
-            // Use KingRatThrowable to handle the throw
-            if (kingRatThrowable != null)
+            // Use IThrowable to handle the throw
+            if (throwable != null)
             {
-                // Set throw duration on KingRatThrowable
-                kingRatThrowable.SetThrowDuration(throwDuration);
-                kingRatThrowable.ThrowTo(destination, GetLaunchSpeed());
+                // Set throw duration on IThrowable
+                throwable.SetThrowDuration(throwDuration);
+                throwable.ThrowTo(destination, GetLaunchSpeed());
             }
             else
             {
-                Debug.LogError("[KingRatHandler] KingRatThrowable component not found on King Rat!");
+                Debug.LogError("[KingRatHandler] IThrowable component not found on King Rat!");
             }
 
             // Fire event

@@ -3,11 +3,12 @@ using UnityEngine;
 namespace FindersCheesers
 {
     /// <summary>
-    /// A component that handles the throwable behavior of King Rat.
+    /// A generic component that handles throwable behavior for any GameObject.
     /// Manages the throw arc animation and physics state during flight.
+    /// Can be used on any object that needs to be thrown.
     /// </summary>
-    [AddComponentMenu("Finders Cheesers/King Rat Throwable")]
-    public class KingRatThrowable : MonoBehaviour, IThrowable
+    [AddComponentMenu("Finders Cheesers/Throwable Object")]
+    public class ThrowableObject : MonoBehaviour, IThrowable
     {
         [Header("Throw Settings")]
         [Tooltip("Duration of the throw animation")]
@@ -34,17 +35,17 @@ namespace FindersCheesers
         private bool wasKinematicBeforePickup;
 
         /// <summary>
-        /// Event fired when the King Rat is thrown.
+        /// Event fired when the object is thrown.
         /// </summary>
         public event System.Action<Vector3> OnThrown;
 
         /// <summary>
-        /// Event fired when the King Rat lands.
+        /// Event fired when the object lands.
         /// </summary>
         public event System.Action<Vector3> OnLanded;
 
         /// <summary>
-        /// Gets whether the King Rat is currently being thrown.
+        /// Gets whether the object is currently being thrown.
         /// </summary>
         public bool IsThrowing => isThrowing;
 
@@ -52,7 +53,12 @@ namespace FindersCheesers
         {
             rb = GetComponent<Rigidbody>();
             
-            // Store original kinematic state before any pickup
+            if (rb == null)
+            {
+                rb = gameObject.AddComponent<Rigidbody>();
+            }
+            
+            // Store the original kinematic state before any pickup
             if (rb != null)
             {
                 wasKinematicBeforePickup = rb.isKinematic;
@@ -79,7 +85,7 @@ namespace FindersCheesers
             {
                 if (debugMode)
                 {
-                    Debug.LogWarning("[KingRatThrowable] Already being thrown!");
+                    Debug.LogWarning("[ThrowableObject] Already being thrown!");
                 }
                 return;
             }
@@ -102,7 +108,7 @@ namespace FindersCheesers
 
             if (debugMode)
             {
-                Debug.Log($"[KingRatThrowable] Throwing to {destination} with speed {speed:F2}");
+                Debug.Log($"[ThrowableObject] Throwing to {destination} with speed {speed:F2}");
             }
         }
 
@@ -165,7 +171,7 @@ namespace FindersCheesers
 
             if (debugMode)
             {
-                Debug.Log($"[KingRatThrowable] Landed at {throwEndPosition}");
+                Debug.Log($"[ThrowableObject] Landed at {throwEndPosition}");
             }
 
             isThrowing = false;
@@ -192,13 +198,13 @@ namespace FindersCheesers
 
             if (debugMode)
             {
-                Debug.Log("[KingRatThrowable] Throw cancelled");
+                Debug.Log("[ThrowableObject] Throw cancelled");
             }
         }
 
         /// <summary>
-        /// Simply drops the King Rat, allowing it to fall with physics.
-        /// This is used when releasing the King Rat without throwing.
+        /// Simply drops the object, allowing it to fall with physics.
+        /// This is used when releasing the object without throwing.
         /// </summary>
         public void Drop()
         {
@@ -217,7 +223,7 @@ namespace FindersCheesers
 
             if (debugMode)
             {
-                Debug.Log("[KingRatThrowable] King Rat dropped");
+                Debug.Log("[ThrowableObject] Object dropped");
             }
         }
 
