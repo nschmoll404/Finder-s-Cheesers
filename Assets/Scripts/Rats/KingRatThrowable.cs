@@ -191,6 +191,30 @@ namespace FindersCheesers
         }
 
         /// <summary>
+        /// Simply drops the King Rat, allowing it to fall with physics.
+        /// This is used when releasing the King Rat without throwing.
+        /// </summary>
+        public void Drop()
+        {
+            // Cancel any ongoing throw
+            if (isThrowing)
+            {
+                CancelThrow();
+            }
+
+            // Ensure rigidbody is not kinematic so it falls
+            if (rb != null)
+            {
+                rb.isKinematic = false;
+            }
+
+            if (debugMode)
+            {
+                Debug.Log("[KingRatThrowable] King Rat dropped");
+            }
+        }
+
+        /// <summary>
         /// Sets the throw duration.
         /// </summary>
         public void SetThrowDuration(float duration)

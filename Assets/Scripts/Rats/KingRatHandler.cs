@@ -46,6 +46,10 @@ namespace FindersCheesers
         private Vector3 detectionBoxOffset = new Vector3(0f, 0f, 1f);
 
         [Header("Carry Settings")]
+        [Tooltip("Minimum number of rats required to carry King Rat")]
+        [SerializeField]
+        private int minRatsToCarry = 2;
+
         [Tooltip("Offset position when King Rat is being carried")]
         [SerializeField]
         private Vector3 carryOffset = new Vector3(0f, 1f, 0f);
@@ -185,7 +189,6 @@ namespace FindersCheesers
         private InputAction grabAction;
         private InputAction pointerAction;
         private InputAction throwAction;
-        private BoxCollider detectionCollider;
         private GameObject targetReticleInstance;
         private KingRatThrowable kingRatThrowable;
 
@@ -271,18 +274,6 @@ namespace FindersCheesers
             // Initialize arc points array
             arcPoints = new Vector3[arcSegments + 1];
 
-            // Create or get detection collider
-            detectionCollider = GetComponent<BoxCollider>();
-            if (detectionCollider == null)
-            {
-                detectionCollider = gameObject.AddComponent<BoxCollider>();
-            }
-
-            // Configure as trigger for detection
-            detectionCollider.isTrigger = true;
-            detectionCollider.size = detectionBoxSize;
-            detectionCollider.center = detectionBoxOffset;
-
             // Get or create LineRenderer
             if (arcLineRenderer == null)
             {
@@ -319,6 +310,18 @@ namespace FindersCheesers
 
         private void Update()
         {
+            // Check if we need to drop King Rat due to insufficient rats
+            if (isGrabbing && ratInventory != null && ratInventory.RatCount < minRatsToCarry)
+            {
+                if (debugMode)
+                {
+                    Debug.Log($"[KingRatHandler] Rat count ({ratInventory.RatCount}) below minimum ({minRatsToCarry}). Dropping King Rat!");
+                }
+
+                // Drop King Rat
+                ReleaseKingRat();
+            }
+
             // Check for grab/release input
             if (grabAction != null)
             {
@@ -349,13 +352,6 @@ namespace FindersCheesers
                 UpdateKingRatPosition();
             }
 
-            // Update detection collider size and offset
-            if (detectionCollider != null)
-            {
-                detectionCollider.size = detectionBoxSize;
-                detectionCollider.center = detectionBoxOffset;
-            }
-
             // Update arc visualization
             UpdateArcVisualization();
 
@@ -373,6 +369,9 @@ namespace FindersCheesers
 
             // Update target position
             UpdateTargetPosition();
+
+            // Detect King Rat using overlap box
+            DetectKingRatWithOverlapBox();
         }
 
         private void LateUpdate()
@@ -405,12 +404,42 @@ namespace FindersCheesers
             }
         }
 
-        private void OnTriggerEnter(Collider other)
+        /// <summary>
+        /// Detects King Rat using an overlap box in FixedUpdate.
+        /// </summary>
+        private void DetectKingRatWithOverlapBox()
         {
-            // Check if collider belongs to King Rat
-            if (IsKingRat(other.gameObject))
+            // Calculate the center of the overlap box in world space
+            Vector3 boxCenter = transform.position + transform.TransformDirection(detectionBoxOffset);
+
+            // Perform overlap box detection
+            Collider[] colliders = Physics.OverlapBox(
+                boxCenter,
+                detectionBoxSize * 0.5f,
+                transform.rotation,
+                kingRatLayerMask,
+                QueryTriggerInteraction.Ignore
+            );
+
+            // Find the King Rat among colliders
+            GameObject newDetectedKingRat = null;
+            foreach (Collider collider in colliders)
             {
-                detectedKingRat = other.gameObject;
+                if (IsKingRat(collider.gameObject))
+                {
+                    newDetectedKingRat = collider.gameObject;
+                    break;
+                }
+            }
+
+            // Update detection state
+            bool wasInRange = kingRatInRange;
+            kingRatInRange = newDetectedKingRat != null;
+
+            // Handle King Rat entering range
+            if (kingRatInRange && !wasInRange && newDetectedKingRat != detectedKingRat)
+            {
+                detectedKingRat = newDetectedKingRat;
                 kingRatRigidbody = detectedKingRat.GetComponent<Rigidbody>();
                 kingRatThrowable = detectedKingRat.GetComponent<KingRatThrowable>();
 
@@ -420,42 +449,35 @@ namespace FindersCheesers
                     kingRatThrowable.OnLanded += OnKingRatLanded;
                 }
 
-                kingRatInRange = true;
-
                 if (debugMode)
                 {
                     Debug.Log($"[KingRatHandler] King Rat detected in range!");
                 }
             }
-        }
-
-        private void OnTriggerExit(Collider other)
-        {
-            // Check if collider belongs to King Rat
-            if (IsKingRat(other.gameObject))
+            // Handle King Rat leaving range (only if not currently grabbing)
+            else if (!kingRatInRange && wasInRange && !isGrabbing)
             {
-                // Only clear if we're not currently grabbing
-                if (!isGrabbing)
+                // Unsubscribe from KingRatThrowable events
+                if (kingRatThrowable != null)
                 {
-                    // Unsubscribe from KingRatThrowable events
-                    if (kingRatThrowable != null)
-                    {
-                        kingRatThrowable.OnLanded -= OnKingRatLanded;
-                    }
+                    kingRatThrowable.OnLanded -= OnKingRatLanded;
+                }
 
-                    detectedKingRat = null;
-                    kingRatRigidbody = null;
-                    kingRatThrowable = null;
-                    kingRatInRange = false;
+                detectedKingRat = null;
+                kingRatRigidbody = null;
+                kingRatThrowable = null;
 
                 if (debugMode)
                 {
                     Debug.Log($"[KingRatHandler] King Rat left range!");
                 }
-                }
-                else
+            }
+            // Update kingRatInRange when grabbing but King Rat leaves range
+            else if (!kingRatInRange && wasInRange && isGrabbing)
+            {
+                if (debugMode)
                 {
-                    kingRatInRange = false;
+                    Debug.Log($"[KingRatHandler] King Rat left range while being grabbed!");
                 }
             }
         }
@@ -473,16 +495,23 @@ namespace FindersCheesers
             {
                 kingRatThrowable.OnLanded -= OnKingRatLanded;
             }
+
+            // Unsubscribe from RatInventory events
+            if (ratInventory != null)
+            {
+                ratInventory.OnRatRemoved -= OnRatRemoved;
+            }
         }
 
         private void OnDrawGizmos()
         {
-            // Draw detection box
+            // Draw detection box (overlap box)
             if (visualizeDetectionBox)
             {
                 Gizmos.color = kingRatInRange ? Color.green : Color.yellow;
-                Gizmos.matrix = transform.localToWorldMatrix;
-                Gizmos.DrawWireCube(detectionBoxOffset, detectionBoxSize);
+                Vector3 boxCenter = transform.position + transform.TransformDirection(detectionBoxOffset);
+                Gizmos.matrix = Matrix4x4.TRS(boxCenter, transform.rotation, Vector3.one);
+                Gizmos.DrawWireCube(Vector3.zero, detectionBoxSize);
                 Gizmos.matrix = Matrix4x4.identity;
             }
 
@@ -538,6 +567,7 @@ namespace FindersCheesers
         private void Reset()
         {
             // Grab settings
+            minRatsToCarry = 2;
             carryOffset = new Vector3(0f, 1f, 0f);
             carrySmoothSpeed = 5f;
             detectionBoxSize = new Vector3(2f, 2f, 2f);
@@ -668,6 +698,11 @@ namespace FindersCheesers
                 {
                     Debug.LogError("[KingRatHandler] RatInventory component not found!");
                 }
+                else
+                {
+                    // Subscribe to rat removal events to check minimum requirement
+                    ratInventory.OnRatRemoved += OnRatRemoved;
+                }
             }
 
             // Get camera if not assigned
@@ -704,7 +739,8 @@ namespace FindersCheesers
         /// <returns>True if King Rat was successfully grabbed, false otherwise.</returns>
         public bool GrabKingRat()
         {
-            if (detectedKingRat == null)
+            // Check if King Rat is in range (within overlap box)
+            if (!kingRatInRange || detectedKingRat == null)
             {
                 if (debugMode)
                 {
@@ -718,6 +754,16 @@ namespace FindersCheesers
                 if (debugMode)
                 {
                     Debug.LogWarning("[KingRatHandler] Already grabbing King Rat!");
+                }
+                return false;
+            }
+
+            // Check if we have enough rats to carry King Rat
+            if (ratInventory != null && ratInventory.RatCount < minRatsToCarry)
+            {
+                if (debugMode)
+                {
+                    Debug.LogWarning($"[KingRatHandler] Not enough rats to carry King Rat! Need {minRatsToCarry}, have {ratInventory.RatCount}.");
                 }
                 return false;
             }
@@ -765,10 +811,14 @@ namespace FindersCheesers
                 return false;
             }
 
-            // Re-enable physics on King Rat
-            if (kingRatRigidbody != null)
+            // Drop the King Rat (ensures rigidbody is not kinematic so it falls)
+            if (kingRatThrowable != null)
             {
-                kingRatRigidbody.isKinematic = kingRatWasKinematic;
+                kingRatThrowable.Drop();
+            }
+            else if (kingRatRigidbody != null)
+            {
+                kingRatRigidbody.isKinematic = false;
             }
 
             isGrabbing = false;
@@ -794,6 +844,30 @@ namespace FindersCheesers
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Called when a rat is removed from the inventory.
+        /// Checks if we fall below the minimum rats requirement and drops King Rat if needed.
+        /// </summary>
+        private void OnRatRemoved(Rat rat)
+        {
+            if (!isGrabbing || ratInventory == null)
+            {
+                return;
+            }
+
+            // Check if we're below the minimum rats requirement
+            if (ratInventory.Count < minRatsToCarry)
+            {
+                if (debugMode)
+                {
+                    Debug.Log($"[KingRatHandler] Rat count ({ratInventory.Count}) below minimum ({minRatsToCarry}). Dropping King Rat!");
+                }
+
+                // Drop King Rat
+                ReleaseKingRat();
+            }
         }
 
         /// <summary>
@@ -1114,6 +1188,7 @@ namespace FindersCheesers
         }
 
         // Grab Settings
+        public void SetMinRatsToCarry(int minRats) => minRatsToCarry = Mathf.Max(1, minRats);
         public void SetCarryOffset(Vector3 offset) => carryOffset = offset;
         public void SetCarrySmoothSpeed(float speed) => carrySmoothSpeed = Mathf.Max(0.1f, speed);
         public void SetDetectionBoxSize(Vector3 size) => detectionBoxSize = size;

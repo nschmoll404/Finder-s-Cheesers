@@ -46,13 +46,30 @@ namespace FindersCheesers
         [SerializeField]
         private bool visualizeRats = true;
 
+        [Header("Gather/Disperse Settings")]
+        [Tooltip("Radius to search for rats when gathering")]
+        [SerializeField]
+        private float gatherRadius = 5f;
+
+        [Tooltip("Layer mask for finding rats")]
+        [SerializeField]
+        private LayerMask ratLayerMask = 1;
+
+        [Tooltip("Tag that identifies rat GameObjects")]
+        [SerializeField]
+        private string ratTag = "Rat";
+
+        [Tooltip("Distance rats will run away when dispersing")]
+        [SerializeField]
+        private float disperseDistance = 10f;
+
         [Header("Rats To Add On Start")]
         [Tooltip("List of rats that can be configured in the Inspector. These rats will be automatically added to the inventory on Start.")]
         [SerializeField]
         private List<Rat> ratsToAddOnStart = new List<Rat>();
 
         [Header("Rat Pack Reference")]
-        [Tooltip("Reference to the Rat Pack controller (for positioning rats in front)")]
+        [Tooltip("Reference to Rat Pack controller (for positioning rats in front)")]
         [SerializeField]
         private RatPackController ratPackController;
 
@@ -84,6 +101,11 @@ namespace FindersCheesers
         public int Count => rats.Count;
 
         /// <summary>
+        /// Simple property for getting the rat count (alias for Count).
+        /// </summary>
+        public int RatCount => rats.Count;
+
+        /// <summary>
         /// Gets whether the inventory is at maximum capacity.
         /// </summary>
         public bool IsFull => rats.Count >= maxCapacity;
@@ -108,6 +130,16 @@ namespace FindersCheesers
         /// </summary>
         public RatPositioningUpdateMode UpdateMode => ratPositioningUpdateMode;
 
+        /// <summary>
+        /// Gets the gather radius for finding rats.
+        /// </summary>
+        public float GatherRadius => gatherRadius;
+
+        /// <summary>
+        /// Gets the disperse distance for rats running away.
+        /// </summary>
+        public float DisperseDistance => disperseDistance;
+
         private void Start()
         {
             // Get Rat Pack controller reference
@@ -116,7 +148,7 @@ namespace FindersCheesers
                 ratPackController = GetComponentInParent<RatPackController>();
             }
 
-            // Add rats from inspector list to inventory
+            // Add rats from inspector list to the inventory
             if (ratsToAddOnStart != null)
             {
                 foreach (Rat rat in ratsToAddOnStart)
@@ -161,7 +193,7 @@ namespace FindersCheesers
         /// <summary>
         /// Updates the positions of rats to be evenly distributed in the support radius.
         /// Rats move instantly to follow the Rat Pack, and the Rat Pack trails slightly behind.
-        /// Rats are positioned in front of the Rat Pack (so Rat Pack trails behind).
+        /// Rats are positioned in front of the Rat Pack (so the Rat Pack trails behind).
         /// </summary>
         private void UpdateRatPositions()
         {
@@ -170,15 +202,15 @@ namespace FindersCheesers
                 return;
             }
 
-            // Get the appropriate delta time based on the update mode
-            float deltaTime = ratPositioningUpdateMode == RatPositioningUpdateMode.FixedUpdate 
-                ? Time.fixedDeltaTime 
+            // Get appropriate delta time based on update mode
+            float deltaTime = ratPositioningUpdateMode == RatPositioningUpdateMode.FixedUpdate
+                ? Time.fixedDeltaTime
                 : Time.deltaTime;
 
             // Get Rat Pack's movement direction and speed
             Vector3 packMovementDirection = Vector3.zero;
             float packSpeed = 0f;
-            
+
             if (ratPackController != null)
             {
                 packMovementDirection = ratPackController.GetVelocity();
@@ -204,7 +236,7 @@ namespace FindersCheesers
                 targetPosition.z += Mathf.Sin(angle) * supportRadius;
 
                 // If Rat Pack is moving, position rats in front of movement direction
-                // This makes Rat Pack trail behind the rats (rats carry Rat Pack)
+                // This makes Rat Pack trail behind rats (rats carry Rat Pack)
                 if (packSpeed > 0.1f && packMovementDirection != Vector3.zero)
                 {
                     Vector3 movementDirection = packMovementDirection.normalized;
@@ -291,6 +323,9 @@ namespace FindersCheesers
             rat.IsSupportingKing = true;
             rat.CurrentRatInventory = this;
 
+            // Disable NavMeshAgent when rat is picked up
+            rat.DisableNavAgent();
+
             OnRatAdded?.Invoke(rat);
 
             if (debugMode)
@@ -315,11 +350,14 @@ namespace FindersCheesers
             }
 
             bool removed = rats.Remove(rat);
-            
+
             if (removed)
             {
                 rat.IsSupportingKing = false;
                 rat.CurrentRatInventory = null;
+
+                // Re-enable NavMeshAgent when rat is removed from inventory
+                rat.EnableNavAgent();
 
                 OnRatRemoved?.Invoke(rat);
 
@@ -357,7 +395,7 @@ namespace FindersCheesers
         {
             // Create a copy of the list to avoid modification during iteration
             List<Rat> ratsToClear = new List<Rat>(rats);
-            
+
             foreach (Rat rat in ratsToClear)
             {
                 RemoveRat(rat);
@@ -367,6 +405,135 @@ namespace FindersCheesers
             {
                 Debug.Log("[RatInventory] Inventory cleared.");
             }
+        }
+
+        /// <summary>
+        /// Gathers all rats within the gather radius and makes them move toward this inventory.
+        /// </summary>
+        /// <returns>The number of rats gathered.</returns>
+        public int GatherRats()
+        {
+            int gatheredCount = 0;
+
+            // Find all colliders within gather radius
+            Collider[] colliders = Physics.OverlapSphere(
+                transform.position,
+                gatherRadius,
+                ratLayerMask,
+                QueryTriggerInteraction.Ignore
+            );
+
+            // Process each collider to find rats
+            foreach (Collider collider in colliders)
+            {
+                if (collider == null)
+                {
+                    continue;
+                }
+
+                // Check if collider has a Rat component
+                Rat rat = collider.GetComponent<Rat>();
+                if (rat == null)
+                {
+                    // Check parent object
+                    rat = collider.GetComponentInParent<Rat>();
+                }
+
+                if (rat == null)
+                {
+                    continue;
+                }
+
+                // Skip if already in this inventory
+                if (rats.Contains(rat))
+                {
+                    continue;
+                }
+
+                // Skip if already moving to an inventory
+                if (rat.IsMovingToInventory)
+                {
+                    continue;
+                }
+
+                // Skip if running away
+                if (rat.IsRunningAway)
+                {
+                    continue;
+                }
+
+                // Check if rat matches to tag (if specified)
+                if (!string.IsNullOrEmpty(ratTag) && !collider.gameObject.CompareTag(ratTag))
+                {
+                    continue;
+                }
+
+                // Make rat move toward this inventory
+                rat.MoveToInventory(this);
+                gatheredCount++;
+
+                if (debugMode)
+                {
+                    Debug.Log($"[RatInventory] Gathering rat. Rat ID: {rat.RatId}");
+                }
+            }
+
+            if (debugMode && gatheredCount > 0)
+            {
+                Debug.Log($"[RatInventory] Gathered {gatheredCount} rats.");
+            }
+
+            return gatheredCount;
+        }
+
+        /// <summary>
+        /// Disperses the specified number of rats from the inventory, making them run away.
+        /// </summary>
+        /// <param name="amount">The number of rats to disperse.</param>
+        /// <returns>The actual number of rats dispersed.</returns>
+        public int DisperseRats(int amount)
+        {
+            if (rats.Count == 0)
+            {
+                return 0;
+            }
+
+            // Clamp amount to available rats
+            int actualAmount = Mathf.Min(amount, rats.Count);
+            int dispersedCount = 0;
+
+            // Collect rats to disperse first to avoid modifying list during iteration
+            List<Rat> ratsToDisperse = new List<Rat>();
+            for (int i = 0; i < actualAmount; i++)
+            {
+                int index = rats.Count - 1 - i;
+                Rat rat = rats[index];
+
+                if (rat != null)
+                {
+                    ratsToDisperse.Add(rat);
+                }
+            }
+
+            // Disperse the collected rats
+            foreach (Rat rat in ratsToDisperse)
+            {
+                // Make rat run away (this will call UnregisterFromRatInventory)
+                rat.RunAway(disperseDistance);
+                dispersedCount++;
+
+                if (debugMode)
+                {
+                    Debug.Log($"[RatInventory] Dispersing rat. Rat ID: {rat.RatId}");
+                }
+            }
+
+            if (debugMode && dispersedCount > 0)
+            {
+                Debug.Log($"[RatInventory] Dispersed {dispersedCount} rats.");
+            }
+
+            return dispersedCount;
         }
 
         /// <summary>
