@@ -199,6 +199,12 @@ namespace FindersCheesers
                     continue;
                 }
 
+                // Skip if deposited to a RatInteractable
+                if (rat.IsDeposited)
+                {
+                    continue;
+                }
+
                 // Check if rat matches tag (if specified)
                 if (!string.IsNullOrEmpty(autoGatherRatTag) && !collider.gameObject.CompareTag(autoGatherRatTag))
                 {

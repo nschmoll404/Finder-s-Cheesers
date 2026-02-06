@@ -11,7 +11,7 @@ namespace FindersCheesers
     {
         #region Settings
 
-        [Header("AI Settings")]
+        [Header("Detection Settings")]
         [Tooltip("The target to track (e.g., player)")]
         [SerializeField]
         private Transform target;
@@ -20,10 +20,28 @@ namespace FindersCheesers
         [SerializeField]
         private float detectionRange = 10f;
 
+        [Tooltip("Vision cone field of view angle (in degrees)")]
+        [SerializeField]
+        private float visionConeAngle = 90f;
+
+        [Tooltip("Layer mask for finding targets")]
+        [SerializeField]
+        private LayerMask targetLayerMask = 1;
+
+        [Tooltip("Tag that identifies target GameObjects")]
+        [SerializeField]
+        private string targetTag = "Player";
+
+        [Tooltip("Whether to use vision cone for line of sight")]
+        [SerializeField]
+        private bool useVisionCone = true;
+
+        [Header("Attack Settings")]
         [Tooltip("Attack range for the enemy")]
         [SerializeField]
         private float attackRange = 2f;
 
+        [Header("Movement Settings")]
         [Tooltip("Movement speed")]
         [SerializeField]
         private float moveSpeed = 3f;
@@ -81,6 +99,11 @@ namespace FindersCheesers
         /// </summary>
         public event System.Action OnTargetOutOfAttackRange;
 
+        /// <summary>
+        /// Event fired when a potential target is found in detection range.
+        /// </summary>
+        public event System.Action<Transform> OnPotentialTargetFound;
+
         #endregion
 
         #region Component References
@@ -114,6 +137,26 @@ namespace FindersCheesers
         /// Gets the detection range.
         /// </summary>
         public float DetectionRange => detectionRange;
+
+        /// <summary>
+        /// Gets the vision cone angle.
+        /// </summary>
+        public float VisionConeAngle => visionConeAngle;
+
+        /// <summary>
+        /// Gets the target layer mask.
+        /// </summary>
+        public LayerMask TargetLayerMask => targetLayerMask;
+
+        /// <summary>
+        /// Gets the target tag.
+        /// </summary>
+        public string TargetTag => targetTag;
+
+        /// <summary>
+        /// Gets whether vision cone is being used.
+        /// </summary>
+        public bool UseVisionCone => useVisionCone;
 
         /// <summary>
         /// Gets the attack range.
@@ -395,14 +438,22 @@ namespace FindersCheesers
         protected virtual void CheckTargetDetection()
         {
             bool wasDetected = IsTargetDetected;
-            IsTargetDetected = CheckDetection();
+            Transform detectedTarget = FindTarget();
+
+            // Update target reference
+            if (detectedTarget != null)
+            {
+                Target = detectedTarget;
+            }
+
+            IsTargetDetected = detectedTarget != null;
 
             if (IsTargetDetected && !wasDetected)
             {
-                OnTargetDetected?.Invoke(target);
+                OnTargetDetected?.Invoke(detectedTarget);
                 if (debugMode)
                 {
-                    Debug.Log($"[EnemyAI] Target detected: {target.name}");
+                    Debug.Log($"[EnemyAI] Target detected: {detectedTarget.name}");
                 }
             }
             else if (!IsTargetDetected && wasDetected)
@@ -413,6 +464,87 @@ namespace FindersCheesers
                     Debug.Log($"[EnemyAI] Target lost");
                 }
             }
+        }
+
+        /// <summary>
+        /// Finds a target within detection range using overlap sphere and vision cone.
+        /// </summary>
+        /// <returns>The detected target transform, or null if no target found.</returns>
+        protected virtual Transform FindTarget()
+        {
+            // Find all colliders within detection range
+            Collider[] colliders = Physics.OverlapSphere(
+                transform.position,
+                detectionRange,
+                targetLayerMask,
+                QueryTriggerInteraction.Ignore
+            );
+
+            Transform bestTarget = null;
+            float closestDistance = float.MaxValue;
+
+            // Process each collider to find the best target
+            foreach (Collider collider in colliders)
+            {
+                if (collider == null)
+                {
+                    continue;
+                }
+
+                // Skip self
+                if (collider.transform == transform)
+                {
+                    continue;
+                }
+
+                // Check if collider matches to tag (if specified)
+                if (!string.IsNullOrEmpty(targetTag) && !collider.gameObject.CompareTag(targetTag))
+                {
+                    continue;
+                }
+
+                // Check if target is within vision cone
+                if (useVisionCone && !IsInVisionCone(collider.transform))
+                {
+                    continue;
+                }
+
+                // Find the closest target
+                float distance = Vector3.Distance(transform.position, collider.transform.position);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    bestTarget = collider.transform;
+                }
+
+                // Fire event for potential target found
+                OnPotentialTargetFound?.Invoke(collider.transform);
+            }
+
+            return bestTarget;
+        }
+
+        /// <summary>
+        /// Checks if a target is within the vision cone (field of view).
+        /// </summary>
+        /// <param name="targetTransform">The target transform to check.</param>
+        /// <returns>True if target is in vision cone, false otherwise.</returns>
+        protected virtual bool IsInVisionCone(Transform targetTransform)
+        {
+            if (targetTransform == null)
+            {
+                return false;
+            }
+
+            // Calculate direction to target
+            Vector3 directionToTarget = (targetTransform.position - transform.position).normalized;
+            directionToTarget.y = 0f; // Keep on horizontal plane
+
+            // Calculate angle between forward direction and direction to target
+            float angle = Vector3.Angle(transform.forward, directionToTarget);
+
+            // Check if within vision cone angle
+            return angle <= visionConeAngle * 0.5f;
         }
 
         /// <summary>
@@ -448,6 +580,7 @@ namespace FindersCheesers
         protected virtual void OnValidate()
         {
             detectionRange = Mathf.Max(0f, detectionRange);
+            visionConeAngle = Mathf.Clamp(visionConeAngle, 0f, 360f);
             attackRange = Mathf.Max(0f, attackRange);
             moveSpeed = Mathf.Max(0f, moveSpeed);
             rotationSpeed = Mathf.Max(0f, rotationSpeed);
@@ -466,6 +599,13 @@ namespace FindersCheesers
             Gizmos.color = IsTargetDetected ? Color.yellow : Color.cyan;
             Gizmos.DrawWireSphere(transform.position, detectionRange);
 
+            // Draw vision cone if enabled
+            if (useVisionCone)
+            {
+                Gizmos.color = new Color(1f, 0.5f, 0f, 0.3f); // Orange tint
+                DrawVisionCone();
+            }
+
             // Draw attack range
             Gizmos.color = IsTargetInAttackRange ? Color.red : Color.green;
             Gizmos.DrawWireSphere(transform.position, attackRange);
@@ -480,6 +620,43 @@ namespace FindersCheesers
             // Draw forward direction
             Gizmos.color = Color.blue;
             Gizmos.DrawRay(transform.position, transform.forward * 2f);
+        }
+
+        /// <summary>
+        /// Draws the vision cone in the scene view.
+        /// </summary>
+        protected virtual void DrawVisionCone()
+        {
+            if (visionConeAngle <= 0f || visionConeAngle >= 360f)
+            {
+                return;
+            }
+
+            int segments = 32;
+            float halfAngle = visionConeAngle * 0.5f;
+            float angleStep = visionConeAngle / segments;
+
+            Vector3[] points = new Vector3[segments + 1];
+            points[0] = transform.position;
+
+            for (int i = 0; i <= segments; i++)
+            {
+                float angle = -halfAngle + (i * angleStep);
+                Vector3 direction = Quaternion.Euler(0f, angle, 0f) * transform.forward;
+                points[i] = transform.position + direction * detectionRange;
+            }
+
+            // Draw cone lines
+            for (int i = 0; i < segments; i++)
+            {
+                Gizmos.DrawLine(points[i], points[i + 1]);
+            }
+
+            // Draw arc at detection range
+            for (int i = 1; i < segments; i++)
+            {
+                Gizmos.DrawLine(points[i], points[i + 1]);
+            }
         }
 
         #endregion

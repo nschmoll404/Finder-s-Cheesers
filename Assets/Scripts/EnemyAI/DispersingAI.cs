@@ -4,7 +4,7 @@ namespace FindersCheesers
 {
     /// <summary>
     /// Component that adds dispersing behavior to an EnemyAI.
-    /// Triggers rat dispersal when the target enters attack range.
+    /// Triggers rat dispersal when the target's RatInventory is in attack range.
     /// </summary>
     [AddComponentMenu("Finders Cheesers/EnemyAI/DispersingAI")]
     [RequireComponent(typeof(EnemyAI))]
@@ -103,7 +103,7 @@ namespace FindersCheesers
         #region Component References
 
         private EnemyAI enemyAI;
-        private RatInventory ratInventory;
+        private RatInventory targetRatInventory;
 
         #endregion
 
@@ -118,7 +118,6 @@ namespace FindersCheesers
         private void Awake()
         {
             enemyAI = GetComponent<EnemyAI>();
-            ratInventory = GetComponent<RatInventory>();
             
             if (enemyAI == null)
             {
@@ -126,9 +125,15 @@ namespace FindersCheesers
                 return;
             }
 
-            if (ratInventory == null)
+            // Find RatInventory on the target GameObject (the player)
+            if (enemyAI.Target != null)
             {
-                Debug.LogWarning("[DispersingAI] RatInventory component not found! Dispersing will not work.");
+                targetRatInventory = enemyAI.Target.GetComponent<RatInventory>();
+            }
+
+            if (targetRatInventory == null)
+            {
+                Debug.LogWarning("[DispersingAI] No RatInventory found on target! Dispersing will not work.");
             }
 
             // Subscribe to EnemyAI events
@@ -174,13 +179,13 @@ namespace FindersCheesers
                 return false;
             }
 
-            if (ratInventory == null)
+            if (targetRatInventory == null)
             {
                 Debug.LogWarning("[DispersingAI] Cannot disperse - no RatInventory component!");
                 return false;
             }
 
-            if (ratInventory.Count == 0)
+            if (targetRatInventory.Count == 0)
             {
                 if (debugMode)
                 {
@@ -293,7 +298,7 @@ namespace FindersCheesers
         /// </summary>
         private void PerformDisperse()
         {
-            if (ratInventory == null)
+            if (targetRatInventory == null)
             {
                 return;
             }
@@ -304,11 +309,11 @@ namespace FindersCheesers
             RemainingCooldown = disperseCooldown;
 
             // Determine number of rats to disperse
-            int amount = disperseAllRats ? ratInventory.Count : ratsToDisperse;
-            amount = Mathf.Min(amount, ratInventory.Count);
+            int amount = disperseAllRats ? targetRatInventory.Count : ratsToDisperse;
+            amount = Mathf.Min(amount, targetRatInventory.Count);
 
             // Disperse rats
-            int dispersedCount = ratInventory.DisperseRats(amount);
+            int dispersedCount = targetRatInventory.DisperseRats(amount);
 
             OnRatsDispersed?.Invoke(dispersedCount);
 
@@ -323,6 +328,12 @@ namespace FindersCheesers
         /// </summary>
         private void HandleTargetInAttackRange(Transform target)
         {
+            // Try to find RatInventory on the target GameObject
+            if (targetRatInventory == null && target != null)
+            {
+                targetRatInventory = target.GetComponent<RatInventory>();
+            }
+
             if (autoDisperse)
             {
                 StartDispersing();
@@ -375,11 +386,11 @@ namespace FindersCheesers
                 Gizmos.DrawWireSphere(transform.position, enemyAI.AttackRange);
             }
 
-            // Draw indicator to RatInventory
-            if (ratInventory != null)
+            // Draw indicator to target's RatInventory
+            if (targetRatInventory != null)
             {
                 Gizmos.color = Color.yellow;
-                Gizmos.DrawLine(transform.position, ratInventory.transform.position);
+                Gizmos.DrawLine(transform.position, targetRatInventory.transform.position);
             }
         }
 

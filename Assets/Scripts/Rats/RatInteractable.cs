@@ -197,6 +197,12 @@ namespace FindersCheesers
 
             if (success)
             {
+                // Mark all rats as deposited
+                foreach (Rat rat in rats)
+                {
+                    rat.IsDeposited = true;
+                }
+
                 // Add all rats to deposited list
                 depositedRats.AddRange(rats);
 
@@ -272,6 +278,27 @@ namespace FindersCheesers
                     allAdded = false;
                     break;
                 }
+            }
+
+            if (!allAdded)
+            {
+                // Rollback - remove any rats that were added
+                foreach (Rat rat in ratsToWithdraw)
+                {
+                    ratInventory.RemoveRat(rat);
+                }
+
+                if (debugMode)
+                {
+                    Debug.LogWarning("[RatInteractable] Failed to return rats to inventory.");
+                }
+                return null;
+            }
+
+            // Mark all rats as no longer deposited
+            foreach (Rat rat in ratsToWithdraw)
+            {
+                rat.IsDeposited = false;
             }
 
             if (!allAdded)
@@ -422,6 +449,7 @@ namespace FindersCheesers
                 if (rat != null)
                 {
                     rat.IsSupportingKing = false;
+                    rat.IsDeposited = false;
                     rat.CurrentRatInventory = null;
                 }
             }

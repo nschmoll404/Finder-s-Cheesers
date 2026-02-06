@@ -17,6 +17,10 @@ namespace FindersCheesers
         [SerializeField]
         private bool isSupportingKing = false;
 
+        [Tooltip("Is this rat currently deposited to a RatInteractable?")]
+        [SerializeField]
+        private bool isDeposited = false;
+
         [Tooltip("The RatInventory this rat is currently supporting")]
         [SerializeField]
         private RatInventory currentRatInventory;
@@ -93,6 +97,15 @@ namespace FindersCheesers
         {
             get => isSupportingKing;
             set => isSupportingKing = value;
+        }
+
+        /// <summary>
+        /// Gets or sets whether this rat is currently deposited to a RatInteractable.
+        /// </summary>
+        public bool IsDeposited
+        {
+            get => isDeposited;
+            set => isDeposited = value;
         }
 
         /// <summary>
