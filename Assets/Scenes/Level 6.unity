@@ -764,6 +764,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ThrowableObject
       objectReference: {fileID: 0}
+    - target: {fileID: 6010248142394442875, guid: 712ad0c5272fc834687623dcf8838636, type: 3}
+      propertyPath: debugMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6839697984308704749, guid: 712ad0c5272fc834687623dcf8838636, type: 3}
       propertyPath: m_LocalPosition.x
       value: 6.839715
@@ -2118,7 +2122,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3258129888195090354, guid: b748b2331bc2f704a956ed924c157104, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.52
+      value: 0.63
       objectReference: {fileID: 0}
     - target: {fileID: 3258129888195090354, guid: b748b2331bc2f704a956ed924c157104, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2156,6 +2160,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Battery
       objectReference: {fileID: 0}
+    - target: {fileID: 4607671066427968602, guid: b748b2331bc2f704a956ed924c157104, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5157237221687182401, guid: b748b2331bc2f704a956ed924c157104, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 5537737872937197307, guid: b748b2331bc2f704a956ed924c157104, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2168,6 +2180,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6670626673575716244, guid: b748b2331bc2f704a956ed924c157104, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 748e27d6eda90db4ab502be0a19b52a1, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2178,6 +2194,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4607671066427968602, guid: b748b2331bc2f704a956ed924c157104, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8763456221502994925}
+    - targetCorrespondingSourceObject: {fileID: 4607671066427968602, guid: b748b2331bc2f704a956ed924c157104, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8763456221502994927}
   m_SourcePrefab: {fileID: 100100000, guid: b748b2331bc2f704a956ed924c157104, type: 3}
 --- !u!1 &8763456221502994924 stripped
 GameObject:
@@ -2203,7 +2222,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.07, y: 2, z: 1}
+  m_Size: {x: 1.07, y: 2, z: 0.75}
   m_Center: {x: 0, y: 1, z: 0}
 --- !u!54 &8763456221502994926
 Rigidbody:
@@ -2232,6 +2251,21 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &8763456221502994927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8763456221502994924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e406713393325e14c916080472a6a47e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.ThrowableObject
+  throwDuration: 1
+  launchSpeed: 10
+  debugMode: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
