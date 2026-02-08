@@ -5292,8 +5292,33 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6147568589645475841, guid: b4e18463a698abf4e9fe3092d6a7db1e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8373013353950550893}
   m_SourcePrefab: {fileID: 100100000, guid: b4e18463a698abf4e9fe3092d6a7db1e, type: 3}
+--- !u!1 &8373013353950550892 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6147568589645475841, guid: b4e18463a698abf4e9fe3092d6a7db1e, type: 3}
+  m_PrefabInstance: {fileID: 8373013353950550891}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8373013353950550893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8373013353950550892}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e741851cba3ad425c91ecf922cc6b379, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.VisualScripting.Core::Unity.VisualScripting.Variables
+  _data:
+    _json: '{"declarations":{"Kind":"Object","collection":{"$content":[{"name":"DepositRat","value":{"$content":0,"$type":"UnityEngine.Object"},"typeHandle":{"Identification":"UnityEngine.GameObject,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null","$version":"A"},"$version":"A"}],"$version":"A"},"$version":"A"}}'
+    _objectReferences:
+    - {fileID: 8373013353950550892}
 --- !u!1001 &8615020677694683558
 PrefabInstance:
   m_ObjectHideFlags: 0
