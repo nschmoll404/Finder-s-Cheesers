@@ -521,8 +521,33 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4485561154162898472, guid: 6a674dc3130841d4ca2f35d4ec2b22e9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 245825907}
   m_SourcePrefab: {fileID: 100100000, guid: 6a674dc3130841d4ca2f35d4ec2b22e9, type: 3}
+--- !u!1 &245825906 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4485561154162898472, guid: 6a674dc3130841d4ca2f35d4ec2b22e9, type: 3}
+  m_PrefabInstance: {fileID: 245825905}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &245825907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 245825906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f8a9b2c3d4e5f6a7b8c9d0e1f2a3b4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.Health
+  maxHealth: 100
+  currentHealth: 100
+  destroyOnDeath: 1
+  destroyDelay: 0
+  debugMode: 0
 --- !u!1 &374869767
 GameObject:
   m_ObjectHideFlags: 0
@@ -709,7 +734,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4485561154162898472, guid: 6a674dc3130841d4ca2f35d4ec2b22e9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1736891202}
   m_SourcePrefab: {fileID: 100100000, guid: 6a674dc3130841d4ca2f35d4ec2b22e9, type: 3}
 --- !u!1 &414860740
 GameObject:
@@ -957,9 +985,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.VisualScripting.Core::Unity.VisualScripting.Variables
   _data:
-    _json: '{"declarations":{"Kind":"Object","collection":{"$content":[{"name":"DamageField","value":null,"typeHandle":{"Identification":"UnityEngine.GameObject,
+    _json: '{"declarations":{"Kind":"Object","collection":{"$content":[{"name":"DamageField","value":{"$content":0,"$type":"UnityEngine.Object"},"typeHandle":{"Identification":"UnityEngine.GameObject,
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null","$version":"A"},"$version":"A"}],"$version":"A"},"$version":"A"}}'
-    _objectReferences: []
+    _objectReferences:
+    - {fileID: 2140190772}
 --- !u!65 &603245965
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -979,7 +1008,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 1, y: 2, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &716994252
 PrefabInstance:
@@ -2309,6 +2338,28 @@ Transform:
   - {fileID: 852223358}
   m_Father: {fileID: 2019855840}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1736891193 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4485561154162898472, guid: 6a674dc3130841d4ca2f35d4ec2b22e9, type: 3}
+  m_PrefabInstance: {fileID: 403659358}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1736891202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1736891193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f8a9b2c3d4e5f6a7b8c9d0e1f2a3b4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.Health
+  maxHealth: 100
+  currentHealth: 100
+  destroyOnDeath: 1
+  destroyDelay: 0
+  debugMode: 0
 --- !u!1 &1802905615
 GameObject:
   m_ObjectHideFlags: 0
