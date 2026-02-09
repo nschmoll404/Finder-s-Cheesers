@@ -18,6 +18,10 @@ namespace FindersCheesers
         [SerializeField]
         private float launchSpeed = 10f;
 
+        [Tooltip("Enable GroundPounder during throw")]
+        [SerializeField]
+        private bool enableGroundPounderDuringThrow = true;
+
         [Header("Debug")]
         [Tooltip("Show debug information in the console")]
         [SerializeField]
@@ -25,6 +29,7 @@ namespace FindersCheesers
 
         // Component references
         private Rigidbody rb;
+        private GroundPounder groundPounder;
 
         // Current state
         private bool isThrowing;
@@ -51,11 +56,18 @@ namespace FindersCheesers
         private void Awake()
         {
             rb = GetComponent<Rigidbody>();
+            groundPounder = GetComponent<GroundPounder>();
             
             // Store original kinematic state before any pickup
             if (rb != null)
             {
                 wasKinematicBeforePickup = rb.isKinematic;
+            }
+
+            // Ensure GroundPounder is initially disabled if we're going to control it
+            if (groundPounder != null && enableGroundPounderDuringThrow)
+            {
+                groundPounder.enabled = false;
             }
         }
 
@@ -88,6 +100,12 @@ namespace FindersCheesers
             if (rb != null)
             {
                 rb.isKinematic = true;
+            }
+
+            // Enable GroundPounder during throw if the option is enabled
+            if (groundPounder != null && enableGroundPounderDuringThrow)
+            {
+                groundPounder.enabled = true;
             }
 
             // Initialize throw state
@@ -160,6 +178,12 @@ namespace FindersCheesers
                 rb.isKinematic = wasKinematicBeforePickup;
             }
 
+            // Disable GroundPounder after throw completes if the option is enabled
+            if (groundPounder != null && enableGroundPounderDuringThrow)
+            {
+                groundPounder.enabled = false;
+            }
+
             // Fire event
             OnLanded?.Invoke(throwEndPosition);
 
@@ -186,6 +210,12 @@ namespace FindersCheesers
             if (rb != null)
             {
                 rb.isKinematic = wasKinematicBeforePickup;
+            }
+
+            // Disable GroundPounder when throw is cancelled if the option is enabled
+            if (groundPounder != null && enableGroundPounderDuringThrow)
+            {
+                groundPounder.enabled = false;
             }
 
             isThrowing = false;
