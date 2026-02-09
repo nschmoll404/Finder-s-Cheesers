@@ -1062,6 +1062,34 @@ PrefabInstance:
       propertyPath: m_Name
       value: DripVFX
       objectReference: {fileID: 0}
+    - target: {fileID: 6417603688745323698, guid: 93b78ae5869a07b43a92f46465fabd26, type: 3}
+      propertyPath: looping
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6417603688745323698, guid: 93b78ae5869a07b43a92f46465fabd26, type: 3}
+      propertyPath: stopAction
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6417603688745323698, guid: 93b78ae5869a07b43a92f46465fabd26, type: 3}
+      propertyPath: startDelay.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6417603688745323698, guid: 93b78ae5869a07b43a92f46465fabd26, type: 3}
+      propertyPath: startDelay.minScalar
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6417603688745323698, guid: 93b78ae5869a07b43a92f46465fabd26, type: 3}
+      propertyPath: startDelay.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6417603688745323698, guid: 93b78ae5869a07b43a92f46465fabd26, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6417603688745323698, guid: 93b78ae5869a07b43a92f46465fabd26, type: 3}
+      propertyPath: LifetimeByEmitterSpeedModule.enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
