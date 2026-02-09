@@ -37,6 +37,10 @@ namespace FindersCheesers
         [SerializeField]
         private string kingRatTag = "KingRat";
 
+        [Tooltip("Layer mask for detecting throwable objects")]
+        [SerializeField]
+        private LayerMask throwableLayerMask = -1;
+
         [Tooltip("Size of detection overlap box")]
         [SerializeField]
         private Vector3 detectionBoxSize = new Vector3(2f, 2f, 2f);
@@ -781,6 +785,18 @@ namespace FindersCheesers
 
             isGrabbing = true;
             OnKingRatGrabbed?.Invoke();
+
+            // Call OnPickup on ThrowableObject if it has one
+            ThrowableObject throwableObj = detectedKingRat.GetComponent<ThrowableObject>();
+            if (throwableObj != null)
+            {
+                throwableObj.OnPickup();
+                
+                if (debugMode)
+                {
+                    Debug.Log("[KingRatHandler] Called OnPickup on ThrowableObject!");
+                }
+            }
 
             if (debugMode)
             {

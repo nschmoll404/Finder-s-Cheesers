@@ -35,6 +35,11 @@ namespace FindersCheesers
         private bool wasKinematicBeforePickup;
 
         /// <summary>
+        /// Event fired when the object is picked up.
+        /// </summary>
+        public event System.Action OnPickedUp;
+
+        /// <summary>
         /// Event fired when the object is thrown.
         /// </summary>
         public event System.Action<Vector3> OnThrown;
@@ -199,6 +204,21 @@ namespace FindersCheesers
             if (debugMode)
             {
                 Debug.Log("[ThrowableObject] Throw cancelled");
+            }
+        }
+
+        /// <summary>
+        /// Called when the object is picked up.
+        /// This should be called by whatever system handles pickup logic.
+        /// </summary>
+        public void OnPickup()
+        {
+            // Fire event
+            OnPickedUp?.Invoke();
+
+            if (debugMode)
+            {
+                Debug.Log($"[ThrowableObject] Object picked up. Event fired to {OnPickedUp?.GetInvocationList()?.Length ?? 0} listeners.");
             }
         }
 

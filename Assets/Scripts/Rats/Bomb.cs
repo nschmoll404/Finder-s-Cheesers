@@ -18,6 +18,10 @@ namespace FindersCheesers
         [SerializeField]
         private float fuseDuration = 3f;
 
+        [Tooltip("Automatically light the fuse when the object is picked up")]
+        [SerializeField]
+        private bool autoLightFuseOnPickup = false;
+
         [Header("Explosion Settings")]
         [Tooltip("Radius of the explosion")]
         [SerializeField]
@@ -91,6 +95,7 @@ namespace FindersCheesers
         // Fuse state
         private float fuseTimer;
         private bool isCountingDown;
+        private bool hasSubscribedToPickupEvent = false;
 
         #endregion
 
@@ -103,6 +108,36 @@ namespace FindersCheesers
             if (throwableObject == null)
             {
                 Debug.LogError("[Bomb] ThrowableObject component not found!");
+            }
+        }
+
+        private void OnEnable()
+        {
+            // Subscribe to pickup event
+            if (throwableObject != null && !hasSubscribedToPickupEvent)
+            {
+                throwableObject.OnPickedUp += HandlePickup;
+                hasSubscribedToPickupEvent = true;
+
+                if (debugMode)
+                {
+                    Debug.Log("[Bomb] Subscribed to ThrowableObject pickup event.");
+                }
+            }
+        }
+
+        private void OnDisable()
+        {
+            // Unsubscribe from pickup event
+            if (throwableObject != null && hasSubscribedToPickupEvent)
+            {
+                throwableObject.OnPickedUp -= HandlePickup;
+                hasSubscribedToPickupEvent = false;
+
+                if (debugMode)
+                {
+                    Debug.Log("[Bomb] Unsubscribed from ThrowableObject pickup event.");
+                }
             }
         }
 
@@ -135,6 +170,11 @@ namespace FindersCheesers
         /// </summary>
         public void StartFuse()
         {
+            if (debugMode)
+            {
+                Debug.Log("[Bomb] StartFuse() called. IsFuseLit: " + IsFuseLit + ", HasExploded: " + HasExploded);
+            }
+
             if (IsFuseLit)
             {
                 if (debugMode)
@@ -164,7 +204,7 @@ namespace FindersCheesers
 
             if (debugMode)
             {
-                Debug.Log($"[Bomb] Fuse lit! Explosion in {fuseDuration:F2} seconds.");
+                Debug.Log($"[Bomb] Fuse lit! Explosion in {fuseDuration:F2} seconds. IsFuseLit now: " + IsFuseLit);
             }
         }
 
@@ -342,6 +382,34 @@ namespace FindersCheesers
                 else
                 {
                     Destroy(gameObject);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handles the pickup event from ThrowableObject.
+        /// </summary>
+        private void HandlePickup()
+        {
+            if (debugMode)
+            {
+                Debug.Log($"[Bomb] HandlePickup() called. autoLightFuseOnPickup: {autoLightFuseOnPickup}");
+            }
+
+            if (autoLightFuseOnPickup)
+            {
+                StartFuse();
+
+                if (debugMode)
+                {
+                    Debug.Log("[Bomb] Auto-lit fuse on pickup.");
+                }
+            }
+            else
+            {
+                if (debugMode)
+                {
+                    Debug.Log("[Bomb] Pickup received but auto-light fuse is disabled.");
                 }
             }
         }
