@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4347202282526059131}
+  - component: {fileID: 1022688259273584059}
   m_Layer: 0
   m_Name: sm_BaseFloor_B_2x1x0.2m
   m_TagString: Untagged
@@ -32,6 +33,27 @@ Transform:
   - {fileID: 3199502593991198627}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1022688259273584059
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3178329279794373259}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 12, y: 1.2, z: 6}
+  m_Center: {x: 0, y: 0.6, z: 0}
 --- !u!1001 &3164996813140009032
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -54,15 +76,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 634c3165392a430469568aa2dbbef20e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 8.51379
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 634c3165392a430469568aa2dbbef20e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 634c3165392a430469568aa2dbbef20e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -13.3049
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 634c3165392a430469568aa2dbbef20e, type: 3}
       propertyPath: m_LocalRotation.w
