@@ -413,6 +413,13 @@ namespace FindersCheesers
         /// </summary>
         private void DetectKingRatWithOverlapBox()
         {
+            // Skip detection updates while already grabbing to prevent auto-swapping
+            // with other throwable objects in the detection area
+            if (isGrabbing)
+            {
+                return;
+            }
+
             // Calculate the center of the overlap box in world space
             Vector3 boxCenter = transform.position + transform.TransformDirection(detectionBoxOffset);
 
@@ -474,14 +481,6 @@ namespace FindersCheesers
                 if (debugMode)
                 {
                     Debug.Log($"[KingRatHandler] King Rat left range!");
-                }
-            }
-            // Update kingRatInRange when grabbing but King Rat leaves range
-            else if (!kingRatInRange && wasInRange && isGrabbing)
-            {
-                if (debugMode)
-                {
-                    Debug.Log($"[KingRatHandler] King Rat left range while being grabbed!");
                 }
             }
         }
