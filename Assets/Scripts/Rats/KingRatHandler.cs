@@ -1203,6 +1203,42 @@ namespace FindersCheesers
             return isTargetValid;
         }
 
+        // Throw Settings Getters
+        /// <summary>
+        /// Gets the base throw distance.
+        /// </summary>
+        public float BaseThrowDistance => baseThrowDistance;
+
+        /// <summary>
+        /// Gets the distance added per rat.
+        /// </summary>
+        public float DistancePerRat => distancePerRat;
+
+        /// <summary>
+        /// Gets the maximum throw distance.
+        /// </summary>
+        public float MaxThrowDistance => maxThrowDistance;
+
+        /// <summary>
+        /// Gets the base launch speed.
+        /// </summary>
+        public float BaseLaunchSpeed => baseLaunchSpeed;
+
+        /// <summary>
+        /// Gets the speed added per rat.
+        /// </summary>
+        public float SpeedPerRat => speedPerRat;
+
+        /// <summary>
+        /// Gets the maximum launch speed.
+        /// </summary>
+        public float MaxLaunchSpeed => maxLaunchSpeed;
+
+        /// <summary>
+        /// Gets the launch height offset.
+        /// </summary>
+        public float LaunchHeightOffset => launchHeightOffset;
+
         // Grab Settings
         public void SetMinRatsToCarry(int minRats) => minRatsToCarry = Mathf.Max(1, minRats);
         public void SetCarryOffset(Vector3 offset) => carryOffset = offset;
