@@ -20,6 +20,21 @@ namespace FindersCheesers
             LateUpdate
         }
 
+        /// <summary>
+        /// Defines how rats follow the inventory owner.
+        /// </summary>
+        public enum RatFollowingMode
+        {
+            /// <summary>
+            /// Rats form a circle around the owner (current behavior).
+            /// </summary>
+            Crowd,
+            /// <summary>
+            /// Rats follow in a trail/line behind the owner.
+            /// </summary>
+            Trail
+        }
+
         [Header("Inventory Settings")]
         [Tooltip("Maximum number of rats that can be stored in this inventory")]
         [SerializeField]
@@ -36,6 +51,40 @@ namespace FindersCheesers
         [Tooltip("When to update rat positions")]
         [SerializeField]
         private RatPositioningUpdateMode ratPositioningUpdateMode = RatPositioningUpdateMode.Update;
+
+        [Header("Following Mode Settings")]
+        [Tooltip("Current following mode for rats (Crowd = circle, Trail = line behind)")]
+        [SerializeField]
+        private RatFollowingMode followingMode = RatFollowingMode.Crowd;
+
+        [Tooltip("Spacing between rats when in trail mode")]
+        [SerializeField]
+        private float trailSpacing = 0.5f;
+
+        [Tooltip("Offset distance behind the owner for trail mode")]
+        [SerializeField]
+        private float trailStartOffset = 0.5f;
+
+        [Header("Auto-Scaling Radius Settings")]
+        [Tooltip("Enable automatic scaling of support radius based on rat count and size")]
+        [SerializeField]
+        private bool autoScaleRadius = false;
+
+        [Tooltip("Minimum radius when auto-scaling is enabled")]
+        [SerializeField]
+        private float minRadius = 0.5f;
+
+        [Tooltip("Maximum radius when auto-scaling is enabled")]
+        [SerializeField]
+        private float maxRadius = 3.0f;
+
+        [Tooltip("Base radius per rat (multiplied by rat size)")]
+        [SerializeField]
+        private float radiusPerRat = 0.2f;
+
+        [Tooltip("Consider rat scale when calculating auto-radius")]
+        [SerializeField]
+        private bool useRatScaleForRadius = true;
 
         [Header("Debug")]
         [Tooltip("Show debug information in the console")]
@@ -131,6 +180,21 @@ namespace FindersCheesers
         public RatPositioningUpdateMode UpdateMode => ratPositioningUpdateMode;
 
         /// <summary>
+        /// Gets the current following mode for rats.
+        /// </summary>
+        public RatFollowingMode FollowingMode => followingMode;
+
+        /// <summary>
+        /// Gets the current effective support radius (auto-scaled if enabled).
+        /// </summary>
+        public float EffectiveSupportRadius => CalculateEffectiveRadius();
+
+        /// <summary>
+        /// Gets whether auto-scaling is enabled for the support radius.
+        /// </summary>
+        public bool IsAutoScaleEnabled => autoScaleRadius;
+
+        /// <summary>
         /// Gets the gather radius for finding rats.
         /// </summary>
         public float GatherRadius => gatherRadius;
@@ -191,9 +255,7 @@ namespace FindersCheesers
         }
 
         /// <summary>
-        /// Updates the positions of rats to be evenly distributed in the support radius.
-        /// Rats move instantly to follow the Rat Pack, and the Rat Pack trails slightly behind.
-        /// Rats are positioned in front of the Rat Pack (so the Rat Pack trails behind).
+        /// Updates the positions of rats based on the current following mode.
         /// </summary>
         private void UpdateRatPositions()
         {
@@ -202,6 +264,23 @@ namespace FindersCheesers
                 return;
             }
 
+            switch (followingMode)
+            {
+                case RatFollowingMode.Crowd:
+                    UpdateCrowdPositions();
+                    break;
+                case RatFollowingMode.Trail:
+                    UpdateTrailPositions();
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Updates rat positions in a circle around the owner (crowd following).
+        /// Rats are positioned in front of the Rat Pack (so the Rat Pack trails behind).
+        /// </summary>
+        private void UpdateCrowdPositions()
+        {
             // Get appropriate delta time based on update mode
             float deltaTime = ratPositioningUpdateMode == RatPositioningUpdateMode.FixedUpdate
                 ? Time.fixedDeltaTime
@@ -218,6 +297,9 @@ namespace FindersCheesers
                 packSpeed = packMovementDirection.magnitude;
             }
 
+            // Use effective radius (auto-scaled if enabled)
+            float effectiveRadius = CalculateEffectiveRadius();
+
             // Calculate target positions for each rat in a circle
             for (int i = 0; i < rats.Count; i++)
             {
@@ -232,8 +314,8 @@ namespace FindersCheesers
 
                 // Calculate base position in circle
                 Vector3 targetPosition = transform.position;
-                targetPosition.x += Mathf.Cos(angle) * supportRadius;
-                targetPosition.z += Mathf.Sin(angle) * supportRadius;
+                targetPosition.x += Mathf.Cos(angle) * effectiveRadius;
+                targetPosition.z += Mathf.Sin(angle) * effectiveRadius;
 
                 // If Rat Pack is moving, position rats in front of movement direction
                 // This makes Rat Pack trail behind rats (rats carry Rat Pack)
@@ -250,6 +332,117 @@ namespace FindersCheesers
                     ratPositioningSpeed * deltaTime
                 );
             }
+        }
+
+        /// <summary>
+        /// Updates rat positions in a trail behind the owner (trail following).
+        /// Rats follow in a line behind the movement direction.
+        /// </summary>
+        private void UpdateTrailPositions()
+        {
+            // Get appropriate delta time based on update mode
+            float deltaTime = ratPositioningUpdateMode == RatPositioningUpdateMode.FixedUpdate
+                ? Time.fixedDeltaTime
+                : Time.deltaTime;
+
+            // Get Rat Pack's movement direction
+            Vector3 backwardDirection = -Vector3.forward;
+            float packSpeed = 0f;
+
+            if (ratPackController != null)
+            {
+                Vector3 velocity = ratPackController.GetVelocity();
+                velocity.y = 0f; // Ignore vertical movement
+                packSpeed = velocity.magnitude;
+
+                if (packSpeed > 0.1f && velocity != Vector3.zero)
+                {
+                    // Face opposite to movement direction for trail
+                    backwardDirection = -velocity.normalized;
+                }
+            }
+
+            // Calculate target positions for each rat in a trail
+            for (int i = 0; i < rats.Count; i++)
+            {
+                Rat rat = rats[i];
+                if (rat == null)
+                {
+                    continue;
+                }
+
+                // Calculate distance behind the owner for this rat
+                float distanceBehind = trailStartOffset + (i * trailSpacing);
+
+                // Get rat scale for spacing adjustment if enabled
+                float ratScale = 1f;
+                if (useRatScaleForRadius && rat != null)
+                {
+                    ratScale = rat.transform.localScale.magnitude;
+                }
+
+                // Adjust spacing based on rat scale
+                distanceBehind = trailStartOffset + (i * trailSpacing * ratScale);
+
+                // Calculate target position behind the owner
+                Vector3 targetPosition = transform.position + (backwardDirection * distanceBehind);
+
+                // Smoothly move the rat to its target position
+                rat.transform.position = Vector3.Lerp(
+                    rat.transform.position,
+                    targetPosition,
+                    ratPositioningSpeed * deltaTime
+                );
+
+                // Make rat face the movement direction
+                if (packSpeed > 0.1f)
+                {
+                    rat.transform.forward = -backwardDirection;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Calculates the effective support radius, accounting for auto-scaling if enabled.
+        /// </summary>
+        /// <returns>The effective radius to use for rat positioning.</returns>
+        private float CalculateEffectiveRadius()
+        {
+            if (!autoScaleRadius)
+            {
+                return supportRadius;
+            }
+
+            if (rats.Count == 0)
+            {
+                return minRadius;
+            }
+
+            // Calculate total size factor from all rats
+            float totalSizeFactor = 0f;
+            foreach (Rat rat in rats)
+            {
+                if (rat == null)
+                {
+                    continue;
+                }
+
+                if (useRatScaleForRadius)
+                {
+                    // Use the average scale of the rat
+                    totalSizeFactor += rat.transform.localScale.magnitude;
+                }
+                else
+                {
+                    totalSizeFactor += 1f;
+                }
+            }
+
+            // Calculate radius based on rat count and size
+            float calculatedRadius = minRadius + (totalSizeFactor * radiusPerRat);
+
+            // Clamp to min/max range
+            return Mathf.Clamp(calculatedRadius, minRadius, maxRadius);
         }
 
         /// <summary>
@@ -605,7 +798,7 @@ namespace FindersCheesers
 
             Vector3 offset = supportCenter - transform.position;
             offset.y = 0f; // Ignore height difference
-            return offset.magnitude / supportRadius;
+            return offset.magnitude / CalculateEffectiveRadius();
         }
 
         /// <summary>
@@ -648,6 +841,74 @@ namespace FindersCheesers
             }
         }
 
+        /// <summary>
+        /// Sets the following mode for rats (Crowd or Trail).
+        /// </summary>
+        /// <param name="mode">The new following mode.</param>
+        public void SetFollowingMode(RatFollowingMode mode)
+        {
+            followingMode = mode;
+            if (debugMode)
+            {
+                Debug.Log($"[RatInventory] Following mode set to: {mode}");
+            }
+        }
+
+        /// <summary>
+        /// Switches to crowd following mode.
+        /// </summary>
+        public void UseCrowdFollowing()
+        {
+            SetFollowingMode(RatFollowingMode.Crowd);
+        }
+
+        /// <summary>
+        /// Switches to trail following mode.
+        /// </summary>
+        public void UseTrailFollowing()
+        {
+            SetFollowingMode(RatFollowingMode.Trail);
+        }
+
+        /// <summary>
+        /// Toggles between crowd and trail following modes.
+        /// </summary>
+        public void ToggleFollowingMode()
+        {
+            followingMode = followingMode == RatFollowingMode.Crowd
+                ? RatFollowingMode.Trail
+                : RatFollowingMode.Crowd;
+
+            if (debugMode)
+            {
+                Debug.Log($"[RatInventory] Toggled following mode to: {followingMode}");
+            }
+        }
+
+        /// <summary>
+        /// Enables or disables auto-scaling for the support radius.
+        /// </summary>
+        /// <param name="enabled">Whether to enable auto-scaling.</param>
+        public void SetAutoScaleRadius(bool enabled)
+        {
+            autoScaleRadius = enabled;
+            if (debugMode)
+            {
+                Debug.Log($"[RatInventory] Auto-scale radius set to: {enabled}");
+            }
+        }
+
+        /// <summary>
+        /// Sets the minimum and maximum radius for auto-scaling.
+        /// </summary>
+        /// <param name="min">Minimum radius.</param>
+        /// <param name="max">Maximum radius.</param>
+        public void SetRadiusRange(float min, float max)
+        {
+            minRadius = Mathf.Max(0.1f, min);
+            maxRadius = Mathf.Max(minRadius, max);
+        }
+
         private void OnDrawGizmos()
         {
             if (!visualizeRats)
@@ -655,9 +916,41 @@ namespace FindersCheesers
                 return;
             }
 
-            // Draw support radius
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawWireSphere(transform.position, supportRadius);
+            // Use effective radius for visualization
+            float effectiveRadius = Application.isPlaying ? CalculateEffectiveRadius() : supportRadius;
+
+            // Draw support radius based on following mode
+            if (followingMode == RatFollowingMode.Crowd)
+            {
+                // Draw circle for crowd mode
+                Gizmos.color = autoScaleRadius ? Color.magenta : Color.cyan;
+                Gizmos.DrawWireSphere(transform.position, effectiveRadius);
+            }
+            else
+            {
+                // Draw trail visualization for trail mode
+                Gizmos.color = Color.blue;
+
+                // Get backward direction
+                Vector3 backwardDirection = -Vector3.forward;
+                if (ratPackController != null)
+                {
+                    Vector3 velocity = ratPackController.GetVelocity();
+                    velocity.y = 0f;
+                    if (velocity.magnitude > 0.1f)
+                    {
+                        backwardDirection = -velocity.normalized;
+                    }
+                }
+
+                // Draw trail positions
+                for (int i = 0; i < maxCapacity; i++)
+                {
+                    float distanceBehind = trailStartOffset + (i * trailSpacing);
+                    Vector3 trailPos = transform.position + (backwardDirection * distanceBehind);
+                    Gizmos.DrawWireSphere(trailPos, 0.2f);
+                }
+            }
 
             // Draw support center
             if (Application.isPlaying)
@@ -666,7 +959,7 @@ namespace FindersCheesers
                 Gizmos.DrawWireSphere(supportCenter, 0.2f);
 
                 // Draw lines to rats
-                Gizmos.color = Color.green;
+                Gizmos.color = followingMode == RatFollowingMode.Crowd ? Color.green : Color.cyan;
                 foreach (Rat rat in rats)
                 {
                     if (rat != null)
@@ -684,6 +977,15 @@ namespace FindersCheesers
                         Gizmos.DrawWireSphere(rat.transform.position, 0.3f);
                     }
                 }
+
+                // Draw min/max radius indicators when auto-scaling
+                if (autoScaleRadius)
+                {
+                    Gizmos.color = new Color(1f, 0.5f, 0f, 0.5f); // Orange
+                    Gizmos.DrawWireSphere(transform.position, minRadius);
+                    Gizmos.color = new Color(0.5f, 0f, 1f, 0.5f); // Purple
+                    Gizmos.DrawWireSphere(transform.position, maxRadius);
+                }
             }
         }
 
@@ -693,6 +995,14 @@ namespace FindersCheesers
             supportRadius = 1.5f;
             ratPositioningSpeed = 5f;
             ratPositioningUpdateMode = RatPositioningUpdateMode.Update;
+            followingMode = RatFollowingMode.Crowd;
+            trailSpacing = 0.5f;
+            trailStartOffset = 0.5f;
+            autoScaleRadius = false;
+            minRadius = 0.5f;
+            maxRadius = 3.0f;
+            radiusPerRat = 0.2f;
+            useRatScaleForRadius = true;
         }
     }
 }
