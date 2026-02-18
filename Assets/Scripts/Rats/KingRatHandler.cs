@@ -66,6 +66,14 @@ namespace FindersCheesers
         [SerializeField]
         private KingRatUpdateMode updateMode = KingRatUpdateMode.Update;
 
+        [Tooltip("Switch rat inventory to crowd mode when carrying King Rat")]
+        [SerializeField]
+        private bool switchToCrowdOnCarry = true;
+
+        [Tooltip("The default following mode to return to when not carrying King Rat")]
+        [SerializeField]
+        private RatInventory.RatFollowingMode defaultFollowingMode = RatInventory.RatFollowingMode.Trail;
+
         #endregion
 
         #region Throw Settings
@@ -208,6 +216,9 @@ namespace FindersCheesers
         private Quaternion kingRatOriginalRotation;
         private bool kingRatWasKinematic;
         private bool kingRatInRange = false;
+
+        // Following mode state
+        private RatInventory.RatFollowingMode previousFollowingMode;
 
         // Throw state
         private Vector2 pointerPosition;
@@ -576,6 +587,8 @@ namespace FindersCheesers
             detectionBoxSize = new Vector3(2f, 2f, 2f);
             detectionBoxOffset = new Vector3(0f, 0f, 1f);
             kingRatTag = "KingRat";
+            switchToCrowdOnCarry = true;
+            defaultFollowingMode = RatInventory.RatFollowingMode.Trail;
 
             // Throw settings
             baseLaunchSpeed = 10f;
@@ -785,6 +798,18 @@ namespace FindersCheesers
             isGrabbing = true;
             OnKingRatGrabbed?.Invoke();
 
+            // Switch to crowd following mode when carrying King Rat
+            if (switchToCrowdOnCarry && ratInventory != null)
+            {
+                previousFollowingMode = ratInventory.FollowingMode;
+                ratInventory.UseCrowdFollowing();
+
+                if (debugMode)
+                {
+                    Debug.Log($"[KingRatHandler] Switched to crowd following mode (was: {previousFollowingMode})");
+                }
+            }
+
             // Call OnPickup on ThrowableObject if it has one
             ThrowableObject throwableObj = detectedKingRat.GetComponent<ThrowableObject>();
             if (throwableObj != null)
@@ -838,6 +863,17 @@ namespace FindersCheesers
 
             isGrabbing = false;
             OnKingRatReleased?.Invoke();
+
+            // Switch back to the default following mode when releasing King Rat
+            if (switchToCrowdOnCarry && ratInventory != null)
+            {
+                ratInventory.SetFollowingMode(defaultFollowingMode);
+
+                if (debugMode)
+                {
+                    Debug.Log($"[KingRatHandler] Switched back to {defaultFollowingMode} following mode");
+                }
+            }
 
             // Clear King Rat reference if out of range
             if (!kingRatInRange)
@@ -1134,6 +1170,17 @@ namespace FindersCheesers
             // Set isGrabbing to false
             isGrabbing = false;
             OnKingRatReleased?.Invoke();
+
+            // Switch back to the default following mode when throwing King Rat
+            if (switchToCrowdOnCarry && ratInventory != null)
+            {
+                ratInventory.SetFollowingMode(defaultFollowingMode);
+
+                if (debugMode)
+                {
+                    Debug.Log($"[KingRatHandler] Switched back to {defaultFollowingMode} following mode (throw)");
+                }
+            }
 
             // Move King Rat to launch position
             if (detectedKingRat != null)

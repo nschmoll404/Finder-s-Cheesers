@@ -4,6 +4,23 @@ using UnityEngine;
 namespace FindersCheesers
 {
     /// <summary>
+    /// Stores position and rotation data for trail following.
+    /// </summary>
+    public struct TrailPoint
+    {
+        public Vector3 Position;
+        public Quaternion Rotation;
+        public float Timestamp;
+
+        public TrailPoint(Vector3 position, Quaternion rotation, float timestamp)
+        {
+            Position = position;
+            Rotation = rotation;
+            Timestamp = timestamp;
+        }
+    }
+
+    /// <summary>
     /// A component that manages an inventory of rats.
     /// This can be used by Rat Pack and other mechanics that need to track rats.
     /// </summary>
@@ -64,6 +81,34 @@ namespace FindersCheesers
         [Tooltip("Offset distance behind the owner for trail mode")]
         [SerializeField]
         private float trailStartOffset = 0.5f;
+
+        [Tooltip("How frequently to record trail positions (lower = smoother but more memory)")]
+        [SerializeField]
+        private float trailRecordInterval = 0.05f;
+
+        [Tooltip("Maximum trail history duration in seconds")]
+        [SerializeField]
+        private float trailHistoryDuration = 5f;
+
+        [Tooltip("How quickly rats rotate to face movement direction in trail mode")]
+        [SerializeField]
+        private float trailRotationSpeed = 10f;
+
+        [Tooltip("Speed threshold below which rats start crowding instead of trailing")]
+        [SerializeField]
+        private float stopSpeedThreshold = 0.5f;
+
+        [Tooltip("Radius for crowding when stopped in trail mode")]
+        [SerializeField]
+        private float trailCrowdRadius = 1.0f;
+
+        [Tooltip("How quickly rats transition from trail to crowd formation when stopped")]
+        [SerializeField]
+        private float crowdTransitionSpeed = 3f;
+
+        [Tooltip("Minimum distance between rats when crowding")]
+        [SerializeField]
+        private float minRatSeparation = 0.3f;
 
         [Header("Auto-Scaling Radius Settings")]
         [Tooltip("Enable automatic scaling of support radius based on rat count and size")]
@@ -128,6 +173,16 @@ namespace FindersCheesers
         // Support calculation
         private Vector3 supportCenter;
         private float totalSupportStrength;
+
+        // Trail following history
+        private readonly Queue<TrailPoint> trailHistory = new Queue<TrailPoint>();
+        private float lastTrailRecordTime;
+        private Vector3 lastRecordedPosition;
+        private Quaternion lastRecordedRotation;
+
+        // Crowding state for trail mode
+        private float crowdBlendFactor = 0f; // 0 = trail, 1 = crowd
+        private float lastMovementSpeed = 0f;
 
         /// <summary>
         /// Event fired when a rat is added to the inventory.
@@ -336,7 +391,9 @@ namespace FindersCheesers
 
         /// <summary>
         /// Updates rat positions in a trail behind the owner (trail following).
-        /// Rats follow in a line behind the movement direction.
+        /// Uses position history for Pikmin-style following where each rat follows
+        /// the path of the leader at a time offset.
+        /// When stopped, rats spread out in a crowd formation to avoid overlapping.
         /// </summary>
         private void UpdateTrailPositions()
         {
@@ -345,24 +402,35 @@ namespace FindersCheesers
                 ? Time.fixedDeltaTime
                 : Time.deltaTime;
 
-            // Get Rat Pack's movement direction
-            Vector3 backwardDirection = -Vector3.forward;
-            float packSpeed = 0f;
+            float currentTime = Time.time;
 
+            // Get movement speed
+            float packSpeed = 0f;
             if (ratPackController != null)
             {
                 Vector3 velocity = ratPackController.GetVelocity();
-                velocity.y = 0f; // Ignore vertical movement
+                velocity.y = 0f;
                 packSpeed = velocity.magnitude;
-
-                if (packSpeed > 0.1f && velocity != Vector3.zero)
-                {
-                    // Face opposite to movement direction for trail
-                    backwardDirection = -velocity.normalized;
-                }
             }
 
-            // Calculate target positions for each rat in a trail
+            // Smooth the speed for better transitions
+            lastMovementSpeed = Mathf.Lerp(lastMovementSpeed, packSpeed, deltaTime * 5f);
+
+            // Update crowd blend factor based on movement speed
+            bool isMoving = lastMovementSpeed > stopSpeedThreshold;
+            float targetBlendFactor = isMoving ? 0f : 1f;
+            crowdBlendFactor = Mathf.Lerp(crowdBlendFactor, targetBlendFactor, crowdTransitionSpeed * deltaTime);
+
+            // Record current position to trail history
+            RecordTrailPosition(currentTime);
+
+            // Clean up old trail points
+            CleanupTrailHistory(currentTime);
+
+            // Calculate target positions for all rats
+            Vector3[] targetPositions = new Vector3[rats.Count];
+            Quaternion[] targetRotations = new Quaternion[rats.Count];
+
             for (int i = 0; i < rats.Count; i++)
             {
                 Rat rat = rats[i];
@@ -371,35 +439,230 @@ namespace FindersCheesers
                     continue;
                 }
 
-                // Calculate distance behind the owner for this rat
-                float distanceBehind = trailStartOffset + (i * trailSpacing);
-
-                // Get rat scale for spacing adjustment if enabled
+                // Calculate rat scale
                 float ratScale = 1f;
                 if (useRatScaleForRadius && rat != null)
                 {
                     ratScale = rat.transform.localScale.magnitude;
                 }
 
-                // Adjust spacing based on rat scale
-                distanceBehind = trailStartOffset + (i * trailSpacing * ratScale);
+                // Calculate trail position
+                float timeDelay = (trailStartOffset + (i * trailSpacing * ratScale)) / Mathf.Max(0.1f, ratPositioningSpeed);
+                TrailPoint trailPoint = GetTrailPointAtTime(currentTime - timeDelay);
+                Vector3 trailPosition = trailPoint.Position;
+                Quaternion trailRotation = trailPoint.Rotation;
 
-                // Calculate target position behind the owner
-                Vector3 targetPosition = transform.position + (backwardDirection * distanceBehind);
+                // Calculate crowd position (circle formation around owner)
+                Vector3 crowdPosition = CalculateCrowdPosition(i, rats.Count, ratScale);
 
-                // Smoothly move the rat to its target position
+                // Blend between trail and crowd positions
+                targetPositions[i] = Vector3.Lerp(trailPosition, crowdPosition, crowdBlendFactor);
+                targetRotations[i] = Quaternion.Slerp(trailRotation, transform.rotation, crowdBlendFactor);
+            }
+
+            // Apply separation to prevent overlapping when crowding
+            if (crowdBlendFactor > 0.1f)
+            {
+                ApplySeparation(ref targetPositions, deltaTime);
+            }
+
+            // Move rats to their target positions
+            for (int i = 0; i < rats.Count; i++)
+            {
+                Rat rat = rats[i];
+                if (rat == null)
+                {
+                    continue;
+                }
+
+                // Smoothly move the rat to the target position
                 rat.transform.position = Vector3.Lerp(
                     rat.transform.position,
-                    targetPosition,
+                    targetPositions[i],
                     ratPositioningSpeed * deltaTime
                 );
 
-                // Make rat face the movement direction
-                if (packSpeed > 0.1f)
+                // Smoothly rotate to match the target rotation
+                rat.transform.rotation = Quaternion.Slerp(
+                    rat.transform.rotation,
+                    targetRotations[i],
+                    trailRotationSpeed * deltaTime
+                );
+            }
+        }
+
+        /// <summary>
+        /// Calculates the crowd position for a rat in a circle formation.
+        /// </summary>
+        /// <param name="index">The index of the rat.</param>
+        /// <param name="totalRats">Total number of rats.</param>
+        /// <param name="ratScale">The scale of the rat.</param>
+        /// <returns>The target crowd position.</returns>
+        private Vector3 CalculateCrowdPosition(int index, int totalRats, float ratScale)
+        {
+            // Calculate angle for this rat (evenly distributed)
+            float angle = (360f / totalRats) * index * Mathf.Deg2Rad;
+
+            // Calculate radius based on number of rats and their scales
+            float crowdRadius = trailCrowdRadius;
+            if (autoScaleRadius)
+            {
+                crowdRadius = CalculateEffectiveRadius();
+            }
+
+            // Calculate position in circle
+            Vector3 targetPosition = transform.position;
+            targetPosition.x += Mathf.Cos(angle) * crowdRadius;
+            targetPosition.z += Mathf.Sin(angle) * crowdRadius;
+
+            return targetPosition;
+        }
+
+        /// <summary>
+        /// Applies separation between rats to prevent overlapping.
+        /// </summary>
+        /// <param name="positions">Array of target positions to modify.</param>
+        /// <param name="deltaTime">Delta time for smooth movement.</param>
+        private void ApplySeparation(ref Vector3[] positions, float deltaTime)
+        {
+            if (positions.Length <= 1)
+            {
+                return;
+            }
+
+            // Multiple passes for better separation
+            for (int pass = 0; pass < 3; pass++)
+            {
+                for (int i = 0; i < positions.Length; i++)
                 {
-                    rat.transform.forward = -backwardDirection;
+                    Vector3 separationForce = Vector3.zero;
+                    int neighborCount = 0;
+
+                    for (int j = 0; j < positions.Length; j++)
+                    {
+                        if (i == j) continue;
+
+                        float distance = Vector3.Distance(positions[i], positions[j]);
+                        if (distance < minRatSeparation && distance > 0.001f)
+                        {
+                            // Calculate repulsion force
+                            Vector3 direction = (positions[i] - positions[j]).normalized;
+                            float forceMagnitude = (minRatSeparation - distance) / minRatSeparation;
+                            separationForce += direction * forceMagnitude;
+                            neighborCount++;
+                        }
+                    }
+
+                    if (neighborCount > 0)
+                    {
+                        // Apply average separation force
+                        separationForce /= neighborCount;
+                        positions[i] += separationForce * 0.5f;
+                    }
                 }
             }
+        }
+
+        /// <summary>
+        /// Records the current position to the trail history.
+        /// </summary>
+        /// <param name="currentTime">Current game time.</param>
+        private void RecordTrailPosition(float currentTime)
+        {
+            // Only record at specified intervals
+            if (currentTime - lastTrailRecordTime < trailRecordInterval)
+            {
+                return;
+            }
+
+            Vector3 currentPosition = transform.position;
+            Quaternion currentRotation = transform.rotation;
+
+            // Only record if position has changed significantly
+            if (Vector3.Distance(currentPosition, lastRecordedPosition) < 0.01f)
+            {
+                return;
+            }
+
+            // Add new trail point
+            trailHistory.Enqueue(new TrailPoint(currentPosition, currentRotation, currentTime));
+
+            // Update last recorded values
+            lastRecordedPosition = currentPosition;
+            lastRecordedRotation = currentRotation;
+            lastTrailRecordTime = currentTime;
+        }
+
+        /// <summary>
+        /// Removes old trail points that are no longer needed.
+        /// </summary>
+        /// <param name="currentTime">Current game time.</param>
+        private void CleanupTrailHistory(float currentTime)
+        {
+            float oldestAllowedTime = currentTime - trailHistoryDuration;
+
+            while (trailHistory.Count > 0 && trailHistory.Peek().Timestamp < oldestAllowedTime)
+            {
+                trailHistory.Dequeue();
+            }
+        }
+
+        /// <summary>
+        /// Gets the trail point at a specific time, interpolating between recorded points.
+        /// </summary>
+        /// <param name="targetTime">The time to get the trail point for.</param>
+        /// <returns>The interpolated trail point.</returns>
+        private TrailPoint GetTrailPointAtTime(float targetTime)
+        {
+            if (trailHistory.Count == 0)
+            {
+                // No history, return current position
+                return new TrailPoint(transform.position, transform.rotation, targetTime);
+            }
+
+            // Convert queue to array for easier searching
+            TrailPoint[] points = trailHistory.ToArray();
+
+            // If target time is before our oldest point, return the oldest
+            if (targetTime <= points[0].Timestamp)
+            {
+                return points[0];
+            }
+
+            // If target time is after our newest point, return current position
+            if (targetTime >= points[points.Length - 1].Timestamp)
+            {
+                return new TrailPoint(transform.position, transform.rotation, targetTime);
+            }
+
+            // Find the two points to interpolate between
+            for (int i = 0; i < points.Length - 1; i++)
+            {
+                if (points[i].Timestamp <= targetTime && points[i + 1].Timestamp >= targetTime)
+                {
+                    // Calculate interpolation factor
+                    float timeRange = points[i + 1].Timestamp - points[i].Timestamp;
+                    float t = timeRange > 0f ? (targetTime - points[i].Timestamp) / timeRange : 0f;
+
+                    // Interpolate position and rotation
+                    Vector3 interpolatedPosition = Vector3.Lerp(points[i].Position, points[i + 1].Position, t);
+                    Quaternion interpolatedRotation = Quaternion.Slerp(points[i].Rotation, points[i + 1].Rotation, t);
+
+                    return new TrailPoint(interpolatedPosition, interpolatedRotation, targetTime);
+                }
+            }
+
+            // Fallback: return current position
+            return new TrailPoint(transform.position, transform.rotation, targetTime);
+        }
+
+        /// <summary>
+        /// Clears the trail history. Call this when switching modes or resetting.
+        /// </summary>
+        public void ClearTrailHistory()
+        {
+            trailHistory.Clear();
+            lastTrailRecordTime = 0f;
         }
 
         /// <summary>
@@ -847,6 +1110,12 @@ namespace FindersCheesers
         /// <param name="mode">The new following mode.</param>
         public void SetFollowingMode(RatFollowingMode mode)
         {
+            // Clear trail history when switching modes
+            if (mode != followingMode)
+            {
+                ClearTrailHistory();
+            }
+
             followingMode = mode;
             if (debugMode)
             {
@@ -931,24 +1200,35 @@ namespace FindersCheesers
                 // Draw trail visualization for trail mode
                 Gizmos.color = Color.blue;
 
-                // Get backward direction
-                Vector3 backwardDirection = -Vector3.forward;
-                if (ratPackController != null)
+                // Draw trail history path
+                if (Application.isPlaying && trailHistory.Count > 1)
                 {
-                    Vector3 velocity = ratPackController.GetVelocity();
-                    velocity.y = 0f;
-                    if (velocity.magnitude > 0.1f)
+                    TrailPoint[] points = trailHistory.ToArray();
+                    Gizmos.color = new Color(0.5f, 0.5f, 1f, 0.5f); // Light blue
+
+                    for (int i = 0; i < points.Length - 1; i++)
                     {
-                        backwardDirection = -velocity.normalized;
+                        Gizmos.DrawLine(points[i].Position, points[i + 1].Position);
                     }
                 }
 
-                // Draw trail positions
-                for (int i = 0; i < maxCapacity; i++)
+                // Draw target positions for each rat in trail
+                float currentTime = Time.time;
+                Gizmos.color = Color.cyan;
+                for (int i = 0; i < rats.Count; i++)
                 {
-                    float distanceBehind = trailStartOffset + (i * trailSpacing);
-                    Vector3 trailPos = transform.position + (backwardDirection * distanceBehind);
-                    Gizmos.DrawWireSphere(trailPos, 0.2f);
+                    Rat rat = rats[i];
+                    if (rat == null) continue;
+
+                    float ratScale = 1f;
+                    if (useRatScaleForRadius && rat != null)
+                    {
+                        ratScale = rat.transform.localScale.magnitude;
+                    }
+
+                    float timeDelay = (trailStartOffset + (i * trailSpacing * ratScale)) / Mathf.Max(0.1f, ratPositioningSpeed);
+                    TrailPoint targetPoint = GetTrailPointAtTime(currentTime - timeDelay);
+                    Gizmos.DrawWireSphere(targetPoint.Position, 0.15f);
                 }
             }
 
@@ -998,6 +1278,13 @@ namespace FindersCheesers
             followingMode = RatFollowingMode.Crowd;
             trailSpacing = 0.5f;
             trailStartOffset = 0.5f;
+            trailRecordInterval = 0.05f;
+            trailHistoryDuration = 5f;
+            trailRotationSpeed = 10f;
+            stopSpeedThreshold = 0.5f;
+            trailCrowdRadius = 1.0f;
+            crowdTransitionSpeed = 3f;
+            minRatSeparation = 0.3f;
             autoScaleRadius = false;
             minRadius = 0.5f;
             maxRadius = 3.0f;

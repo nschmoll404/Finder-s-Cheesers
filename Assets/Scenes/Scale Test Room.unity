@@ -4860,6 +4860,21 @@ MonoBehaviour:
   supportRadius: 0.6
   ratPositioningSpeed: 5
   ratPositioningUpdateMode: 1
+  followingMode: 0
+  trailSpacing: 0.5
+  trailStartOffset: 0.5
+  trailRecordInterval: 0.05
+  trailHistoryDuration: 5
+  trailRotationSpeed: 10
+  stopSpeedThreshold: 0.5
+  trailCrowdRadius: 1
+  crowdTransitionSpeed: 3
+  minRatSeparation: 0.3
+  autoScaleRadius: 1
+  minRadius: 0.5
+  maxRadius: 3
+  radiusPerRat: 0.2
+  useRatScaleForRadius: 1
   debugMode: 0
   visualizeRats: 1
   gatherRadius: 5
@@ -5637,6 +5652,8 @@ MonoBehaviour:
   carryOffset: {x: 0, y: 1, z: 0}
   carrySmoothSpeed: 10
   updateMode: 1
+  switchToCrowdOnCarry: 1
+  defaultFollowingMode: 1
   pointerActionReference: {fileID: 4004371835555017464, guid: 855a47865bf910d4f9b7cf9ee07a6ac6, type: 3}
   throwActionReference: {fileID: 1120369429361536294, guid: 855a47865bf910d4f9b7cf9ee07a6ac6, type: 3}
   mainCamera: {fileID: 0}
