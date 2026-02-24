@@ -477,6 +477,21 @@ MonoBehaviour:
   supportRadius: 2.31
   ratPositioningSpeed: 5
   ratPositioningUpdateMode: 1
+  followingMode: 0
+  trailSpacing: 0.5
+  trailStartOffset: 0.5
+  trailRecordInterval: 0.05
+  trailHistoryDuration: 5
+  trailRotationSpeed: 10
+  stopSpeedThreshold: 0.5
+  trailCrowdRadius: 1
+  crowdTransitionSpeed: 3
+  minRatSeparation: 0.3
+  autoScaleRadius: 0
+  minRadius: 0.5
+  maxRadius: 3
+  radiusPerRat: 0.2
+  useRatScaleForRadius: 1
   debugMode: 0
   visualizeRats: 1
   gatherRadius: 5.08
@@ -3033,6 +3048,8 @@ MonoBehaviour:
   carryOffset: {x: 0, y: 1, z: 0}
   carrySmoothSpeed: 10
   updateMode: 1
+  switchToCrowdOnCarry: 1
+  defaultFollowingMode: 1
   pointerActionReference: {fileID: 4004371835555017464, guid: 855a47865bf910d4f9b7cf9ee07a6ac6, type: 3}
   throwActionReference: {fileID: 1120369429361536294, guid: 855a47865bf910d4f9b7cf9ee07a6ac6, type: 3}
   mainCamera: {fileID: 696505769}
@@ -4919,70 +4936,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1789967791}
   m_CullTransparentMesh: 1
---- !u!1 &1841232745
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1841232747}
-  - component: {fileID: 1841232746}
-  m_Layer: 0
-  m_Name: DebugThrowTool
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1841232746
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1841232745}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe40da2a58cba6f4397171b13da36769, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.KingRatThrowDebugTool
-  ratCount: 8
-  baseThrowDistance: 5
-  distancePerRat: 1
-  maxThrowDistance: 20
-  baseLaunchSpeed: 10
-  speedPerRat: 2
-  maxLaunchSpeed: 30
-  launchHeightOffset: 1
-  arcSegments: 30
-  showArc: 1
-  showMaxDistanceCircle: 1
-  showDistanceMarkers: 1
-  arcColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  maxDistanceColor: {r: 1, g: 1, b: 0, a: 0.3}
-  markerColor: {r: 0, g: 1, b: 1, a: 1}
-  useLocalSpace: 1
-  throwDirection: {x: 0, y: 0, z: 1}
-  useCustomTarget: 0
-  customTargetPosition: {x: 0, y: 0, z: 0}
-  targetHeight: 0
---- !u!4 &1841232747
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1841232745}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.037187073, z: -0, w: 0.99930835}
-  m_LocalPosition: {x: -13.59, y: 0, z: -9.63}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 4.262, z: 0}
 --- !u!1 &1856478495
 GameObject:
   m_ObjectHideFlags: 0
@@ -6055,6 +6008,63 @@ MonoBehaviour:
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null","$version":"A"},"$version":"A"}],"$version":"A"},"$version":"A"}}'
     _objectReferences:
     - {fileID: 8373013353950550892}
+--- !u!1001 &8496883530008732954
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1560775754426137501, guid: cb73d9701d755474aacbf1355869ba8a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -13.59
+      objectReference: {fileID: 0}
+    - target: {fileID: 1560775754426137501, guid: cb73d9701d755474aacbf1355869ba8a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1560775754426137501, guid: cb73d9701d755474aacbf1355869ba8a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -9.63
+      objectReference: {fileID: 0}
+    - target: {fileID: 1560775754426137501, guid: cb73d9701d755474aacbf1355869ba8a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.99930835
+      objectReference: {fileID: 0}
+    - target: {fileID: 1560775754426137501, guid: cb73d9701d755474aacbf1355869ba8a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1560775754426137501, guid: cb73d9701d755474aacbf1355869ba8a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.037187073
+      objectReference: {fileID: 0}
+    - target: {fileID: 1560775754426137501, guid: cb73d9701d755474aacbf1355869ba8a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1560775754426137501, guid: cb73d9701d755474aacbf1355869ba8a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1560775754426137501, guid: cb73d9701d755474aacbf1355869ba8a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 4.262
+      objectReference: {fileID: 0}
+    - target: {fileID: 1560775754426137501, guid: cb73d9701d755474aacbf1355869ba8a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1874822116903515070, guid: cb73d9701d755474aacbf1355869ba8a, type: 3}
+      propertyPath: m_Name
+      value: DebugThrowTool
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: cb73d9701d755474aacbf1355869ba8a, type: 3}
 --- !u!1001 &8615020677694683558
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6157,4 +6167,4 @@ SceneRoots:
   - {fileID: 1527269761}
   - {fileID: 470861480}
   - {fileID: 247762789}
-  - {fileID: 1841232747}
+  - {fileID: 8496883530008732954}
