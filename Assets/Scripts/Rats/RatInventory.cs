@@ -50,7 +50,11 @@ namespace FindersCheesers
             /// <summary>
             /// Rats follow in a trail/line behind the owner.
             /// </summary>
-            Trail
+            Trail,
+            /// <summary>
+            /// Rats follow in a random swarm with multiple lines and random spacing.
+            /// </summary>
+            RandomTrail
         }
 
         [Header("Inventory Settings")]
@@ -71,7 +75,7 @@ namespace FindersCheesers
         private RatPositioningUpdateMode ratPositioningUpdateMode = RatPositioningUpdateMode.Update;
 
         [Header("Following Mode Settings")]
-        [Tooltip("Current following mode for rats (Crowd = circle, Trail = line behind)")]
+        [Tooltip("Current following mode for rats (Crowd = circle, Trail = line behind, RandomTrail = swarm with multiple lines)")]
         [SerializeField]
         private RatFollowingMode followingMode = RatFollowingMode.Crowd;
 
@@ -110,6 +114,34 @@ namespace FindersCheesers
         [Tooltip("Minimum distance between rats when crowding")]
         [SerializeField]
         private float minRatSeparation = 0.3f;
+
+        [Header("Random Trail Settings")]
+        [Tooltip("Number of parallel lanes for random trail mode")]
+        [SerializeField]
+        [Range(1, 5)]
+        private int randomTrailLanes = 3;
+
+        [Tooltip("Maximum lateral offset from center trail line")]
+        [SerializeField]
+        private float randomTrailMaxLateralOffset = 1.0f;
+
+        [Tooltip("Randomness factor for spacing between rats (0 = uniform, 1 = very random)")]
+        [SerializeField]
+        [Range(0f, 1f)]
+        private float randomTrailSpacingRandomness = 0.5f;
+
+        [Tooltip("Randomness factor for lateral position (0 = even lanes, 1 = very scattered)")]
+        [SerializeField]
+        [Range(0f, 1f)]
+        private float randomTrailLateralRandomness = 0.3f;
+
+        [Tooltip("How quickly rats switch lanes in random trail mode")]
+        [SerializeField]
+        private float randomTrailLaneSwitchSpeed = 0.5f;
+
+        [Tooltip("Per-rat random seed offset for consistent randomization")]
+        [SerializeField]
+        private int randomTrailSeedOffset = 0;
 
         [Header("Auto-Scaling Radius Settings")]
         [Tooltip("Enable automatic scaling of support radius based on rat count and size")]
@@ -197,6 +229,17 @@ namespace FindersCheesers
         private float lastTrailRecordTime;
         private Vector3 lastRecordedPosition;
         private Quaternion lastRecordedRotation;
+
+        // Random trail state
+        private class RandomTrailRatState
+        {
+            public float LaneOffset; // Lateral offset from center
+            public float SpacingOffset; // Random spacing offset
+            public float TargetLaneOffset; // For smooth lane switching
+            public float LaneSwitchTimer;
+            public int RandomSeed;
+        }
+        private readonly Dictionary<Rat, RandomTrailRatState> randomTrailStates = new Dictionary<Rat, RandomTrailRatState>();
 
         // Crowding state for trail mode
         private float crowdBlendFactor = 0f; // 0 = trail, 1 = crowd
@@ -377,6 +420,9 @@ namespace FindersCheesers
                 case RatFollowingMode.Trail:
                     UpdateTrailPositions();
                     break;
+                case RatFollowingMode.RandomTrail:
+                    UpdateRandomTrailPositions();
+                    break;
             }
         }
 
@@ -539,6 +585,225 @@ namespace FindersCheesers
                     trailRotationSpeed * deltaTime
                 );
             }
+        }
+
+        /// <summary>
+        /// Updates rat positions in a random trail with multiple lanes and random spacing.
+        /// Creates a swarm-like following behavior with random blobbing.
+        /// </summary>
+        private void UpdateRandomTrailPositions()
+        {
+            // Get appropriate delta time based on update mode
+            float deltaTime = ratPositioningUpdateMode == RatPositioningUpdateMode.FixedUpdate
+                ? Time.fixedDeltaTime
+                : Time.deltaTime;
+
+            float currentTime = Time.time;
+
+            // Get movement speed
+            float packSpeed = 0f;
+            if (ratPackController != null)
+            {
+                Vector3 velocity = ratPackController.GetVelocity();
+                velocity.y = 0f;
+                packSpeed = velocity.magnitude;
+            }
+
+            // Smooth the speed for better transitions
+            lastMovementSpeed = Mathf.Lerp(lastMovementSpeed, packSpeed, deltaTime * 5f);
+
+            // Update crowd blend factor based on movement speed
+            bool isMoving = lastMovementSpeed > stopSpeedThreshold;
+            float targetBlendFactor = isMoving ? 0f : 1f;
+            crowdBlendFactor = Mathf.Lerp(crowdBlendFactor, targetBlendFactor, crowdTransitionSpeed * deltaTime);
+
+            // Record current position to trail history
+            RecordTrailPosition(currentTime);
+
+            // Clean up old trail points
+            CleanupTrailHistory(currentTime);
+
+            // Initialize or update random trail states
+            InitializeRandomTrailStates();
+
+            // Calculate target positions for all rats
+            Vector3[] targetPositions = new Vector3[rats.Count];
+            Quaternion[] targetRotations = new Quaternion[rats.Count];
+
+            for (int i = 0; i < rats.Count; i++)
+            {
+                Rat rat = rats[i];
+                if (rat == null)
+                {
+                    continue;
+                }
+
+                // Get or create random trail state for this rat
+                if (!randomTrailStates.ContainsKey(rat))
+                {
+                    randomTrailStates[rat] = CreateRandomTrailState(i);
+                }
+
+                RandomTrailRatState state = randomTrailStates[rat];
+
+                // Update lane switching
+                UpdateRandomTrailLane(state, deltaTime);
+
+                // Calculate rat scale
+                float ratScale = 1f;
+                if (useRatScaleForRadius && rat != null)
+                {
+                    ratScale = rat.transform.localScale.magnitude;
+                }
+
+                // Calculate base trail position with random spacing
+                float spacingVariation = 1f + (state.SpacingOffset * randomTrailSpacingRandomness * 0.5f);
+                float timeDelay = (trailStartOffset + (i * trailSpacing * ratScale * spacingVariation)) / Mathf.Max(0.1f, ratPositioningSpeed);
+                TrailPoint trailPoint = GetTrailPointAtTime(currentTime - timeDelay);
+
+                // Calculate lateral offset based on lane
+                float lateralOffset = Mathf.Lerp(state.LaneOffset, state.TargetLaneOffset, state.LaneSwitchTimer);
+
+                // Apply lateral offset perpendicular to movement direction
+                Vector3 trailPosition = ApplyLateralOffset(trailPoint.Position, trailPoint.Rotation, lateralOffset);
+                Quaternion trailRotation = trailPoint.Rotation;
+
+                // Calculate crowd position (circle formation around owner)
+                Vector3 crowdPosition = CalculateCrowdPosition(i, rats.Count, ratScale);
+
+                // Blend between trail and crowd positions
+                targetPositions[i] = Vector3.Lerp(trailPosition, crowdPosition, crowdBlendFactor);
+                targetRotations[i] = Quaternion.Slerp(trailRotation, transform.rotation, crowdBlendFactor);
+            }
+
+            // Apply separation to prevent overlapping when crowding
+            if (crowdBlendFactor > 0.1f)
+            {
+                ApplySeparation(ref targetPositions, deltaTime);
+            }
+
+            // Move rats to their target positions
+            for (int i = 0; i < rats.Count; i++)
+            {
+                Rat rat = rats[i];
+                if (rat == null)
+                {
+                    continue;
+                }
+
+                // Smoothly move the rat to the target position
+                rat.transform.position = Vector3.Lerp(
+                    rat.transform.position,
+                    targetPositions[i],
+                    ratPositioningSpeed * deltaTime
+                );
+
+                // Smoothly rotate to match the target rotation
+                rat.transform.rotation = Quaternion.Slerp(
+                    rat.transform.rotation,
+                    targetRotations[i],
+                    trailRotationSpeed * deltaTime
+                );
+            }
+        }
+
+        /// <summary>
+        /// Initializes random trail states for all rats.
+        /// </summary>
+        private void InitializeRandomTrailStates()
+        {
+            // Clean up states for rats that are no longer in the inventory
+            List<Rat> ratsToRemove = new List<Rat>();
+            foreach (var pair in randomTrailStates)
+            {
+                if (!rats.Contains(pair.Key))
+                {
+                    ratsToRemove.Add(pair.Key);
+                }
+            }
+
+            foreach (Rat rat in ratsToRemove)
+            {
+                randomTrailStates.Remove(rat);
+            }
+        }
+
+        /// <summary>
+        /// Creates a new random trail state for a rat.
+        /// </summary>
+        /// <param name="index">The index of the rat.</param>
+        /// <returns>The new random trail state.</returns>
+        private RandomTrailRatState CreateRandomTrailState(int index)
+        {
+            System.Random random = new System.Random(index + randomTrailSeedOffset);
+
+            RandomTrailRatState state = new RandomTrailRatState();
+            state.RandomSeed = index + randomTrailSeedOffset;
+
+            // Assign to a random lane
+            int lane = random.Next(0, randomTrailLanes);
+            float laneWidth = randomTrailMaxLateralOffset * 2f / randomTrailLanes;
+            state.LaneOffset = -randomTrailMaxLateralOffset + (lane * laneWidth) + (laneWidth * 0.5f);
+
+            // Add lateral randomness
+            float lateralRandomness = (float)random.NextDouble() * 2f - 1f; // -1 to 1
+            state.LaneOffset += lateralRandomness * randomTrailLateralRandomness * laneWidth;
+
+            state.TargetLaneOffset = state.LaneOffset;
+
+            // Random spacing offset
+            state.SpacingOffset = (float)random.NextDouble() * 2f - 1f; // -1 to 1
+
+            state.LaneSwitchTimer = 0f;
+
+            return state;
+        }
+
+        /// <summary>
+        /// Updates the lane switching for a random trail rat state.
+        /// </summary>
+        /// <param name="state">The random trail state to update.</param>
+        /// <param name="deltaTime">Delta time.</param>
+        private void UpdateRandomTrailLane(RandomTrailRatState state, float deltaTime)
+        {
+            // Update lane switch timer
+            state.LaneSwitchTimer += randomTrailLaneSwitchSpeed * deltaTime;
+            state.LaneSwitchTimer = Mathf.Clamp01(state.LaneSwitchTimer);
+
+            // Check if we should pick a new target lane
+            if (state.LaneSwitchTimer >= 1f)
+            {
+                System.Random random = new System.Random(state.RandomSeed + (int)(Time.time * 10));
+
+                // Pick a new lane
+                int newLane = random.Next(0, randomTrailLanes);
+                float laneWidth = randomTrailMaxLateralOffset * 2f / randomTrailLanes;
+                state.TargetLaneOffset = -randomTrailMaxLateralOffset + (newLane * laneWidth) + (laneWidth * 0.5f);
+
+                // Add lateral randomness to new lane
+                float lateralRandomness = (float)random.NextDouble() * 2f - 1f; // -1 to 1
+                state.TargetLaneOffset += lateralRandomness * randomTrailLateralRandomness * laneWidth;
+
+                // Reset timer for smooth transition
+                state.LaneSwitchTimer = 0f;
+            }
+        }
+
+        /// <summary>
+        /// Applies a lateral offset to a position perpendicular to the movement direction.
+        /// </summary>
+        /// <param name="position">The base position.</param>
+        /// <param name="rotation">The rotation representing movement direction.</param>
+        /// <param name="lateralOffset">The lateral offset to apply.</param>
+        /// <returns>The position with lateral offset applied.</returns>
+        private Vector3 ApplyLateralOffset(Vector3 position, Quaternion rotation, float lateralOffset)
+        {
+            // Get the right direction (perpendicular to forward)
+            Vector3 rightDirection = rotation * Vector3.right;
+            rightDirection.y = 0f; // Keep on the ground plane
+            rightDirection = rightDirection.normalized;
+
+            return position + rightDirection * lateralOffset;
         }
 
         /// <summary>
@@ -1276,13 +1541,24 @@ namespace FindersCheesers
         }
 
         /// <summary>
-        /// Toggles between crowd and trail following modes.
+        /// Switches to random trail following mode.
+        /// </summary>
+        public void UseRandomTrailFollowing()
+        {
+            SetFollowingMode(RatFollowingMode.RandomTrail);
+        }
+
+        /// <summary>
+        /// Toggles between crowd, trail, and random trail following modes.
         /// </summary>
         public void ToggleFollowingMode()
         {
-            followingMode = followingMode == RatFollowingMode.Crowd
-                ? RatFollowingMode.Trail
-                : RatFollowingMode.Crowd;
+            followingMode = followingMode switch
+            {
+                RatFollowingMode.Crowd => RatFollowingMode.Trail,
+                RatFollowingMode.Trail => RatFollowingMode.RandomTrail,
+                _ => RatFollowingMode.Crowd
+            };
 
             if (debugMode)
             {
@@ -1331,7 +1607,7 @@ namespace FindersCheesers
                 Gizmos.color = autoScaleRadius ? Color.magenta : Color.cyan;
                 Gizmos.DrawWireSphere(transform.position, effectiveRadius);
             }
-            else
+            else if (followingMode == RatFollowingMode.Trail)
             {
                 // Draw trail visualization for trail mode
                 Gizmos.color = Color.blue;
@@ -1365,6 +1641,60 @@ namespace FindersCheesers
                     float timeDelay = (trailStartOffset + (i * trailSpacing * ratScale)) / Mathf.Max(0.1f, ratPositioningSpeed);
                     TrailPoint targetPoint = GetTrailPointAtTime(currentTime - timeDelay);
                     Gizmos.DrawWireSphere(targetPoint.Position, 0.15f);
+                }
+            }
+            else if (followingMode == RatFollowingMode.RandomTrail)
+            {
+                // Draw random trail visualization
+                Gizmos.color = new Color(1f, 0.5f, 0f, 0.8f); // Orange
+
+                // Draw trail history path
+                if (Application.isPlaying && trailHistory.Count > 1)
+                {
+                    TrailPoint[] points = trailHistory.ToArray();
+                    Gizmos.color = new Color(0.8f, 0.4f, 0f, 0.3f); // Dim orange
+
+                    for (int i = 0; i < points.Length - 1; i++)
+                    {
+                        Gizmos.DrawLine(points[i].Position, points[i + 1].Position);
+                    }
+                }
+
+                // Draw lane boundaries
+                Gizmos.color = new Color(1f, 0.5f, 0f, 0.2f); // Faint orange
+                float currentTime = Time.time;
+                for (int i = 0; i < rats.Count; i++)
+                {
+                    Rat rat = rats[i];
+                    if (rat == null) continue;
+
+                    // Get the trail state for this rat
+                    if (!randomTrailStates.ContainsKey(rat))
+                    {
+                        continue;
+                    }
+
+                    RandomTrailRatState state = randomTrailStates[rat];
+
+                    // Calculate the trail point
+                    float ratScale = 1f;
+                    if (useRatScaleForRadius && rat != null)
+                    {
+                        ratScale = rat.transform.localScale.magnitude;
+                    }
+
+                    float spacingVariation = 1f + (state.SpacingOffset * randomTrailSpacingRandomness * 0.5f);
+                    float timeDelay = (trailStartOffset + (i * trailSpacing * ratScale * spacingVariation)) / Mathf.Max(0.1f, ratPositioningSpeed);
+                    TrailPoint trailPoint = GetTrailPointAtTime(currentTime - timeDelay);
+
+                    // Draw the rat's target position
+                    Gizmos.color = new Color(1f, 0.6f, 0.2f, 0.8f); // Bright orange
+                    Gizmos.DrawWireSphere(trailPoint.Position, 0.15f);
+
+                    // Draw line showing lateral offset
+                    Vector3 lateralPosition = ApplyLateralOffset(trailPoint.Position, trailPoint.Rotation, state.LaneOffset);
+                    Gizmos.color = new Color(1f, 0.3f, 0f, 0.5f); // Red-orange
+                    Gizmos.DrawLine(trailPoint.Position, lateralPosition);
                 }
             }
 
@@ -1421,6 +1751,12 @@ namespace FindersCheesers
             trailCrowdRadius = 1.0f;
             crowdTransitionSpeed = 3f;
             minRatSeparation = 0.3f;
+            randomTrailLanes = 3;
+            randomTrailMaxLateralOffset = 1.0f;
+            randomTrailSpacingRandomness = 0.5f;
+            randomTrailLateralRandomness = 0.3f;
+            randomTrailLaneSwitchSpeed = 0.5f;
+            randomTrailSeedOffset = 0;
             autoScaleRadius = false;
             minRadius = 0.5f;
             maxRadius = 3.0f;
