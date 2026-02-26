@@ -504,6 +504,10 @@ MonoBehaviour:
   - {fileID: 963628781}
   - {fileID: 1646657548}
   ratPackController: {fileID: 94278675}
+  dropRatInput: {fileID: 1722914664841557398, guid: 855a47865bf910d4f9b7cf9ee07a6ac6, type: 3}
+  dropDistance: 2
+  randomizeDropPosition: 0
+  dropRandomRadius: 0.5
 --- !u!114 &94278675
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3219,7 +3223,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3422856200804321788, guid: 0d07811549bba2247a73014ab7d57ec4, type: 3}
   m_PrefabInstance: {fileID: 5776631535886336514}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1280367352}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8fe9edcf757a28344bbe9d4feca06a9f, type: 3}
@@ -3998,6 +4002,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1280367352 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8338166939317028711, guid: 0d07811549bba2247a73014ab7d57ec4, type: 3}
+  m_PrefabInstance: {fileID: 5776631535886336514}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1280367356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1280367352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ea3d21fc344a1a4dab3a35ab88e51d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.RatAutoDepositer
+  detectionRadius: 10
+  interactableLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  interactableTag: Untagged
+  movementSpeed: 3
+  arrivalDistance: 0.5
+  useNavMeshAgent: 1
+  autoDeposit: 1
+  depositDelay: 0.5
+  debugMode: 0
+  visualizeDetectionRadius: 1
 --- !u!1 &1328965286
 GameObject:
   m_ObjectHideFlags: 0
@@ -4155,7 +4188,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8338166939317028711, guid: 0d07811549bba2247a73014ab7d57ec4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1677753768}
   m_SourcePrefab: {fileID: 100100000, guid: 0d07811549bba2247a73014ab7d57ec4, type: 3}
 --- !u!1 &1527269759
 GameObject:
@@ -4457,7 +4493,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3422856200804321788, guid: 0d07811549bba2247a73014ab7d57ec4, type: 3}
   m_PrefabInstance: {fileID: 1396249454}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1677753764}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8fe9edcf757a28344bbe9d4feca06a9f, type: 3}
@@ -4599,6 +4635,35 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1674891903}
   m_CullTransparentMesh: 1
+--- !u!1 &1677753764 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8338166939317028711, guid: 0d07811549bba2247a73014ab7d57ec4, type: 3}
+  m_PrefabInstance: {fileID: 1396249454}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1677753768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1677753764}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ea3d21fc344a1a4dab3a35ab88e51d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.RatAutoDepositer
+  detectionRadius: 10
+  interactableLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  interactableTag: Untagged
+  movementSpeed: 3
+  arrivalDistance: 0.5
+  useNavMeshAgent: 1
+  autoDeposit: 1
+  depositDelay: 0.5
+  debugMode: 0
+  visualizeDetectionRadius: 1
 --- !u!1 &1712629094
 GameObject:
   m_ObjectHideFlags: 0
@@ -5196,7 +5261,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 236dd05133f80a1489b0eb217b06b6b1, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 3ef89f7fc8f542944b81232d305705f4, type: 2}
   m_BuildHeightMesh: 0
 --- !u!4 &2001193608
 Transform:
@@ -5816,7 +5881,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8338166939317028711, guid: 0d07811549bba2247a73014ab7d57ec4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1280367356}
   m_SourcePrefab: {fileID: 100100000, guid: 0d07811549bba2247a73014ab7d57ec4, type: 3}
 --- !u!1001 &6319482236149873064
 PrefabInstance:

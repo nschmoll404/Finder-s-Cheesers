@@ -11,11 +11,6 @@ namespace FindersCheesers
     public interface IRatInteractable
     {
         /// <summary>
-        /// Gets the number of rats required to interact with this interactable.
-        /// </summary>
-        int RatCost { get; }
-
-        /// <summary>
         /// Gets the number of rats currently deposited in this interactable.
         /// </summary>
         int DepositedRatsCount { get; }

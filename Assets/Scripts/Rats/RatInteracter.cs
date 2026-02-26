@@ -242,8 +242,8 @@ namespace FindersCheesers
             // Check if we can deposit rats
             if (interactable.CanDepositRats())
             {
-                // Check if we have enough rats
-                if (ratInventory != null && ratInventory.Count >= interactable.RatCost)
+                // Check if we have at least one rat to deposit
+                if (ratInventory != null && ratInventory.Count > 0)
                 {
                     return true;
                 }
@@ -286,7 +286,7 @@ namespace FindersCheesers
             // Check for deposit
             if (interactable.CanDepositRats())
             {
-                if (ratInventory != null && ratInventory.Count >= interactable.RatCost)
+                if (ratInventory != null && ratInventory.Count > 0)
                 {
                     return InteractionType.Deposit;
                 }
@@ -394,49 +394,28 @@ namespace FindersCheesers
                 return false;
             }
 
-            int ratCost = interactable.RatCost;
-            if (ratInventory.Count < ratCost)
+            // Collect one rat to deposit
+            Rat ratToDeposit = ratInventory.GetRat(0);
+            if (ratToDeposit == null)
             {
                 if (debugMode)
                 {
-                    Debug.Log($"[RatInteracter] Not enough rats to deposit. Required: {ratCost}, Available: {ratInventory.Count}");
+                    Debug.Log("[RatInteracter] No rat available to deposit.");
                 }
                 return false;
             }
 
-            // Collect the rats to deposit
-            List<Rat> ratsToDeposit = new List<Rat>();
-            for (int i = 0; i < ratCost; i++)
-            {
-                Rat rat = ratInventory.GetRat(i);
-                if (rat != null)
-                {
-                    ratsToDeposit.Add(rat);
-                }
-            }
+            // Remove rat from inventory
+            ratInventory.RemoveRat(ratToDeposit);
 
-            if (ratsToDeposit.Count != ratCost)
-            {
-                Debug.LogWarning("[RatInteracter] Failed to collect required rats from inventory.");
-                return false;
-            }
-
-            // Remove rats from inventory
-            foreach (Rat rat in ratsToDeposit)
-            {
-                ratInventory.RemoveRat(rat);
-            }
-
-            // Deposit rats to the interactable
+            // Deposit rat to interactable
+            List<Rat> ratsToDeposit = new List<Rat> { ratToDeposit };
             bool success = interactable.DepositRats(ratsToDeposit);
 
             if (!success)
             {
-                // Rollback - return rats to inventory
-                foreach (Rat rat in ratsToDeposit)
-                {
-                    ratInventory.AddRat(rat);
-                }
+                // Rollback - return rat to inventory
+                ratInventory.AddRat(ratToDeposit);
             }
 
             return success;
@@ -461,7 +440,7 @@ namespace FindersCheesers
                 return false;
             }
 
-            // Withdraw rats from the interactable
+            // Withdraw rats from interactable
             List<Rat> withdrawnRats = interactable.WithdrawRats(ratInventory);
 
             return withdrawnRats != null;

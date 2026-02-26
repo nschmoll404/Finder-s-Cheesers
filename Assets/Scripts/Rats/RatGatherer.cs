@@ -205,6 +205,12 @@ namespace FindersCheesers
                     continue;
                 }
 
+                // Check if rat can be gathered (drop cooldown check)
+                if (!rat.CanBeGathered(transform.position))
+                {
+                    continue;
+                }
+
                 // Check if rat matches tag (if specified)
                 if (!string.IsNullOrEmpty(autoGatherRatTag) && !collider.gameObject.CompareTag(autoGatherRatTag))
                 {

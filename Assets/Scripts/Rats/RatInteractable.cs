@@ -15,10 +15,6 @@ namespace FindersCheesers
         [SerializeField]
         private string interactionDescription = "Deposit rats";
 
-        [Tooltip("The number of rats required to interact with this interactable")]
-        [SerializeField]
-        private int ratCost = 1;
-
         [Tooltip("Maximum number of rats this interactable can accept (-1 for unlimited)")]
         [SerializeField]
         private int maxRatsToAccept = -1;
@@ -65,12 +61,7 @@ namespace FindersCheesers
         public event System.Action<List<Rat>> OnRatsWithdrawn;
 
         /// <summary>
-        /// Gets the number of rats required to interact with this interactable.
-        /// </summary>
-        public int RatCost => ratCost;
-
-        /// <summary>
-        /// Gets the number of rats currently deposited in this interactable.
+        /// Gets number of rats currently deposited in this interactable.
         /// </summary>
         public int DepositedRatsCount => depositedRats.Count;
 
@@ -124,8 +115,8 @@ namespace FindersCheesers
                 return false;
             }
 
-            // Check if there's room for the rat cost
-            if (maxRatsToAccept >= 0 && depositedRats.Count + ratCost > maxRatsToAccept)
+            // Check if there's room for at least one more rat
+            if (maxRatsToAccept >= 0 && depositedRats.Count >= maxRatsToAccept)
             {
                 return false;
             }
@@ -168,15 +159,6 @@ namespace FindersCheesers
                 return false;
             }
 
-            // Check if the number of rats matches the cost
-            if (rats.Count != ratCost)
-            {
-                string reason = $"Expected {ratCost} rats, but received {rats.Count}.";
-                OnRatsInteractionFailed?.Invoke(rats, reason);
-                Debug.LogWarning($"[RatInteractable] {reason}");
-                return false;
-            }
-
             // Validate all rats
             foreach (Rat rat in rats)
             {
@@ -203,7 +185,7 @@ namespace FindersCheesers
                     rat.IsDeposited = true;
                 }
 
-                // Add all rats to deposited list
+                // Add all rats to the deposited list
                 depositedRats.AddRange(rats);
 
                 // Fire the deposited event after successful interaction
@@ -301,21 +283,6 @@ namespace FindersCheesers
                 rat.IsDeposited = false;
             }
 
-            if (!allAdded)
-            {
-                // Rollback - remove any rats that were added
-                foreach (Rat rat in ratsToWithdraw)
-                {
-                    ratInventory.RemoveRat(rat);
-                }
-
-                if (debugMode)
-                {
-                    Debug.LogWarning("[RatInteractable] Failed to return rats to inventory.");
-                }
-                return null;
-            }
-
             // Clear the deposited rats list
             depositedRats.Clear();
 
@@ -350,8 +317,8 @@ namespace FindersCheesers
         /// <returns>True if the interaction was successful, false otherwise.</returns>
         protected virtual bool ProcessRatInteraction(List<Rat> rats)
         {
-            // Default implementation just accepts the rats
-            // Derived classes should override this to do something with the rats
+            // Default implementation just accepts rats
+            // Derived classes should override this to do something with rats
             return true;
         }
 
@@ -365,19 +332,6 @@ namespace FindersCheesers
             if (debugMode)
             {
                 Debug.Log($"[RatInteractable] Can accept rats set to: {canAccept}");
-            }
-        }
-
-        /// <summary>
-        /// Sets the rat cost.
-        /// </summary>
-        /// <param name="cost">The new rat cost.</param>
-        public void SetRatCost(int cost)
-        {
-            ratCost = Mathf.Max(1, cost);
-            if (debugMode)
-            {
-                Debug.Log($"[RatInteractable] Rat cost set to: {ratCost}");
             }
         }
 
@@ -421,7 +375,7 @@ namespace FindersCheesers
             {
                 return $"{interactionDescription} (Full)";
             }
-            return $"{interactionDescription} (Cost: {ratCost} rat{(ratCost > 1 ? "s" : "")})";
+            return $"{interactionDescription} ({depositedRats.Count}/{(maxRatsToAccept < 0 ? "∞" : maxRatsToAccept.ToString())})";
         }
 
         private void OnDrawGizmos()
@@ -436,7 +390,7 @@ namespace FindersCheesers
                 #if UNITY_EDITOR
                 string status = HasDepositedRats && AllowWithdrawal ? "Withdraw" : (IsFull ? "Full" : "Deposit");
                 UnityEditor.Handles.Label(transform.position + Vector3.up * 0.5f, 
-                    $"{interactionDescription}\n{status}: {depositedRats.Count}/{(maxRatsToAccept < 0 ? "∞" : maxRatsToAccept.ToString())}\nCost: {ratCost}");
+                    $"{interactionDescription}\n{status}: {depositedRats.Count}/{(maxRatsToAccept < 0 ? "∞" : maxRatsToAccept.ToString())}");
                 #endif
             }
         }

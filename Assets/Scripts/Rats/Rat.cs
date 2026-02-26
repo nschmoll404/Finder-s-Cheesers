@@ -42,6 +42,19 @@ namespace FindersCheesers
         [SerializeField]
         private bool enableNavAgentOnDisperse = true;
 
+        [Header("Drop Cooldown Settings")]
+        [Tooltip("If enabled, rats cannot be auto-gathered until conditions are met after being dropped")]
+        [SerializeField]
+        private bool enableDropCooldown = true;
+
+        [Tooltip("Minimum time (in seconds) before a dropped rat can be gathered again")]
+        [SerializeField]
+        private float dropCooldownTime = 2f;
+
+        [Tooltip("Minimum distance (in units) the gatherer must be from the drop point before the rat can be gathered again")]
+        [SerializeField]
+        private float dropCooldownDistance = 3f;
+
         [Header("Debug")]
         [Tooltip("Show debug information in the console")]
         [SerializeField]
@@ -54,6 +67,11 @@ namespace FindersCheesers
         private bool isMovingToInventory = false;
         private bool isRunningAway = false;
         private Vector3 targetPosition;
+
+        // Drop cooldown state
+        private Vector3 dropPosition;
+        private float dropTime;
+        private bool hasBeenDropped = false;
 
         /// <summary>
         /// Gets the movement speed of this rat.
@@ -126,6 +144,21 @@ namespace FindersCheesers
         /// Gets the position of this rat in world space.
         /// </summary>
         public Vector3 Position => transform.position;
+
+        /// <summary>
+        /// Gets whether drop cooldown is enabled for this rat.
+        /// </summary>
+        public bool IsDropCooldownEnabled => enableDropCooldown;
+
+        /// <summary>
+        /// Gets the drop cooldown time in seconds.
+        /// </summary>
+        public float DropCooldownTime => dropCooldownTime;
+
+        /// <summary>
+        /// Gets the drop cooldown distance in units.
+        /// </summary>
+        public float DropCooldownDistance => dropCooldownDistance;
 
         private void Awake()
         {
@@ -446,6 +479,79 @@ namespace FindersCheesers
         public void SetMovementSpeed(float speed)
         {
             movementSpeed = Mathf.Max(0.1f, speed);
+        }
+
+        /// <summary>
+        /// Marks this rat as having been dropped, starting the cooldown period.
+        /// </summary>
+        public void MarkAsDropped()
+        {
+            if (!enableDropCooldown)
+            {
+                return;
+            }
+
+            dropPosition = transform.position;
+            dropTime = Time.time;
+            hasBeenDropped = true;
+
+            if (debugMode)
+            {
+                Debug.Log($"[Rat] Marked as dropped. Rat ID: {RatId}, Position: {dropPosition}, Time: {dropTime}");
+            }
+        }
+
+        /// <summary>
+        /// Checks if this rat can be gathered based on cooldown conditions.
+        /// </summary>
+        /// <param name="gathererPosition">The position of the gatherer attempting to gather this rat.</param>
+        /// <returns>True if the rat can be gathered, false otherwise.</returns>
+        public bool CanBeGathered(Vector3 gathererPosition)
+        {
+            // If cooldown is disabled, always allow gathering
+            if (!enableDropCooldown)
+            {
+                return true;
+            }
+
+            // If the rat hasn't been dropped, it can be gathered
+            if (!hasBeenDropped)
+            {
+                return true;
+            }
+
+            // Check time condition
+            float timeSinceDrop = Time.time - dropTime;
+            bool timeConditionMet = timeSinceDrop >= dropCooldownTime;
+
+            // Check distance condition
+            float distanceFromDrop = Vector3.Distance(gathererPosition, dropPosition);
+            bool distanceConditionMet = distanceFromDrop >= dropCooldownDistance;
+
+            // Rat can be gathered if either condition is met
+            bool canGather = timeConditionMet || distanceConditionMet;
+
+            if (debugMode && !canGather)
+            {
+                Debug.Log($"[Rat] Cannot be gathered yet. Rat ID: {RatId}, Time since drop: {timeSinceDrop:F2}s (need {dropCooldownTime}s), Distance from drop: {distanceFromDrop:F2} (need {dropCooldownDistance})");
+            }
+
+            return canGather;
+        }
+
+        /// <summary>
+        /// Resets the drop cooldown state.
+        /// </summary>
+        public void ResetDropCooldown()
+        {
+            hasBeenDropped = false;
+            dropPosition = Vector3.zero;
+            dropTime = 0f;
+
+            if (debugMode)
+            {
+                Debug.Log($"[Rat] Drop cooldown reset. Rat ID: {RatId}");
+            }
         }
 
         private void OnDestroy()

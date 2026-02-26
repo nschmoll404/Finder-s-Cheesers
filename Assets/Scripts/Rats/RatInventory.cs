@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace FindersCheesers
 {
@@ -167,6 +168,23 @@ namespace FindersCheesers
         [SerializeField]
         private RatPackController ratPackController;
 
+        [Header("Drop Rat Settings")]
+        [Tooltip("Input action for dropping a rat from the inventory")]
+        [SerializeField]
+        private InputActionReference dropRatInput;
+
+        [Tooltip("Distance in front of the player to drop the rat")]
+        [SerializeField]
+        private float dropDistance = 2f;
+
+        [Tooltip("Whether to drop rats randomly around the drop point")]
+        [SerializeField]
+        private bool randomizeDropPosition = false;
+
+        [Tooltip("Random radius for dropping rats when randomized")]
+        [SerializeField]
+        private float dropRandomRadius = 0.5f;
+
         // Inventory of rats
         private readonly List<Rat> rats = new List<Rat>();
 
@@ -277,6 +295,38 @@ namespace FindersCheesers
                         AddRat(rat);
                     }
                 }
+            }
+        }
+
+        private void OnEnable()
+        {
+            // Subscribe to drop rat input
+            if (dropRatInput != null)
+            {
+                dropRatInput.action.Enable();
+                dropRatInput.action.performed += OnDropRatInput;
+            }
+        }
+
+        private void OnDisable()
+        {
+            // Unsubscribe from drop rat input
+            if (dropRatInput != null)
+            {
+                dropRatInput.action.performed -= OnDropRatInput;
+                dropRatInput.action.Disable();
+            }
+        }
+
+        /// <summary>
+        /// Handles the drop rat input action.
+        /// </summary>
+        /// <param name="context">The input action context.</param>
+        private void OnDropRatInput(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                DropRat();
             }
         }
 
@@ -782,6 +832,9 @@ namespace FindersCheesers
             // Disable NavMeshAgent when rat is picked up
             rat.DisableNavAgent();
 
+            // Reset drop cooldown when rat is added to inventory
+            rat.ResetDropCooldown();
+
             OnRatAdded?.Invoke(rat);
 
             if (debugMode)
@@ -864,6 +917,83 @@ namespace FindersCheesers
         }
 
         /// <summary>
+        /// Drops a rat from the inventory at a position in front of the owner.
+        /// </summary>
+        /// <returns>The dropped rat, or null if no rats were available.</returns>
+        public Rat DropRat()
+        {
+            if (rats.Count == 0)
+            {
+                if (debugMode)
+                {
+                    Debug.LogWarning("[RatInventory] No rats to drop.");
+                }
+                return null;
+            }
+
+            // Get the last rat in the inventory (most recently added)
+            Rat ratToDrop = rats[rats.Count - 1];
+
+            if (ratToDrop == null)
+            {
+                if (debugMode)
+                {
+                    Debug.LogWarning("[RatInventory] Rat to drop is null.");
+                }
+                return null;
+            }
+
+            // Calculate drop position in front of the owner
+            Vector3 dropPosition = CalculateDropPosition();
+
+            // Remove rat from inventory
+            RemoveRat(ratToDrop);
+
+            // Set the rat's position
+            ratToDrop.transform.position = dropPosition;
+
+            // Reset rat's rotation to face forward
+            ratToDrop.transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
+
+            // Mark the rat as dropped to start cooldown
+            ratToDrop.MarkAsDropped();
+
+            if (debugMode)
+            {
+                Debug.Log($"[RatInventory] Dropped rat at position: {dropPosition}");
+            }
+
+            return ratToDrop;
+        }
+
+        /// <summary>
+        /// Calculates the position where a rat should be dropped.
+        /// </summary>
+        /// <returns>The drop position.</returns>
+        private Vector3 CalculateDropPosition()
+        {
+            Vector3 dropPosition = transform.position;
+
+            // Get forward direction, ignoring vertical component
+            Vector3 forwardDirection = transform.forward;
+            forwardDirection.y = 0f;
+            forwardDirection = forwardDirection.normalized;
+
+            // Calculate position in front of the owner
+            dropPosition += forwardDirection * dropDistance;
+
+            // Add random offset if enabled
+            if (randomizeDropPosition)
+            {
+                Vector2 randomOffset = Random.insideUnitCircle * dropRandomRadius;
+                dropPosition.x += randomOffset.x;
+                dropPosition.z += randomOffset.y;
+            }
+
+            return dropPosition;
+        }
+
+        /// <summary>
         /// Gathers all rats within the gather radius and makes them move toward this inventory.
         /// </summary>
         /// <returns>The number of rats gathered.</returns>
@@ -914,6 +1044,12 @@ namespace FindersCheesers
 
                 // Skip if running away
                 if (rat.IsRunningAway)
+                {
+                    continue;
+                }
+
+                // Check if rat can be gathered (drop cooldown check)
+                if (!rat.CanBeGathered(transform.position))
                 {
                     continue;
                 }
