@@ -75,6 +75,9 @@ namespace FindersCheesers
         private Vector3 currentVelocity;
         private bool isMoving;
         private Quaternion currentRotation;
+        
+        // Movement override - allows external systems (like SplineRider) to take control
+        private bool isMovementOverridden = false;
 
         private void Awake()
         {
@@ -188,6 +191,12 @@ namespace FindersCheesers
         /// </summary>
         private void HandleMovement()
         {
+            // Skip movement if overridden by external system (e.g., SplineRider)
+            if (isMovementOverridden)
+            {
+                return;
+            }
+
             Vector3 targetVelocity = Vector3.zero;
 
             if (isMoving)
@@ -237,6 +246,12 @@ namespace FindersCheesers
         /// </summary>
         private void HandleRotation()
         {
+            // Skip rotation if overridden by external system (e.g., SplineRider)
+            if (isMovementOverridden)
+            {
+                return;
+            }
+
             if (!isMoving)
             {
                 return;
@@ -316,6 +331,25 @@ namespace FindersCheesers
         public bool IsMoving()
         {
             return isMoving;
+        }
+
+        /// <summary>
+        /// Sets whether movement is overridden by an external system.
+        /// When overridden, the controller will not apply velocity or rotation.
+        /// </summary>
+        /// <param name="overridden">True if movement should be overridden.</param>
+        public void SetMovementOverride(bool overridden)
+        {
+            isMovementOverridden = overridden;
+        }
+
+        /// <summary>
+        /// Gets whether movement is currently overridden.
+        /// </summary>
+        /// <returns>True if movement is overridden, false otherwise.</returns>
+        public bool IsMovementOverridden()
+        {
+            return isMovementOverridden;
         }
 
         private void OnDrawGizmos()
