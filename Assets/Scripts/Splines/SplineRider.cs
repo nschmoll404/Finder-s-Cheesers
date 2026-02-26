@@ -87,6 +87,8 @@ namespace FindersCheesers.Splines
         public event System.Action OnSplineAttached;
         public event System.Action OnSplineDetached;
         public event System.Action<float> OnSplineProgressChanged; // float is normalized progress (0-1)
+        public event System.Action OnRide; // Fired continuously while riding
+        public event System.Action OnRideEnd; // Fired when the ride ends (detached)
 
         // Public properties
         public bool IsRiding => isRiding;
@@ -321,6 +323,9 @@ namespace FindersCheesers.Splines
 
             // Fire progress event
             OnSplineProgressChanged?.Invoke(currentSplinePosition);
+
+            // Fire ride event
+            OnRide?.Invoke();
         }
 
         private void UpdateRidingPhysics()
@@ -367,6 +372,7 @@ namespace FindersCheesers.Splines
 
             UpdateVisualState();
             OnSplineDetached?.Invoke();
+            OnRideEnd?.Invoke();
         }
 
         #endregion

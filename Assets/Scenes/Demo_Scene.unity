@@ -388,6 +388,7 @@ GameObject:
   - component: {fileID: 94278677}
   - component: {fileID: 94278678}
   - component: {fileID: 94278679}
+  - component: {fileID: 94278680}
   m_Layer: 7
   m_Name: RatPackController
   m_TagString: Player
@@ -478,7 +479,7 @@ MonoBehaviour:
   supportRadius: 2.31
   ratPositioningSpeed: 5
   ratPositioningUpdateMode: 1
-  followingMode: 0
+  followingMode: 1
   trailSpacing: 0.5
   trailStartOffset: 0.5
   trailRecordInterval: 0.05
@@ -605,6 +606,28 @@ MonoBehaviour:
   nearbyColor: {r: 0, g: 1, b: 0, a: 1}
   ridingColor: {r: 0, g: 1, b: 1, a: 1}
   changeColor: 1
+--- !u!114 &94278680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 94278670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: caf028406fbd8224d80d43cb8174e63c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.Splines.SplineRiderActionRunner
+  _rideActionRunner:
+    _actions: []
+  _rideEndActionRunner:
+    _actions: []
+  _runContinuously: 1
+  _executionInterval: 0
+  _clearAfterRide: 0
+  references:
+    version: 2
+    RefIds: []
 --- !u!1 &160989957
 GameObject:
   m_ObjectHideFlags: 0
@@ -4046,6 +4069,7 @@ MonoBehaviour:
   highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   highlightOnProximity: 1
   proximityRadius: 3
+  interactionDescription: Ride Spline
 --- !u!65 &1238338959
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4541,6 +4565,7 @@ GameObject:
   - component: {fileID: 1549031481}
   - component: {fileID: 1549031480}
   - component: {fileID: 1549031479}
+  - component: {fileID: 1549031484}
   m_Layer: 0
   m_Name: SplineBegin
   m_TagString: Untagged
@@ -4569,6 +4594,7 @@ MonoBehaviour:
   highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   highlightOnProximity: 1
   proximityRadius: 3
+  interactionDescription: Ride Spline
 --- !u!65 &1549031480
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4661,6 +4687,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 170.632, z: 0}
+--- !u!114 &1549031484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1549031478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c5f606cc11a8894fa7834e5193bf8e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.InteractableActionRunner
+  _actionRunner:
+    _actions:
+    - rid: -2
+  _runOnSuccessOnly: 1
+  _clearAfterRun: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
 --- !u!1 &1608688453
 GameObject:
   m_ObjectHideFlags: 0

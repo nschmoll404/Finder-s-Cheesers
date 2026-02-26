@@ -1,14 +1,16 @@
 using UnityEngine;
 using UnityEngine.Splines;
+using FindersCheesers;
 
 namespace FindersCheesers.Splines
 {
     /// <summary>
-    /// Marks the beginning point of a spline that a SplineRider can attach to.
-    /// Requires a collider to be detected by the SplineRider.
+    /// Marks beginning point of a spline that a SplineRider can attach to.
+    /// Requires a collider to be detected by SplineRider.
+    /// Implements IInteractable for player interaction.
     /// </summary>
     [RequireComponent(typeof(Collider))]
-    public class SplineBegin : MonoBehaviour
+    public class SplineBegin : MonoBehaviour, IInteractable
     {
         [Header("Spline Settings")]
         [SerializeField]
@@ -48,11 +50,19 @@ namespace FindersCheesers.Splines
         [Tooltip("Detection radius for highlighting")]
         private float proximityRadius = 3f;
 
+        [Header("Interaction Settings")]
+        [SerializeField]
+        [Tooltip("Description shown when player can interact with this spline")]
+        private string interactionDescription = "Ride Spline";
+
         // Cached references
         private Collider splineCollider;
         private Renderer objectRenderer;
         private Color originalColor;
         private bool hasOriginalColor;
+
+        // IInteractable event
+        public event System.Action<GameObject, bool> OnInteracted;
 
         // Public properties
         public SplineContainer SplineContainer => splineContainer;
@@ -61,6 +71,10 @@ namespace FindersCheesers.Splines
         public bool AutoAttachOnCollision => autoAttachOnCollision;
         public float RideSpeed => rideSpeed;
         public bool DetachAtEnd => detachAtEnd;
+
+        // IInteractable implementation
+        string IInteractable.InteractionDescription => interactionDescription;
+        Transform IInteractable.Transform => transform;
 
         private void Awake()
         {
@@ -171,5 +185,56 @@ namespace FindersCheesers.Splines
             }
             return transform.position;
         }
+
+        #region IInteractable Implementation
+
+        /// <summary>
+        /// Checks if this spline can currently be interacted with.
+        /// </summary>
+        /// <returns>True if the spline is valid and can be ridden, false otherwise.</returns>
+        public bool CanInteract()
+        {
+            return splineContainer != null && splineContainer.Splines.Count > splineIndex;
+        }
+
+        /// <summary>
+        /// Performs the interaction with this spline.
+        /// Attempts to attach the interactor's SplineRider component to this spline.
+        /// </summary>
+        /// <param name="interactor">The GameObject performing the interaction.</param>
+        /// <returns>True if the interaction was successful, false otherwise.</returns>
+        public bool Interact(GameObject interactor)
+        {
+            bool success = false;
+
+            if (interactor == null)
+            {
+                OnInteracted?.Invoke(interactor, false);
+                return false;
+            }
+
+            // Try to find SplineRider component on the interactor
+            SplineRider rider = interactor.GetComponent<SplineRider>();
+            if (rider != null)
+            {
+                rider.AttachToSpline(this);
+                success = true;
+            }
+            else
+            {
+                // Try to find SplineRider on children
+                rider = interactor.GetComponentInChildren<SplineRider>();
+                if (rider != null)
+                {
+                    rider.AttachToSpline(this);
+                    success = true;
+                }
+            }
+
+            OnInteracted?.Invoke(interactor, success);
+            return success;
+        }
+
+        #endregion
     }
 }
