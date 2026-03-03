@@ -11485,6 +11485,9 @@ MonoBehaviour:
   movementSpeed: 3
   disableNavAgentOnPickup: 1
   enableNavAgentOnDisperse: 1
+  enableDropCooldown: 1
+  dropCooldownTime: 2
+  dropCooldownDistance: 3
   debugMode: 0
 --- !u!114 &297374007495458448
 MonoBehaviour:
@@ -11505,6 +11508,9 @@ MonoBehaviour:
   movementSpeed: 3
   disableNavAgentOnPickup: 1
   enableNavAgentOnDisperse: 1
+  enableDropCooldown: 1
+  dropCooldownTime: 2
+  dropCooldownDistance: 3
   debugMode: 0
 --- !u!114 &297374007985591124
 MonoBehaviour:
@@ -11525,6 +11531,9 @@ MonoBehaviour:
   movementSpeed: 3
   disableNavAgentOnPickup: 1
   enableNavAgentOnDisperse: 1
+  enableDropCooldown: 1
+  dropCooldownTime: 2
+  dropCooldownDistance: 3
   debugMode: 0
 --- !u!114 &297374008224635790
 MonoBehaviour:
@@ -11545,6 +11554,9 @@ MonoBehaviour:
   movementSpeed: 3
   disableNavAgentOnPickup: 1
   enableNavAgentOnDisperse: 1
+  enableDropCooldown: 1
+  dropCooldownTime: 2
+  dropCooldownDistance: 3
   debugMode: 0
 --- !u!33 &399478167158585880
 MeshFilter:
@@ -11963,6 +11975,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5885460930640419269}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &832994568833921369
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2332787002797478241, guid: 76fec06cd6dfaee46acf91a7400b381f, type: 3}
+      propertyPath: m_Name
+      value: littlerats
+      objectReference: {fileID: 0}
+    - target: {fileID: 3104222349886753755, guid: 76fec06cd6dfaee46acf91a7400b381f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -26.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3104222349886753755, guid: 76fec06cd6dfaee46acf91a7400b381f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -3.98
+      objectReference: {fileID: 0}
+    - target: {fileID: 3104222349886753755, guid: 76fec06cd6dfaee46acf91a7400b381f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -120.71
+      objectReference: {fileID: 0}
+    - target: {fileID: 3104222349886753755, guid: 76fec06cd6dfaee46acf91a7400b381f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3104222349886753755, guid: 76fec06cd6dfaee46acf91a7400b381f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3104222349886753755, guid: 76fec06cd6dfaee46acf91a7400b381f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3104222349886753755, guid: 76fec06cd6dfaee46acf91a7400b381f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3104222349886753755, guid: 76fec06cd6dfaee46acf91a7400b381f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3104222349886753755, guid: 76fec06cd6dfaee46acf91a7400b381f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3104222349886753755, guid: 76fec06cd6dfaee46acf91a7400b381f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 76fec06cd6dfaee46acf91a7400b381f, type: 3}
 --- !u!23 &835567596466372637
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -13387,6 +13456,9 @@ MonoBehaviour:
   movementSpeed: 3
   disableNavAgentOnPickup: 1
   enableNavAgentOnDisperse: 1
+  enableDropCooldown: 1
+  dropCooldownTime: 2
+  dropCooldownDistance: 3
   debugMode: 0
 --- !u!114 &1595221097189210681
 MonoBehaviour:
@@ -13407,6 +13479,9 @@ MonoBehaviour:
   movementSpeed: 3
   disableNavAgentOnPickup: 1
   enableNavAgentOnDisperse: 1
+  enableDropCooldown: 1
+  dropCooldownTime: 2
+  dropCooldownDistance: 3
   debugMode: 0
 --- !u!114 &1595221097546176509
 MonoBehaviour:
@@ -13427,6 +13502,9 @@ MonoBehaviour:
   movementSpeed: 3
   disableNavAgentOnPickup: 1
   enableNavAgentOnDisperse: 1
+  enableDropCooldown: 1
+  dropCooldownTime: 2
+  dropCooldownDistance: 3
   debugMode: 0
 --- !u!114 &1595221097852264231
 MonoBehaviour:
@@ -13447,6 +13525,9 @@ MonoBehaviour:
   movementSpeed: 3
   disableNavAgentOnPickup: 1
   enableNavAgentOnDisperse: 1
+  enableDropCooldown: 1
+  dropCooldownTime: 2
+  dropCooldownDistance: 3
   debugMode: 0
 --- !u!33 &1695634334739496625
 MeshFilter:
@@ -21317,7 +21398,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2732817235591053658, guid: 01c0c28b4ed6f2046a68b98a26e02aac, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.91
+      value: 1.61
       objectReference: {fileID: 0}
     - target: {fileID: 2732817235591053658, guid: 01c0c28b4ed6f2046a68b98a26e02aac, type: 3}
       propertyPath: m_LocalPosition.z
@@ -24633,3 +24714,4 @@ SceneRoots:
   - {fileID: 1199678655}
   - {fileID: 430872695}
   - {fileID: 677142183}
+  - {fileID: 832994568833921369}
