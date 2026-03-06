@@ -407,12 +407,18 @@ namespace FindersCheesers
 
             // Check if waypoint is reached
             bool waypointReached = false;
-            
+
             if (enemyAI.UseNavMeshAgent && enemyAI.IsNavMeshAgentAvailable)
             {
                 // Use NavMeshAgent's remaining distance to check if waypoint is reached
                 waypointReached = enemyAI.NavMeshAgent.remainingDistance <= waypointThreshold &&
                                enemyAI.NavMeshAgent.hasPath;
+            }
+            else if (enemyAI.UseNavAgentHopping && enemyAI.IsNavAgentHoppingAvailable)
+            {
+                // Use NavAgentHoppingController's remaining distance to check if waypoint is reached
+                waypointReached = enemyAI.NavAgentHoppingController.RemainingDistance <= waypointThreshold &&
+                               enemyAI.NavAgentHoppingController.HasPath;
             }
             else
             {
@@ -500,6 +506,15 @@ namespace FindersCheesers
             if (enemyAI.UseNavMeshAgent && enemyAI.IsNavMeshAgentAvailable)
             {
                 enemyAI.NavMeshAgent.ResetPath();
+            }
+            // Set new destination for NavAgentHoppingController to force recalculation for new waypoint
+            else if (enemyAI.UseNavAgentHopping && enemyAI.IsNavAgentHoppingAvailable)
+            {
+                if (debugMode)
+                {
+                    Debug.Log($"[PatrollingAI] AdvanceToNextWaypoint: Calling SetDestination() for waypoint {CurrentWaypointIndex}");
+                }
+                enemyAI.NavAgentHoppingController.SetDestination(waypoints[CurrentWaypointIndex].position);
             }
 
             if (debugMode)

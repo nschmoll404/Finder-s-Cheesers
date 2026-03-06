@@ -284,6 +284,11 @@ namespace FindersCheesers
                 atPosition = enemyAI.NavMeshAgent.remainingDistance <= lastKnownPositionThreshold &&
                            enemyAI.NavMeshAgent.hasPath;
             }
+            else if (enemyAI.UseNavAgentHopping && enemyAI.IsNavAgentHoppingAvailable)
+            {
+                atPosition = enemyAI.NavAgentHoppingController.RemainingDistance <= lastKnownPositionThreshold &&
+                           enemyAI.NavAgentHoppingController.HasPath;
+            }
             else
             {
                 atPosition = Vector3.Distance(transform.position, LastKnownPosition) < lastKnownPositionThreshold;
@@ -302,6 +307,11 @@ namespace FindersCheesers
             if (enemyAI.UseNavMeshAgent && enemyAI.IsNavMeshAgentAvailable)
             {
                 enemyAI.NavMeshAgent.ResetPath();
+            }
+            // Reset NavAgentHoppingController path to force recalculation
+            else if (enemyAI.UseNavAgentHopping && enemyAI.IsNavAgentHoppingAvailable)
+            {
+                enemyAI.NavAgentHoppingController.RecalculatePath();
             }
 
             // Restore original speeds for returning
@@ -360,12 +370,18 @@ namespace FindersCheesers
         {
             // Check if last known position is reached
             bool positionReached = false;
-            
+
             if (enemyAI.UseNavMeshAgent && enemyAI.IsNavMeshAgentAvailable)
             {
                 // Use NavMeshAgent's remaining distance to check if position is reached
                 positionReached = enemyAI.NavMeshAgent.remainingDistance <= lastKnownPositionThreshold &&
                                enemyAI.NavMeshAgent.hasPath;
+            }
+            else if (enemyAI.UseNavAgentHopping && enemyAI.IsNavAgentHoppingAvailable)
+            {
+                // Use NavAgentHoppingController's remaining distance to check if position is reached
+                positionReached = enemyAI.NavAgentHoppingController.RemainingDistance <= lastKnownPositionThreshold &&
+                               enemyAI.NavAgentHoppingController.HasPath;
             }
             else
             {

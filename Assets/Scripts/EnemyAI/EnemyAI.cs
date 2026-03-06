@@ -50,9 +50,9 @@ namespace FindersCheesers
         [SerializeField]
         private float rotationSpeed = 5f;
 
-        [Tooltip("Whether to use NavMeshAgent for movement")]
+        [Tooltip("Movement mode: NavMeshAgent, NavAgentHopping, or Direct")]
         [SerializeField]
-        private bool useNavMeshAgent = true;
+        private MovementMode movementMode = MovementMode.NavMeshAgent;
 
         [Tooltip("Angular speed for NavMeshAgent rotation")]
         [SerializeField]
@@ -61,6 +61,10 @@ namespace FindersCheesers
         [Tooltip("Stopping distance for NavMeshAgent")]
         [SerializeField]
         private float navMeshStoppingDistance = 0.5f;
+
+        [Tooltip("Whether to use NavMeshAgent for movement (legacy, use movementMode instead)")]
+        [SerializeField]
+        private bool useNavMeshAgent = true;
 
         [Tooltip("Whether the AI is active and processing")]
         [SerializeField]
@@ -106,9 +110,27 @@ namespace FindersCheesers
 
         #endregion
 
+        #region Enums
+
+        /// <summary>
+        /// Defines the movement mode for the AI.
+        /// </summary>
+        public enum MovementMode
+        {
+            /// <summary>Use NavMeshAgent for movement</summary>
+            NavMeshAgent,
+            /// <summary>Use NavAgentHoppingController for physics-based hopping</summary>
+            NavAgentHopping,
+            /// <summary>Use direct movement without pathfinding</summary>
+            Direct
+        }
+
+        #endregion
+
         #region Component References
 
         private UnityEngine.AI.NavMeshAgent navMeshAgent;
+        private NavAgentHoppingController navAgentHoppingController;
 
         #endregion
 
@@ -216,9 +238,19 @@ namespace FindersCheesers
         }
 
         /// <summary>
+        /// Gets the current movement mode.
+        /// </summary>
+        public MovementMode CurrentMovementMode => movementMode;
+
+        /// <summary>
         /// Gets whether NavMeshAgent is being used for movement.
         /// </summary>
-        public bool UseNavMeshAgent => useNavMeshAgent;
+        public bool UseNavMeshAgent => movementMode == MovementMode.NavMeshAgent;
+
+        /// <summary>
+        /// Gets whether NavAgentHoppingController is being used for movement.
+        /// </summary>
+        public bool UseNavAgentHopping => movementMode == MovementMode.NavAgentHopping;
 
         /// <summary>
         /// Gets the NavMeshAgent component (null if not available).
@@ -226,9 +258,19 @@ namespace FindersCheesers
         public UnityEngine.AI.NavMeshAgent NavMeshAgent => navMeshAgent;
 
         /// <summary>
+        /// Gets the NavAgentHoppingController component (null if not available).
+        /// </summary>
+        public NavAgentHoppingController NavAgentHoppingController => navAgentHoppingController;
+
+        /// <summary>
         /// Gets whether NavMeshAgent is available and enabled.
         /// </summary>
         public bool IsNavMeshAgentAvailable => navMeshAgent != null && navMeshAgent.enabled;
+
+        /// <summary>
+        /// Gets whether NavAgentHoppingController is available.
+        /// </summary>
+        public bool IsNavAgentHoppingAvailable => navAgentHoppingController != null;
 
         #endregion
 
@@ -238,7 +280,10 @@ namespace FindersCheesers
         {
             // Get NavMeshAgent component if it exists
             navMeshAgent = GetComponent<UnityEngine.AI.NavMeshAgent>();
-            
+
+            // Get NavAgentHoppingController component if it exists
+            navAgentHoppingController = GetComponent<NavAgentHoppingController>();
+
             // Configure NavMeshAgent if available
             if (navMeshAgent != null)
             {
@@ -246,6 +291,13 @@ namespace FindersCheesers
                 navMeshAgent.angularSpeed = navMeshAngularSpeed;
                 navMeshAgent.stoppingDistance = navMeshStoppingDistance;
                 navMeshAgent.autoBraking = true;
+            }
+
+            // Configure NavAgentHoppingController if available
+            if (navAgentHoppingController != null)
+            {
+                // Configure hopping controller with movement settings
+                // Note: NavAgentHoppingController has its own hop force settings
             }
         }
 
@@ -281,20 +333,31 @@ namespace FindersCheesers
         public void MoveTowards(Vector3 targetPosition, float deltaTime)
         {
             // Use NavMeshAgent if available and enabled
-            if (useNavMeshAgent && IsNavMeshAgentAvailable)
+            if (UseNavMeshAgent && IsNavMeshAgentAvailable)
             {
                 // Set destination if not already set
                 if (navMeshAgent.destination != targetPosition || !navMeshAgent.hasPath)
                 {
                     navMeshAgent.SetDestination(targetPosition);
                 }
-                
+
                 // Update speed
                 navMeshAgent.speed = moveSpeed;
 
                 if (debugMode)
                 {
                     Debug.Log($"[EnemyAI] Moving towards {targetPosition} using NavMeshAgent");
+                }
+            }
+            // Use NavAgentHoppingController if available
+            else if (UseNavAgentHopping && IsNavAgentHoppingAvailable)
+            {
+                // Set destination for hopping controller
+                navAgentHoppingController.SetDestination(targetPosition);
+
+                if (debugMode)
+                {
+                    Debug.Log($"[EnemyAI] Moving towards {targetPosition} using NavAgentHoppingController");
                 }
             }
             else
@@ -323,11 +386,18 @@ namespace FindersCheesers
         public void FaceTarget(Vector3 targetPosition, float deltaTime)
         {
             // NavMeshAgent handles rotation automatically when moving
-            if (useNavMeshAgent && IsNavMeshAgentAvailable)
+            if (UseNavMeshAgent && IsNavMeshAgentAvailable)
             {
                 // NavMeshAgent handles rotation, so we don't need to manually rotate
                 // But we can update the angular speed if needed
                 navMeshAgent.angularSpeed = navMeshAngularSpeed;
+                return;
+            }
+
+            // NavAgentHoppingController handles rotation automatically when hopping
+            if (UseNavAgentHopping && IsNavAgentHoppingAvailable)
+            {
+                // NavAgentHoppingController handles rotation internally
                 return;
             }
 
@@ -420,6 +490,11 @@ namespace FindersCheesers
             if (IsNavMeshAgentAvailable)
             {
                 navMeshAgent.ResetPath();
+            }
+
+            if (IsNavAgentHoppingAvailable)
+            {
+                navAgentHoppingController.StopMoving();
             }
 
             if (debugMode)
