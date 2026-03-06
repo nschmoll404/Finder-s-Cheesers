@@ -203,6 +203,7 @@ namespace FindersCheesers
         private InputAction throwAction;
         private GameObject targetReticleInstance;
         private IThrowable throwable;
+        private GameObject currentThrowableObject; // Track any throwable object being held (not just King Rat)
 
         #endregion
 
@@ -335,6 +336,39 @@ namespace FindersCheesers
 
                 // Drop King Rat
                 ReleaseKingRat();
+            }
+
+            // Check if the held object has been destroyed (e.g., bomb exploded)
+            if (isGrabbing && detectedKingRat == null)
+            {
+                if (debugMode)
+                {
+                    Debug.LogWarning("[KingRatHandler] Held object is null! Resetting grab state.");
+                }
+
+                // Reset grab state
+                isGrabbing = false;
+                OnKingRatReleased?.Invoke();
+
+                // Switch back to the default following mode
+                if (switchToCrowdOnCarry && ratInventory != null)
+                {
+                    ratInventory.SetFollowingMode(defaultFollowingMode);
+
+                    if (debugMode)
+                    {
+                        Debug.Log($"[KingRatHandler] Switched back to {defaultFollowingMode} following mode (held object destroyed)");
+                    }
+                }
+
+                // Clear references
+                kingRatRigidbody = null;
+                throwable = null;
+
+                if (debugMode)
+                {
+                    Debug.Log("[KingRatHandler] Grab state reset. Can now pick up objects again.");
+                }
             }
 
             // Check for grab/release input
@@ -508,6 +542,21 @@ namespace FindersCheesers
             if (throwable != null)
             {
                 throwable.OnLanded -= OnKingRatLanded;
+            }
+
+            // Unsubscribe from bomb explosion event if it was a bomb
+            if (currentThrowableObject != null)
+            {
+                Bomb bomb = currentThrowableObject.GetComponent<Bomb>();
+                if (bomb != null)
+                {
+                    bomb.OnExploded -= OnBombExploded;
+
+                    if (debugMode)
+                    {
+                        Debug.Log("[KingRatHandler] Unsubscribed from bomb explosion event in OnDestroy!");
+                    }
+                }
             }
 
             // Unsubscribe from RatInventory events
@@ -815,7 +864,20 @@ namespace FindersCheesers
             if (throwableObj != null)
             {
                 throwableObj.OnPickup();
-                
+                currentThrowableObject = detectedKingRat;
+
+                // Check if this is a bomb and subscribe to its explosion event
+                Bomb bomb = detectedKingRat.GetComponent<Bomb>();
+                if (bomb != null)
+                {
+                    bomb.OnExploded += OnBombExploded;
+
+                    if (debugMode)
+                    {
+                        Debug.Log("[KingRatHandler] Subscribed to bomb explosion event!");
+                    }
+                }
+
                 if (debugMode)
                 {
                     Debug.Log("[KingRatHandler] Called OnPickup on ThrowableObject!");
@@ -884,9 +946,25 @@ namespace FindersCheesers
                     throwable.OnLanded -= OnKingRatLanded;
                 }
 
+                // Unsubscribe from bomb explosion event if it was a bomb
+                if (currentThrowableObject != null)
+                {
+                    Bomb bomb = currentThrowableObject.GetComponent<Bomb>();
+                    if (bomb != null)
+                    {
+                        bomb.OnExploded -= OnBombExploded;
+
+                        if (debugMode)
+                        {
+                            Debug.Log("[KingRatHandler] Unsubscribed from bomb explosion event!");
+                        }
+                    }
+                }
+
                 detectedKingRat = null;
                 kingRatRigidbody = null;
                 throwable = null;
+                currentThrowableObject = null;
             }
 
             if (debugMode)
@@ -895,6 +973,55 @@ namespace FindersCheesers
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Called when a bomb explodes while being held.
+        /// Resets the grab state and disperses all rats.
+        /// </summary>
+        private void OnBombExploded(Vector3 explosionPosition)
+        {
+            if (debugMode)
+            {
+                Debug.Log($"[KingRatHandler] Bomb exploded at {explosionPosition} while being held!");
+            }
+
+            // Reset grab state
+            isGrabbing = false;
+            OnKingRatReleased?.Invoke();
+
+            // Switch back to the default following mode
+            if (switchToCrowdOnCarry && ratInventory != null)
+            {
+                ratInventory.SetFollowingMode(defaultFollowingMode);
+
+                if (debugMode)
+                {
+                    Debug.Log($"[KingRatHandler] Switched back to {defaultFollowingMode} following mode (bomb exploded)");
+                }
+            }
+
+            // Clear references
+            detectedKingRat = null;
+            kingRatRigidbody = null;
+            throwable = null;
+            currentThrowableObject = null;
+
+            // Disperse all rats from inventory
+            if (ratInventory != null && ratInventory.RatCount > 0)
+            {
+                int dispersedCount = ratInventory.DisperseRats(ratInventory.RatCount);
+
+                if (debugMode)
+                {
+                    Debug.Log($"[KingRatHandler] Dispersed {dispersedCount} rats due to bomb explosion!");
+                }
+            }
+
+            if (debugMode)
+            {
+                Debug.Log("[KingRatHandler] Grab state reset. Can now pick up objects again.");
+            }
         }
 
         /// <summary>
@@ -1180,6 +1307,22 @@ namespace FindersCheesers
                 {
                     Debug.Log($"[KingRatHandler] Switched back to {defaultFollowingMode} following mode (throw)");
                 }
+            }
+
+            // Unsubscribe from bomb explosion event if it was a bomb
+            if (currentThrowableObject != null)
+            {
+                Bomb bomb = currentThrowableObject.GetComponent<Bomb>();
+                if (bomb != null)
+                {
+                    bomb.OnExploded -= OnBombExploded;
+
+                    if (debugMode)
+                    {
+                        Debug.Log("[KingRatHandler] Unsubscribed from bomb explosion event (throwing)!");
+                    }
+                }
+                currentThrowableObject = null;
             }
 
             // Move King Rat to launch position
