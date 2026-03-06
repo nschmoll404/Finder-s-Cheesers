@@ -208,6 +208,31 @@ namespace FindersCheesers
         }
 
         /// <summary>
+        /// Stops the current throw and resets physics state for external control.
+        /// This is used when external systems (like teleport triggers) need to take control of the object.
+        /// </summary>
+        public void StopThrowAndResetPhysics()
+        {
+            if (isThrowing)
+            {
+                isThrowing = false;
+            }
+
+            // Ensure physics is enabled and reset velocity
+            if (rb != null)
+            {
+                rb.isKinematic = false;
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+
+                if (debugMode)
+                {
+                    Debug.Log("[ThrowableObject] Throw stopped and physics reset");
+                }
+            }
+        }
+
+        /// <summary>
         /// Called when the object is picked up.
         /// This should be called by whatever system handles pickup logic.
         /// </summary>

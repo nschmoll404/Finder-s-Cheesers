@@ -221,6 +221,18 @@ namespace FindersCheesers
         /// <param name="targetPosition">The position to teleport to.</param>
         private void TeleportObject(GameObject obj, Vector3 targetPosition)
         {
+            // Handle ThrowableObject if present - stop throw animation before teleporting
+            ThrowableObject throwable = obj.GetComponent<ThrowableObject>();
+            if (throwable != null && throwable.IsThrowing)
+            {
+                throwable.StopThrowAndResetPhysics();
+                
+                if (debugMode)
+                {
+                    Debug.Log($"[NavMeshTeleportTrigger] Stopped throw animation for {obj.name}");
+                }
+            }
+
             // Apply vertical offset
             Vector3 finalPosition = targetPosition + Vector3.up * verticalOffset;
 
@@ -239,13 +251,22 @@ namespace FindersCheesers
             Rigidbody rb = obj.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                // Reset velocity to prevent physics issues after teleport
-                rb.linearVelocity = Vector3.zero;
-                rb.angularVelocity = Vector3.zero;
-
-                if (debugMode)
+                // Only reset velocity if the Rigidbody is not kinematic
+                // (ThrowableObject.StopThrowAndResetPhysics already handles this for throwables)
+                if (!rb.isKinematic)
                 {
-                    Debug.Log($"[NavMeshTeleportTrigger] Reset Rigidbody velocity for {obj.name}");
+                    // Reset velocity to prevent physics issues after teleport
+                    rb.linearVelocity = Vector3.zero;
+                    rb.angularVelocity = Vector3.zero;
+
+                    if (debugMode)
+                    {
+                        Debug.Log($"[NavMeshTeleportTrigger] Reset Rigidbody velocity for {obj.name}");
+                    }
+                }
+                else if (debugMode)
+                {
+                    Debug.Log($"[NavMeshTeleportTrigger] Skipping velocity reset for {obj.name} (Rigidbody is kinematic)");
                 }
             }
 
