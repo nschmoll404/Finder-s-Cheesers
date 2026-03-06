@@ -3203,6 +3203,88 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fe9edcf757a28344bbe9d4feca06a9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.Rat
+--- !u!1 &984552530
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 984552532}
+  - component: {fileID: 984552531}
+  - component: {fileID: 984552533}
+  m_Layer: 0
+  m_Name: WeightZONE
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &984552531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 984552530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07aba7e064402314880803c2e827cbf7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.WeightZone
+  zoneSize: {x: 6.05, y: 1, z: 7.54}
+  zoneCenter: {x: 0, y: 0.5, z: 0}
+  targetLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  updateInterval: 0.1
+  thresholdWeight: 2
+  debugMode: 0
+  belowThresholdColor: {r: 0, g: 1, b: 0, a: 0.3}
+  aboveThresholdColor: {r: 1, g: 0, b: 0, a: 0.3}
+--- !u!4 &984552532
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 984552530}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 11.91, y: 0.05, z: -10.8}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &984552533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 984552530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 266d282d25849344ebd23cbe2fe4dc25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.WeightZoneActionRunner
+  _onThresholdReachedActions:
+    _actions:
+    - rid: 4285165299301351496
+  _onThresholdLostActions:
+    _actions: []
+  _clearAfterRun: 0
+  _debugMode: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 4285165299301351496
+      type: {class: SetActiveAction, ns: Actions, asm: Assembly-CSharp}
+      data:
+        target: {fileID: 2008768697}
+        setActive: 1
 --- !u!1 &1006218623
 GameObject:
   m_ObjectHideFlags: 0
@@ -6646,3 +6728,4 @@ SceneRoots:
   - {fileID: 1238338962}
   - {fileID: 290816275}
   - {fileID: 149540980}
+  - {fileID: 984552532}

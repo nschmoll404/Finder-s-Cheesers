@@ -251,6 +251,7 @@ GameObject:
   - component: {fileID: 5912741348117272508}
   - component: {fileID: 5829397370876133487}
   - component: {fileID: 6427209074995708596}
+  - component: {fileID: 7677048252204840739}
   m_Layer: 6
   m_Name: KingRat
   m_TagString: KingRat
@@ -379,6 +380,19 @@ MonoBehaviour:
   damageAmount: 100
   singleHitPerPound: 1
   debugMode: 1
+--- !u!114 &7677048252204840739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4944552254280327239}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad81161aa11c1704cba58e86ed9240d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.Weight
+  weight: 4
 --- !u!1 &6391445481419123801
 GameObject:
   m_ObjectHideFlags: 0
