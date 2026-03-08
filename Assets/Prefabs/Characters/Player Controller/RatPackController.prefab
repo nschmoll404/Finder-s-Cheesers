@@ -214,6 +214,7 @@ GameObject:
   - component: {fileID: 6507795758806245615}
   - component: {fileID: 7471958214262676170}
   - component: {fileID: 4149756386440273271}
+  - component: {fileID: 7920564177833336463}
   m_Layer: 7
   m_Name: RatPackController
   m_TagString: Player
@@ -361,7 +362,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   ratPackController: {fileID: 2527029248512623407}
-  dropRatInput: {fileID: 0}
+  dropRatInput: {fileID: 1722914664841557398, guid: 855a47865bf910d4f9b7cf9ee07a6ac6, type: 3}
   dropDistance: 2
   randomizeDropPosition: 0
   dropRandomRadius: 0.5
@@ -412,6 +413,31 @@ MonoBehaviour:
   debugMode: 0
   visualizeGatherRadius: 1
   visualizeAutoGatherRadius: 1
+--- !u!114 &7920564177833336463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4623764168444344113}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.Splines.SplineRider
+  interactActionReference: {fileID: 1781555164194001046, guid: 855a47865bf910d4f9b7cf9ee07a6ac6, type: 3}
+  detachActionReference: {fileID: 0}
+  detectionRadius: 3
+  splineBeginLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  showPrompt: 0
+  followSplineRotation: 1
+  preserveVelocityOnDetach: 1
+  detachVelocityMultiplier: 1
+  nearbyColor: {r: 0, g: 1, b: 0, a: 1}
+  ridingColor: {r: 0, g: 1, b: 1, a: 1}
+  changeColor: 1
 --- !u!1 &5231091554989860528
 GameObject:
   m_ObjectHideFlags: 0
