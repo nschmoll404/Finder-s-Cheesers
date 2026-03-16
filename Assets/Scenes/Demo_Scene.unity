@@ -337,7 +337,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2732817235591053658, guid: 01c0c28b4ed6f2046a68b98a26e02aac, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.6974697
+      value: -5.07
       objectReference: {fileID: 0}
     - target: {fileID: 2732817235591053658, guid: 01c0c28b4ed6f2046a68b98a26e02aac, type: 3}
       propertyPath: m_LocalPosition.y
@@ -345,7 +345,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2732817235591053658, guid: 01c0c28b4ed6f2046a68b98a26e02aac, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5.3918905
+      value: -27.16
       objectReference: {fileID: 0}
     - target: {fileID: 2732817235591053658, guid: 01c0c28b4ed6f2046a68b98a26e02aac, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3111,7 +3111,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 886771676}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4a8b3c9d7e2f4a5b8c6d7e8f9a0b1c2d, type: 3}
   m_Name: 
@@ -3134,6 +3134,43 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5928516414462191589, guid: 6a674dc3130841d4ca2f35d4ec2b22e9, type: 3}
   m_PrefabInstance: {fileID: 5136138269500222820}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &886771695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 886771676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f16911dc0ef2604e85cff1e6fc6e077, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.GrabKingRatAI
+  kingRatTag: KingRat
+  kingRatLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  kingRatDetectionRange: 20
+  grabRange: 2
+  grabDuration: 1
+  carryOffset: {x: 0, y: 1.5, z: 0}
+  carrySmoothSpeed: 10
+  carryDistance: 10
+  minDistanceFromPlayer: 10
+  carrySpeedMultiplier: 1.5
+  dropDistance: 12
+  dropDuration: 0.5
+  throwDistance: 5
+  returnToIdleAfterDrop: 1
+  grabCooldown: 5
+  playerTag: Player
+  playerDetectionRange: 25
+  stopPatrollingWhenSeeking: 1
+  resumePatrollingAfterDrop: 1
+  maxPickupCount: 3
+  pickupCountResetTime: 60
+  debugMode: 0
+  showGizmos: 1
 --- !u!1 &889234517
 GameObject:
   m_ObjectHideFlags: 0
@@ -11784,6 +11821,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4485561154162898472, guid: 6a674dc3130841d4ca2f35d4ec2b22e9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 886771687}
+    - targetCorrespondingSourceObject: {fileID: 4485561154162898472, guid: 6a674dc3130841d4ca2f35d4ec2b22e9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 886771695}
   m_SourcePrefab: {fileID: 100100000, guid: 6a674dc3130841d4ca2f35d4ec2b22e9, type: 3}
 --- !u!1001 &5776631535886336514
 PrefabInstance:
