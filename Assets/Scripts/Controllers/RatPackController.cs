@@ -52,6 +52,18 @@ namespace FindersCheesers
         [SerializeField]
         private bool useGravity = true;
 
+        [Tooltip("Gravity force applied when not grounded")]
+        [SerializeField]
+        private float gravity = -20f;
+
+        [Tooltip("Distance from the bottom to check for ground")]
+        [SerializeField]
+        private float groundCheckDistance = 0.1f;
+
+        [Tooltip("Layers to consider as ground")]
+        [SerializeField]
+        private LayerMask groundLayers;
+
         [Tooltip("Drag applied to the Rigidbody when not moving")]
         [SerializeField]
         private float drag = 3f;
@@ -75,6 +87,7 @@ namespace FindersCheesers
         private Vector3 currentVelocity;
         private bool isMoving;
         private Quaternion currentRotation;
+        private bool isGrounded;
         
         // Movement override - allows external systems (like SplineRider) to take control
         private bool isMovementOverridden = false;
@@ -156,7 +169,8 @@ namespace FindersCheesers
             // Configure Rigidbody
             if (rb != null)
             {
-                rb.useGravity = useGravity;
+                // Disable Unity's built-in gravity when using custom gravity
+                rb.useGravity = false;
                 rb.linearDamping = drag;
                 rb.angularDamping = 10f;
                 rb.constraints = RigidbodyConstraints.FreezeRotation;
@@ -180,6 +194,8 @@ namespace FindersCheesers
                 return;
             }
 
+            CheckGrounded();
+            HandleGravity();
             HandleMovement();
             HandleRotation();
             ApplyRotation();
@@ -294,6 +310,68 @@ namespace FindersCheesers
         }
 
         /// <summary>
+        /// Checks if the controller is grounded using a raycast.
+        /// </summary>
+        private void CheckGrounded()
+        {
+            isGrounded = false;
+
+            if (groundLayers.value == 0)
+            {
+                // If no ground layers are set, use default ground check
+                isGrounded = Physics.Raycast(
+                    transform.position,
+                    Vector3.down,
+                    groundCheckDistance
+                );
+            }
+            else
+            {
+                // Use specified ground layers
+                isGrounded = Physics.Raycast(
+                    transform.position,
+                    Vector3.down,
+                    groundCheckDistance,
+                    groundLayers
+                );
+            }
+
+            if (debugMode)
+            {
+                Debug.DrawRay(
+                    transform.position,
+                    Vector3.down * groundCheckDistance,
+                    isGrounded ? Color.green : Color.red
+                );
+            }
+        }
+
+        /// <summary>
+        /// Applies custom gravity when not grounded.
+        /// </summary>
+        private void HandleGravity()
+        {
+            if (!useGravity)
+            {
+                return;
+            }
+
+            if (isGrounded)
+            {
+                // Reset vertical velocity when grounded
+                if (rb.linearVelocity.y < 0)
+                {
+                    rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+                }
+            }
+            else
+            {
+                // Apply gravity force when not grounded
+                rb.AddForce(Vector3.up * gravity, ForceMode.Acceleration);
+            }
+        }
+
+        /// <summary>
         /// Gets the current number of rats in the pack.
         /// </summary>
         /// <returns>The number of rats in the pack.</returns>
@@ -331,6 +409,15 @@ namespace FindersCheesers
         public bool IsMoving()
         {
             return isMoving;
+        }
+
+        /// <summary>
+        /// Gets whether the controller is currently grounded.
+        /// </summary>
+        /// <returns>True if the controller is grounded, false otherwise.</returns>
+        public bool IsGrounded()
+        {
+            return isGrounded;
         }
 
         /// <summary>
@@ -375,6 +462,8 @@ namespace FindersCheesers
             deceleration = 8f;
             rotationSpeed = 10f;
             useGravity = true;
+            gravity = -20f;
+            groundCheckDistance = 0.1f;
             drag = 3f;
         }
     }

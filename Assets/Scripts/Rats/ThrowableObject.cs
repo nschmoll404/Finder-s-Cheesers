@@ -19,6 +19,11 @@ namespace FindersCheesers
         [SerializeField]
         private float launchSpeed = 10f;
 
+        [Header("Carry Settings")]
+        [Tooltip("Custom carry offset that overrides the handler's default offset when this object is being carried. Set to zero to use the handler's default offset.")]
+        [SerializeField]
+        private Vector3 carryOffset = Vector3.zero;
+
         [Header("Debug")]
         [Tooltip("Show debug information in the console")]
         [SerializeField]
@@ -53,6 +58,12 @@ namespace FindersCheesers
         /// Gets whether the object is currently being thrown.
         /// </summary>
         public bool IsThrowing => isThrowing;
+
+        /// <summary>
+        /// Gets the custom carry offset for this throwable object.
+        /// If set to Vector3.zero, the handler's default offset will be used.
+        /// </summary>
+        public Vector3 CarryOffset => carryOffset;
 
         private void Awake()
         {

@@ -41,6 +41,10 @@ namespace FindersCheesers
         [SerializeField]
         private LayerMask throwableLayerMask = -1;
 
+        [Tooltip("Layer mask for detecting ThrowableProducer objects")]
+        [SerializeField]
+        private LayerMask producerLayerMask = -1;
+
         [Tooltip("Size of detection overlap box")]
         [SerializeField]
         private Vector3 detectionBoxSize = new Vector3(2f, 2f, 2f);
@@ -217,6 +221,8 @@ namespace FindersCheesers
         private Quaternion kingRatOriginalRotation;
         private bool kingRatWasKinematic;
         private bool kingRatInRange = false;
+        private ThrowableProducer detectedProducer;
+        private bool producerInRange = false;
 
         // Following mode state
         private RatInventory.RatFollowingMode previousFollowingMode;
@@ -275,6 +281,16 @@ namespace FindersCheesers
         /// Gets the King Rat GameObject (null if not grabbed).
         /// </summary>
         public GameObject KingRat => isGrabbing ? detectedKingRat : null;
+
+        /// <summary>
+        /// Gets whether a ThrowableProducer is currently in range for interaction.
+        /// </summary>
+        public bool ProducerInRange => producerInRange;
+
+        /// <summary>
+        /// Gets the detected ThrowableProducer (null if not in range).
+        /// </summary>
+        public ThrowableProducer DetectedProducer => producerInRange ? detectedProducer : null;
 
         /// <summary>
         /// Gets whether the King Rat is currently being thrown.
@@ -443,7 +459,15 @@ namespace FindersCheesers
         {
             if (isGrabbing && detectedKingRat != null)
             {
-                Vector3 targetPosition = transform.position + carryOffset;
+                // Check if the throwable object has a custom carry offset
+                Vector3 effectiveCarryOffset = carryOffset;
+                ThrowableObject throwableObj = detectedKingRat.GetComponent<ThrowableObject>();
+                if (throwableObj != null && throwableObj.CarryOffset != Vector3.zero)
+                {
+                    effectiveCarryOffset = throwableObj.CarryOffset;
+                }
+
+                Vector3 targetPosition = transform.position + effectiveCarryOffset;
                 float deltaTime = (updateMode == KingRatUpdateMode.FixedUpdate) ? Time.fixedDeltaTime : Time.deltaTime;
                 detectedKingRat.transform.position = Vector3.Lerp(
                     detectedKingRat.transform.position,
@@ -454,7 +478,7 @@ namespace FindersCheesers
         }
 
         /// <summary>
-        /// Detects King Rat using an overlap box in FixedUpdate.
+        /// Detects King Rat and ThrowableProducer using an overlap box in FixedUpdate.
         /// </summary>
         private void DetectKingRatWithOverlapBox()
         {
@@ -468,8 +492,8 @@ namespace FindersCheesers
             // Calculate the center of the overlap box in world space
             Vector3 boxCenter = transform.position + transform.TransformDirection(detectionBoxOffset);
 
-            // Perform overlap box detection
-            Collider[] colliders = Physics.OverlapBox(
+            // Detect King Rat
+            Collider[] kingRatColliders = Physics.OverlapBox(
                 boxCenter,
                 detectionBoxSize * 0.5f,
                 transform.rotation,
@@ -479,7 +503,7 @@ namespace FindersCheesers
 
             // Find the King Rat among colliders
             GameObject newDetectedKingRat = null;
-            foreach (Collider collider in colliders)
+            foreach (Collider collider in kingRatColliders)
             {
                 if (IsKingRat(collider.gameObject))
                 {
@@ -488,7 +512,7 @@ namespace FindersCheesers
                 }
             }
 
-            // Update detection state
+            // Update King Rat detection state
             bool wasInRange = kingRatInRange;
             kingRatInRange = newDetectedKingRat != null;
 
@@ -526,6 +550,52 @@ namespace FindersCheesers
                 if (debugMode)
                 {
                     Debug.Log($"[KingRatHandler] King Rat left range!");
+                }
+            }
+
+            // Detect ThrowableProducer
+            Collider[] producerColliders = Physics.OverlapBox(
+                boxCenter,
+                detectionBoxSize * 0.5f,
+                transform.rotation,
+                producerLayerMask,
+                QueryTriggerInteraction.Ignore
+            );
+
+            // Find the ThrowableProducer among colliders
+            ThrowableProducer newDetectedProducer = null;
+            foreach (Collider collider in producerColliders)
+            {
+                ThrowableProducer producer = collider.GetComponent<ThrowableProducer>();
+                if (producer != null && producer.CanSpawn)
+                {
+                    newDetectedProducer = producer;
+                    break;
+                }
+            }
+
+            // Update Producer detection state
+            bool producerWasInRange = producerInRange;
+            producerInRange = newDetectedProducer != null;
+
+            // Handle Producer entering range
+            if (producerInRange && !producerWasInRange && newDetectedProducer != detectedProducer)
+            {
+                detectedProducer = newDetectedProducer;
+
+                if (debugMode)
+                {
+                    Debug.Log($"[KingRatHandler] ThrowableProducer detected in range!");
+                }
+            }
+            // Handle Producer leaving range
+            else if (!producerInRange && producerWasInRange)
+            {
+                detectedProducer = null;
+
+                if (debugMode)
+                {
+                    Debug.Log($"[KingRatHandler] ThrowableProducer left range!");
                 }
             }
         }
@@ -793,6 +863,16 @@ namespace FindersCheesers
             }
             else
             {
+                // Check if we should interact with a producer first
+                if (producerInRange && detectedProducer != null)
+                {
+                    // Spawn throwable from producer and grab it
+                    if (SpawnAndGrabFromProducer())
+                    {
+                        return;
+                    }
+                }
+
                 // Grab King Rat
                 GrabKingRat();
             }
@@ -1072,6 +1152,71 @@ namespace FindersCheesers
 
             // If both checks pass, it's considered King Rat
             return true;
+        }
+
+        /// <summary>
+        /// Spawns a throwable from the detected producer and grabs it.
+        /// </summary>
+        /// <returns>True if the throwable was successfully spawned and grabbed, false otherwise.</returns>
+        private bool SpawnAndGrabFromProducer()
+        {
+            if (detectedProducer == null)
+            {
+                if (debugMode)
+                {
+                    Debug.LogWarning("[KingRatHandler] No producer detected!");
+                }
+                return false;
+            }
+
+            if (!detectedProducer.CanSpawn)
+            {
+                if (debugMode)
+                {
+                    Debug.LogWarning("[KingRatHandler] Producer cannot spawn throwable!");
+                }
+                return false;
+            }
+
+            // Check if we have enough rats to carry the throwable
+            if (ratInventory != null && ratInventory.RatCount < minRatsToCarry)
+            {
+                if (debugMode)
+                {
+                    Debug.LogWarning($"[KingRatHandler] Not enough rats to carry throwable! Need {minRatsToCarry}, have {ratInventory.RatCount}.");
+                }
+                return false;
+            }
+
+            // Spawn the throwable from the producer
+            GameObject spawnedThrowable = detectedProducer.SpawnThrowable();
+
+            if (spawnedThrowable == null)
+            {
+                if (debugMode)
+                {
+                    Debug.LogWarning("[KingRatHandler] Failed to spawn throwable from producer!");
+                }
+                return false;
+            }
+
+            // Set the spawned throwable as the detected object
+            detectedKingRat = spawnedThrowable;
+            kingRatRigidbody = spawnedThrowable.GetComponent<Rigidbody>();
+            throwable = spawnedThrowable.GetComponent<IThrowable>();
+
+            if (throwable == null)
+            {
+                Debug.LogError("[KingRatHandler] Spawned throwable does not have IThrowable component!");
+                Destroy(spawnedThrowable);
+                return false;
+            }
+
+            // Subscribe to IThrowable events
+            throwable.OnLanded += OnKingRatLanded;
+
+            // Now grab the spawned throwable
+            return GrabKingRat();
         }
 
         #endregion

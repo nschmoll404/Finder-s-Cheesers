@@ -184,27 +184,60 @@ namespace FindersCheesers
 
         /// <summary>
         /// Finds the nearest valid point on the navmesh to the given position.
+        /// Uses multiple sampling points to ensure the absolute closest point in 3D space is found,
+        /// preventing issues with multi-level navmeshes (e.g., upper vs lower floors).
         /// </summary>
         /// <param name="position">The position to search from.</param>
         /// <returns>The nearest navmesh point, or Vector3.zero if no point was found.</returns>
         private Vector3 FindNearestNavMeshPoint(Vector3 position)
         {
-            // Sample the navmesh at the given position
-            NavMeshHit hit;
-            bool found = NavMesh.SamplePosition(
-                position,
-                out hit,
-                maxSearchDistance,
-                navMeshAreaMask
-            );
+            Vector3 closestPoint = Vector3.zero;
+            float closestDistance = float.MaxValue;
+            bool foundAny = false;
 
-            if (found)
+            // Sample multiple points at different heights to find the absolute closest navmesh point
+            // This is necessary because NavMesh.SamplePosition may return a point on an upper floor
+            // even when a lower floor is closer in 3D space
+            int sampleCount = 10; // Number of vertical samples to check
+            float sampleRange = maxSearchDistance; // Total vertical range to sample
+
+            for (int i = 0; i < sampleCount; i++)
+            {
+                // Calculate sample height, centered around the original position
+                float sampleHeightOffset = Mathf.Lerp(-sampleRange / 2f, sampleRange / 2f, (float)i / (sampleCount - 1));
+                Vector3 samplePosition = position + Vector3.up * sampleHeightOffset;
+
+                // Sample the navmesh at this height
+                NavMeshHit hit;
+                bool found = NavMesh.SamplePosition(
+                    samplePosition,
+                    out hit,
+                    maxSearchDistance,
+                    navMeshAreaMask
+                );
+
+                if (found)
+                {
+                    // Calculate the actual 3D distance from the original position to this navmesh point
+                    float actualDistance = Vector3.Distance(position, hit.position);
+
+                    // Check if this is the closest point found so far
+                    if (actualDistance < closestDistance)
+                    {
+                        closestDistance = actualDistance;
+                        closestPoint = hit.position;
+                        foundAny = true;
+                    }
+                }
+            }
+
+            if (foundAny)
             {
                 if (debugMode)
                 {
-                    Debug.Log($"[NavMeshTeleportTrigger] Found navmesh point at {hit.position} (distance: {hit.distance:F2})");
+                    Debug.Log($"[NavMeshTeleportTrigger] Found closest navmesh point at {closestPoint} (actual 3D distance: {closestDistance:F2})");
                 }
-                return hit.position;
+                return closestPoint;
             }
 
             if (debugMode)
