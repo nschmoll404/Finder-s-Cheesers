@@ -8,8 +8,38 @@ namespace FindersCheesers
     /// </summary>
     [AddComponentMenu("Finders Cheesers/EnemyAI/PatrollingAI")]
     [RequireComponent(typeof(EnemyAI))]
-    public class PatrollingAI : MonoBehaviour
+    public class PatrollingAI : MonoBehaviour, IEnemyAIComponent
     {
+        #region IEnemyAIComponent Implementation
+
+        public bool IsTriggered => enemyAI != null && !enemyAI.IsTargetDetected && (IsPatrolling || (!IsPatrolling && waypoints != null && waypoints.Length > 0));
+        public bool IsRunning { get; set; }
+
+        public event System.Action OnActivated;
+        public event System.Action OnDeactivated;
+
+        /// <summary>
+        /// Called by EnemyAI when this component transitions into the running state.
+        /// Starts patrolling behavior.
+        /// </summary>
+        public void OnStartRunning()
+        {
+            IsRunning = true;
+            StartPatrolling();
+        }
+
+        /// <summary>
+        /// Called by EnemyAI when this component transitions out of the running state.
+        /// Stops patrolling behavior.
+        /// </summary>
+        public void OnExitRunning()
+        {
+            IsRunning = false;
+            StopPatrolling();
+        }
+
+        #endregion
+
         #region Settings
 
         [Header("Patrol Settings")]
@@ -40,6 +70,11 @@ namespace FindersCheesers
         [Tooltip("Whether to resume patrolling when target is lost")]
         [SerializeField]
         private bool resumeOnTargetLost = true;
+
+        [Header("Priority Settings")]
+        [Tooltip("Priority of this AI component (higher values take precedence when multiple AI components are triggered)")]
+        [SerializeField]
+        private int priority = 0;
 
         [Header("Debug")]
         [Tooltip("Show debug information in the console")]
@@ -118,6 +153,12 @@ namespace FindersCheesers
         /// </summary>
         public Transform[] Waypoints => waypoints;
 
+        /// <summary>
+        /// Gets the priority of this AI component.
+        /// Higher priority values take precedence when multiple AI components are triggered.
+        /// </summary>
+        public int Priority => priority;
+
         #endregion
 
         #region Component References
@@ -166,7 +207,7 @@ namespace FindersCheesers
 
         private void Update()
         {
-            if (!IsPatrolling || enemyAI == null || !enemyAI.IsActive)
+            if (!IsRunning || !IsPatrolling || enemyAI == null || !enemyAI.IsActive)
             {
                 return;
             }
@@ -223,6 +264,7 @@ namespace FindersCheesers
             CurrentWaypointIndex = FindNearestWaypointIndex();
             
             OnPatrolStarted?.Invoke();
+            OnActivated?.Invoke();
             
             if (debugMode)
             {
@@ -247,6 +289,7 @@ namespace FindersCheesers
             enemyAI.StopMovement();
             
             OnPatrolStopped?.Invoke();
+            OnDeactivated?.Invoke();
             
             if (debugMode)
             {

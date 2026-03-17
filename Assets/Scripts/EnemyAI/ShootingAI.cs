@@ -8,8 +8,38 @@ namespace FindersCheesers
     /// </summary>
     [AddComponentMenu("Finders Cheesers/EnemyAI/ShootingAI")]
     [RequireComponent(typeof(EnemyAI))]
-    public class ShootingAI : MonoBehaviour
+    public class ShootingAI : MonoBehaviour, IEnemyAIComponent
     {
+        #region IEnemyAIComponent Implementation
+
+        public bool IsTriggered => enemyAI != null && enemyAI.IsTargetInAttackRange && rangedWeapon != null;
+        public bool IsRunning { get; set; }
+
+        public event System.Action OnActivated;
+        public event System.Action OnDeactivated;
+
+        /// <summary>
+        /// Called by EnemyAI when this component transitions into the running state.
+        /// Starts shooting behavior.
+        /// </summary>
+        public void OnStartRunning()
+        {
+            IsRunning = true;
+            StartShooting();
+        }
+
+        /// <summary>
+        /// Called by EnemyAI when this component transitions out of the running state.
+        /// Stops shooting behavior.
+        /// </summary>
+        public void OnExitRunning()
+        {
+            IsRunning = false;
+            StopShooting();
+        }
+
+        #endregion
+
         #region Settings
 
         [Header("Weapon Settings")]
@@ -58,6 +88,11 @@ namespace FindersCheesers
         [Tooltip("Aim offset from target center")]
         [SerializeField]
         private Vector3 aimOffset = Vector3.zero;
+
+        [Header("Priority Settings")]
+        [Tooltip("Priority of this AI component (higher values take precedence when multiple AI components are triggered)")]
+        [SerializeField]
+        private int priority = 0;
 
         [Header("Debug")]
         [Tooltip("Show debug information in the console")]
@@ -143,6 +178,12 @@ namespace FindersCheesers
             set => leadTarget = value;
         }
 
+        /// <summary>
+        /// Gets the priority of this AI component.
+        /// Higher priority values take precedence when multiple AI components are triggered.
+        /// </summary>
+        public int Priority => priority;
+
         #endregion
 
         #region Component References
@@ -182,7 +223,7 @@ namespace FindersCheesers
 
         private void Update()
         {
-            if (!enemyAI.IsActive)
+            if (!enemyAI.IsActive || !IsRunning)
             {
                 return;
             }
@@ -280,6 +321,7 @@ namespace FindersCheesers
             CurrentTarget = enemyAI.Target;
 
             OnShootingStarted?.Invoke(CurrentTarget);
+            OnActivated?.Invoke();
 
             if (debugMode)
             {
@@ -307,6 +349,7 @@ namespace FindersCheesers
             }
 
             OnShootingStopped?.Invoke();
+            OnDeactivated?.Invoke();
 
             if (debugMode)
             {

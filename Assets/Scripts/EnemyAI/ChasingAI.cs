@@ -8,8 +8,39 @@ namespace FindersCheesers
     /// </summary>
     [AddComponentMenu("Finders Cheesers/EnemyAI/ChasingAI")]
     [RequireComponent(typeof(EnemyAI))]
-    public class ChasingAI : MonoBehaviour
+    public class ChasingAI : MonoBehaviour, IEnemyAIComponent
     {
+        #region IEnemyAIComponent Implementation
+
+        public bool IsTriggered => enemyAI != null && enemyAI.IsTargetDetected && (!stopAtAttackRange || !enemyAI.IsTargetInAttackRange);
+        public bool IsRunning { get; set; }
+
+        public event System.Action OnActivated;
+        public event System.Action OnDeactivated;
+
+        /// <summary>
+        /// Called by EnemyAI when this component transitions into the running state.
+        /// Starts chasing behavior.
+        /// </summary>
+        public void OnStartRunning()
+        {
+            IsRunning = true;
+            StartChasing();
+        }
+
+        /// <summary>
+        /// Called by EnemyAI when this component transitions out of the running state.
+        /// Stops chasing behavior.
+        /// </summary>
+        public void OnExitRunning()
+        {
+            IsRunning = false;
+            StopChasing();
+            IsReturningToLastKnownPosition = false;
+        }
+
+        #endregion
+
         #region Settings
 
         [Header("Chase Settings")]
@@ -44,6 +75,11 @@ namespace FindersCheesers
         [Tooltip("Rotation speed multiplier while chasing (1.0 = normal speed)")]
         [SerializeField]
         private float chaseRotationMultiplier = 1.5f;
+
+        [Header("Priority Settings")]
+        [Tooltip("Priority of this AI component (higher values take precedence when multiple AI components are triggered)")]
+        [SerializeField]
+        private int priority = 0;
 
         [Header("Debug")]
         [Tooltip("Show debug information in the console")]
@@ -102,6 +138,12 @@ namespace FindersCheesers
         /// </summary>
         public Transform CurrentTarget { get; private set; }
 
+        /// <summary>
+        /// Gets the priority of this AI component.
+        /// Higher priority values take precedence when multiple AI components are triggered.
+        /// </summary>
+        public int Priority => priority;
+
         #endregion
 
         #region Component References
@@ -147,7 +189,15 @@ namespace FindersCheesers
                 return;
             }
 
-            UpdateChaseBehavior();
+            if (IsRunning)
+            {
+                UpdateChaseBehavior();
+            }
+            else if (IsChasing || IsReturningToLastKnownPosition)
+            {
+                StopChasing();
+                IsReturningToLastKnownPosition = false;
+            }
         }
 
         private void OnDestroy()
@@ -189,6 +239,7 @@ namespace FindersCheesers
             ApplyChaseSpeeds();
 
             OnChaseStarted?.Invoke(CurrentTarget);
+            OnActivated?.Invoke();
 
             if (debugMode)
             {
@@ -216,6 +267,7 @@ namespace FindersCheesers
             RestoreOriginalSpeeds();
 
             OnChaseStopped?.Invoke();
+            OnDeactivated?.Invoke();
 
             if (debugMode)
             {

@@ -8,8 +8,38 @@ namespace FindersCheesers
     /// </summary>
     [AddComponentMenu("Finders Cheesers/EnemyAI/AttackingAI")]
     [RequireComponent(typeof(EnemyAI))]
-    public class AttackingAI : MonoBehaviour
+    public class AttackingAI : MonoBehaviour, IEnemyAIComponent
     {
+        #region IEnemyAIComponent Implementation
+
+        public bool IsTriggered => enemyAI != null && enemyAI.IsTargetInAttackRange;
+        public bool IsRunning { get; set; }
+
+        public event System.Action OnActivated;
+        public event System.Action OnDeactivated;
+
+        /// <summary>
+        /// Called by EnemyAI when this component transitions into the running state.
+        /// Starts attacking behavior.
+        /// </summary>
+        public void OnStartRunning()
+        {
+            IsRunning = true;
+            StartAttacking();
+        }
+
+        /// <summary>
+        /// Called by EnemyAI when this component transitions out of the running state.
+        /// Stops attacking behavior.
+        /// </summary>
+        public void OnExitRunning()
+        {
+            IsRunning = false;
+            StopAttacking();
+        }
+
+        #endregion
+
         #region Settings
 
         [Header("Attack Settings")]
@@ -45,6 +75,11 @@ namespace FindersCheesers
         [Tooltip("Optional animator bool name for attacking state")]
         [SerializeField]
         private string attackBoolName = "IsAttacking";
+
+        [Header("Priority Settings")]
+        [Tooltip("Priority of this AI component (higher values take precedence when multiple AI components are triggered)")]
+        [SerializeField]
+        private int priority = 0;
 
         [Header("Debug")]
         [Tooltip("Show debug information in the console")]
@@ -131,6 +166,12 @@ namespace FindersCheesers
             set => attackCooldown = Mathf.Max(0f, value);
         }
 
+        /// <summary>
+        /// Gets the priority of this AI component.
+        /// Higher priority values take precedence when multiple AI components are triggered.
+        /// </summary>
+        public int Priority => priority;
+
         #endregion
 
         #region Component References
@@ -173,7 +214,15 @@ namespace FindersCheesers
             }
 
             UpdateCooldown();
-            UpdateAttackingBehavior();
+
+            if (IsRunning)
+            {
+                UpdateAttackingBehavior();
+            }
+            else if (IsAttacking)
+            {
+                StopAttacking();
+            }
         }
 
         private void OnDestroy()
@@ -266,6 +315,7 @@ namespace FindersCheesers
             CurrentTarget = enemyAI.Target;
 
             OnAttackingStarted?.Invoke();
+            OnActivated?.Invoke();
 
             if (debugMode)
             {
@@ -287,6 +337,7 @@ namespace FindersCheesers
             CurrentTarget = null;
 
             OnAttackingStopped?.Invoke();
+            OnDeactivated?.Invoke();
 
             if (debugMode)
             {

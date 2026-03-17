@@ -3127,6 +3127,7 @@ MonoBehaviour:
   aimSpeed: 90
   aimAtCenter: 1
   aimOffset: {x: 0, y: 0, z: 0}
+  priority: 0
   debugMode: 1
   showGizmos: 1
 --- !u!4 &886771694 stripped
@@ -3169,6 +3170,7 @@ MonoBehaviour:
   resumePatrollingAfterDrop: 1
   maxPickupCount: 3
   pickupCountResetTime: 60
+  priority: 0
   debugMode: 0
   showGizmos: 1
 --- !u!195 &886771702
@@ -5335,6 +5337,49 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineHardLookAt
   LookAtOffset: {x: 0, y: 0, z: 0}
+--- !u!1 &1636135456 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4868275458856752256, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
+  m_PrefabInstance: {fileID: 2937061366349575749}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1636135457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1636135456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f16911dc0ef2604e85cff1e6fc6e077, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.GrabKingRatAI
+  kingRatTag: KingRat
+  kingRatLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  kingRatDetectionRange: 20
+  grabRange: 2
+  grabDuration: 1
+  carryOffset: {x: 0, y: 1.5, z: 0}
+  carrySmoothSpeed: 10
+  carryDistance: 15
+  minDistanceFromPlayer: 10
+  carrySpeedMultiplier: 1.5
+  dropDistance: 20
+  dropDuration: 0.5
+  throwDistance: 5
+  returnToIdleAfterDrop: 1
+  grabCooldown: 5
+  playerTag: Player
+  playerDetectionRange: 25
+  stopPatrollingWhenSeeking: 1
+  resumePatrollingAfterDrop: 0
+  maxPickupCount: 3
+  pickupCountResetTime: 60
+  priority: 3
+  debugMode: 0
+  showGizmos: 1
 --- !u!1 &1644241500 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8338166939317028711, guid: 0d07811549bba2247a73014ab7d57ec4, type: 3}
@@ -11521,6 +11566,10 @@ PrefabInstance:
       propertyPath: 'waypoints.Array.data[3]'
       value: 
       objectReference: {fileID: 743138241}
+    - target: {fileID: 1165671882059549780, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
+      propertyPath: priority
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 2821471157935297425, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
       propertyPath: maxHorizontalSpeed
       value: 10
@@ -11609,6 +11658,10 @@ PrefabInstance:
       propertyPath: projectilePrefab
       value: 
       objectReference: {fileID: 643560161009610544, guid: 3b894d4e53137a348be3076d488bcbc1, type: 3}
+    - target: {fileID: 4363341273658796204, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
+      propertyPath: priority
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4868275458856752256, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
       propertyPath: m_Name
       value: Ranged Enemy
@@ -11616,6 +11669,10 @@ PrefabInstance:
     - target: {fileID: 4868275458856752256, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5667809884761760806, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
+      propertyPath: priority
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6484575948445220396, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -11628,7 +11685,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4868275458856752256, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1636135457}
   m_SourcePrefab: {fileID: 100100000, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
 --- !u!33 &3247726563477165925
 MeshFilter:

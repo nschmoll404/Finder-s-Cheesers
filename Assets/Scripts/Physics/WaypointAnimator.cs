@@ -61,7 +61,6 @@ public class WaypointAnimator : MonoBehaviour
     private Transform _transform;
     private float _currentProgress;
     private int _currentSegment;
-    private bool _movingForward = true;
     private float _totalPathLength;
     private List<float> _segmentLengths = new List<float>();
     

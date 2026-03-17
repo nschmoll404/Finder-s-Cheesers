@@ -288,9 +288,10 @@ namespace FindersCheesers
 
         /// <summary>
         /// Sets the destination and starts moving towards it.
+        /// If no valid path is found, finds the closest valid navmesh point.
         /// </summary>
         /// <param name="destination">The destination position.</param>
-        /// <returns>True if a valid path was found, false otherwise.</returns>
+        /// <returns>True if a valid path was found (or adjusted to a valid point), false otherwise.</returns>
         public bool SetDestination(Vector3 destination)
         {
             // Reset destination reached flag to allow new movement
@@ -337,7 +338,37 @@ namespace FindersCheesers
             }
             else
             {
-                Debug.LogWarning("[NavAgentHoppingController] No valid path found to destination!");
+                // No valid path found - try to find the closest valid navmesh point
+                Vector3 closestValidPoint = FindClosestValidNavMeshPoint(destination);
+                
+                if (closestValidPoint != Vector3.zero)
+                {
+                    // Update destination to the closest valid point
+                    Destination = closestValidPoint;
+                    
+                    if (debugMode)
+                    {
+                        Debug.Log($"[NavAgentHoppingController] No path to original destination. Adjusted to closest valid navmesh point: {closestValidPoint}");
+                    }
+                    
+                    // Recalculate path to the adjusted destination
+                    pathFound = CalculatePath();
+                    
+                    if (pathFound)
+                    {
+                        if (!IsMoving)
+                        {
+                            StartMoving();
+                        }
+                        return true;
+                    }
+                }
+                
+                // Still no valid path even after adjustment
+                if (debugMode)
+                {
+                    Debug.LogWarning($"[NavAgentHoppingController] No valid path found to destination or any nearby valid navmesh point!");
+                }
                 return false;
             }
         }
@@ -460,6 +491,29 @@ namespace FindersCheesers
         #endregion
 
         #region Private Methods
+
+        /// <summary>
+        /// Finds the closest valid navmesh point to a given position.
+        /// </summary>
+        /// <param name="position">The position to find the closest valid navmesh point for.</param>
+        /// <returns>The closest valid navmesh point, or Vector3.zero if none found.</returns>
+        private Vector3 FindClosestValidNavMeshPoint(Vector3 position)
+        {
+            // Try to find a valid navmesh point with increasing search radius
+            float[] searchRadii = { 1.0f, 2.0f, 5.0f, 10.0f, 20.0f };
+            
+            foreach (float radius in searchRadii)
+            {
+                NavMeshHit hit;
+                if (NavMesh.SamplePosition(position, out hit, radius, navMeshAreaMask))
+                {
+                    return hit.position;
+                }
+            }
+            
+            // No valid navmesh point found
+            return Vector3.zero;
+        }
 
         /// <summary>
         /// Calculates a path to the destination using NavMesh.

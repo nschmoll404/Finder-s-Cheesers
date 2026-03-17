@@ -20,8 +20,46 @@ namespace FindersCheesers
     /// </summary>
     [AddComponentMenu("Finders Cheesers/EnemyAI/GrabKingRatAI")]
     [RequireComponent(typeof(EnemyAI))]
-    public class GrabKingRatAI : MonoBehaviour
+    public class GrabKingRatAI : MonoBehaviour, IEnemyAIComponent
     {
+        #region IEnemyAIComponent Implementation
+
+        public bool IsTriggered => enemyAI != null && grabCooldownTimer <= 0f && (maxPickupCount <= 0 || pickupCount < maxPickupCount) && IsAvailableKingRatReachable();
+        public bool IsRunning { get; set; }
+
+        public event System.Action OnActivated;
+        public event System.Action OnDeactivated;
+
+        /// <summary>
+        /// Called by EnemyAI when this component transitions into the running state.
+        /// Enables the grab/carry state machine.
+        /// </summary>
+        public void OnStartRunning()
+        {
+            IsRunning = true;
+            // The internal state machine will handle progression from Idle -> Seeking etc.
+        }
+
+        /// <summary>
+        /// Called by EnemyAI when this component transitions out of the running state.
+        /// Drops the king rat if carried and resets to Idle.
+        /// </summary>
+        public void OnExitRunning()
+        {
+            IsRunning = false;
+
+            if (isCarryingKingRat)
+            {
+                ForceDrop();
+            }
+            else if (currentState != GrabKingRatState.Idle)
+            {
+                ChangeState(GrabKingRatState.Idle);
+            }
+        }
+
+        #endregion
+
         #region Settings
 
         [Header("King Rat Detection")]
@@ -115,6 +153,11 @@ namespace FindersCheesers
         [SerializeField]
         private float pickupCountResetTime = 60f;
 
+        [Header("Priority Settings")]
+        [Tooltip("Priority of this AI component (higher values take precedence when multiple AI components are triggered)")]
+        [SerializeField]
+        private int priority = 0;
+
         [Header("Debug")]
         [Tooltip("Show debug information in the console")]
         [SerializeField]
@@ -202,6 +245,12 @@ namespace FindersCheesers
         /// </summary>
         public float RemainingPickupResetTime => Mathf.Max(0f, pickupCountResetTimer);
 
+        /// <summary>
+        /// Gets the priority of this AI component.
+        /// Higher priority values take precedence when multiple AI components are triggered.
+        /// </summary>
+        public int Priority => priority;
+
         #endregion
 
         #region Component References
@@ -260,8 +309,15 @@ namespace FindersCheesers
                 return;
             }
 
+            // Timers always tick so cooldowns drain even when not running
             UpdateGrabCooldown();
             UpdatePickupCountResetTimer();
+
+            if (!IsRunning)
+            {
+                return;
+            }
+
             UpdateStateMachine();
         }
 
@@ -351,32 +407,35 @@ namespace FindersCheesers
                 return;
             }
 
-            // Find available king rat
-            GameObject availableKingRat = FindAvailableKingRat();
-
-            if (availableKingRat != null)
+            // Find available king rat that is also reachable
+            if (IsAvailableKingRatReachable())
             {
-                kingRat = availableKingRat;
-                kingRatThrowable = kingRat.GetComponent<IThrowable>();
-                kingRatRigidbody = kingRat.GetComponent<Rigidbody>();
-
-                ChangeState(GrabKingRatState.Seeking);
-                OnSeekingStarted?.Invoke();
-
-                // Stop patrolling if configured
-                if (stopPatrollingWhenSeeking && patrollingAI != null && patrollingAI.IsPatrolling)
+                GameObject availableKingRat = FindAvailableKingRat();
+                
+                if (availableKingRat != null)
                 {
-                    patrollingAI.StopPatrolling();
+                    kingRat = availableKingRat;
+                    kingRatThrowable = kingRat.GetComponent<IThrowable>();
+                    kingRatRigidbody = kingRat.GetComponent<Rigidbody>();
+
+                    ChangeState(GrabKingRatState.Seeking);
+                    OnSeekingStarted?.Invoke();
+
+                    // Stop patrolling if configured
+                    if (stopPatrollingWhenSeeking && patrollingAI != null && patrollingAI.IsPatrolling)
+                    {
+                        patrollingAI.StopPatrolling();
+
+                        if (debugMode)
+                        {
+                            Debug.Log("[GrabKingRatAI] Stopped patrolling to seek king rat");
+                        }
+                    }
 
                     if (debugMode)
                     {
-                        Debug.Log("[GrabKingRatAI] Stopped patrolling to seek king rat");
+                        Debug.Log($"[GrabKingRatAI] Found available and reachable king rat: {kingRat.name} (Pickup {pickupCount + 1}/{maxPickupCount})");
                     }
-                }
-
-                if (debugMode)
-                {
-                    Debug.Log($"[GrabKingRatAI] Found available king rat: {kingRat.name} (Pickup {pickupCount + 1}/{maxPickupCount})");
                 }
             }
         }
@@ -409,6 +468,28 @@ namespace FindersCheesers
                     if (debugMode)
                     {
                         Debug.Log("[GrabKingRatAI] Resumed patrolling (king rat unavailable)");
+                    }
+                }
+                return;
+            }
+
+            // Check if king rat is reachable via navigation
+            if (!IsTargetPositionValid(kingRat.transform.position))
+            {
+                if (debugMode)
+                {
+                    Debug.LogWarning($"[GrabKingRatAI] King rat at {kingRat.transform.position} is unreachable. Aborting seek.");
+                }
+                ChangeState(GrabKingRatState.Idle);
+
+                // Resume patrolling if configured
+                if (resumePatrollingAfterDrop && patrollingAI != null && !patrollingAI.IsPatrolling)
+                {
+                    patrollingAI.StartPatrolling();
+
+                    if (debugMode)
+                    {
+                        Debug.Log("[GrabKingRatAI] Resumed patrolling (king rat unreachable)");
                     }
                 }
                 return;
@@ -728,6 +809,23 @@ namespace FindersCheesers
         #region Detection Methods
 
         /// <summary>
+        /// Checks if there is an available king rat that is reachable via navigation.
+        /// </summary>
+        /// <returns>True if an available and reachable king rat exists, false otherwise.</returns>
+        private bool IsAvailableKingRatReachable()
+        {
+            GameObject availableKingRat = FindAvailableKingRat();
+            
+            if (availableKingRat == null)
+            {
+                return false;
+            }
+            
+            // Check if the available king rat is reachable via navigation
+            return IsTargetPositionValid(availableKingRat.transform.position);
+        }
+
+        /// <summary>
         /// Finds an available king rat that is not being carried.
         /// </summary>
         /// <returns>The available king rat GameObject, or null if none found.</returns>
@@ -1006,6 +1104,18 @@ namespace FindersCheesers
         /// <param name="newState">The new state to transition to.</param>
         private void ChangeState(GrabKingRatState newState)
         {
+            // Invoke OnActivated when transitioning from Idle to any active state
+            if (currentState == GrabKingRatState.Idle && newState != GrabKingRatState.Idle)
+            {
+                OnActivated?.Invoke();
+            }
+            
+            // Invoke OnDeactivated when transitioning to Idle from an active state
+            if (currentState != GrabKingRatState.Idle && newState == GrabKingRatState.Idle)
+            {
+                OnDeactivated?.Invoke();
+            }
+            
             currentState = newState;
         }
 

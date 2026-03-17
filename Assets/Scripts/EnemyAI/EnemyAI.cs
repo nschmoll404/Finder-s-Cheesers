@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace FindersCheesers
@@ -62,6 +63,11 @@ namespace FindersCheesers
         [SerializeField]
         private bool isActive = true;
 
+        [Header("Priority Settings")]
+        [Tooltip("Priority of this AI component (higher values take precedence when multiple AI components are triggered)")]
+        [SerializeField]
+        private int priority = 0;
+
         [Header("Debug")]
         [Tooltip("Show debug information in the console")]
         [SerializeField]
@@ -106,6 +112,8 @@ namespace FindersCheesers
 
         private UnityEngine.AI.NavMeshAgent navMeshAgent;
         private NavAgentHoppingController navAgentHoppingController;
+        
+        private List<IEnemyAIComponent> aiComponents = new List<IEnemyAIComponent>();
 
         #endregion
 
@@ -188,6 +196,12 @@ namespace FindersCheesers
         }
 
         /// <summary>
+        /// Gets the priority of this AI component.
+        /// Higher priority values take precedence when multiple AI components are triggered.
+        /// </summary>
+        public int Priority => priority;
+
+        /// <summary>
         /// Gets whether a target is currently detected.
         /// </summary>
         public bool IsTargetDetected { get; private set; }
@@ -254,6 +268,9 @@ namespace FindersCheesers
             // Get NavAgentHoppingController component if it exists
             navAgentHoppingController = GetComponent<NavAgentHoppingController>();
 
+            // Find and register all AI components
+            RegisterAIComponents();
+
             // Configure NavMeshAgent if available
             if (navMeshAgent != null)
             {
@@ -263,7 +280,7 @@ namespace FindersCheesers
                 navMeshAgent.autoBraking = true;
             }
 
-            // Configure NavAgentHoppingController if available
+            // Configure NavMeshHoppingController if available
             if (navAgentHoppingController != null)
             {
                 // Configure hopping controller with movement settings
@@ -279,6 +296,7 @@ namespace FindersCheesers
             }
 
             CheckTargetDetection();
+            UpdateAIComponents();
         }
 
         protected virtual void FixedUpdate()
@@ -473,6 +491,211 @@ namespace FindersCheesers
             }
         }
 
+        /// <summary>
+        /// Registers all AI components on this GameObject.
+        /// Priority arbitration is handled each frame by UpdateAIComponents();
+        /// no event subscriptions are needed here.
+        /// </summary>
+        private void RegisterAIComponents()
+        {
+            // Find all IEnemyAIComponent components on this GameObject
+            IEnemyAIComponent[] components = GetComponents<IEnemyAIComponent>();
+            
+            // Clear and rebuild the list
+            aiComponents.Clear();
+            foreach (var component in components)
+            {
+                aiComponents.Add(component);
+            }
+        }
+
+        /// <summary>
+        /// Gets the highest priority AI component that is active.
+        /// </summary>
+        /// <returns>The highest priority active component, or null if none are active.</returns>
+        private IEnemyAIComponent GetHighestPriorityActiveComponent()
+        {
+            IEnemyAIComponent highestPriorityComponent = null;
+            int highestPriority = int.MinValue;
+
+            foreach (var component in aiComponents)
+            {
+                // Check if component is active (has an active state like IsChasing, IsAttacking, etc.)
+                if (IsComponentActive(component))
+                {
+                    if (component.Priority > highestPriority)
+                    {
+                        highestPriority = component.Priority;
+                        highestPriorityComponent = component;
+                    }
+                }
+            }
+
+            return highestPriorityComponent;
+        }
+
+        /// <summary>
+        /// Checks if an AI component is currently active.
+        /// </summary>
+        /// <param name="component">The component to check.</param>
+        /// <returns>True if the component is in an active state.</returns>
+        private bool IsComponentActive(IEnemyAIComponent component)
+        {
+            // Check for common active states in different AI components
+            if (component is AttackingAI attackingAI && attackingAI.IsAttacking)
+                return true;
+            if (component is ChasingAI chasingAI && chasingAI.IsChasing)
+                return true;
+            if (component is PatrollingAI patrollingAI && patrollingAI.IsPatrolling)
+                return true;
+            if (component is DispersingAI dispersingAI && dispersingAI.IsDispersing)
+                return true;
+            if (component is GrabKingRatAI grabAI && grabAI.CurrentState != GrabKingRatState.Idle)
+                return true;
+            if (component is ShootingAI shootingAI && shootingAI.IsShooting)
+                return true;
+            
+            return false;
+        }
+
+        /// <summary>
+        /// Handles when an AI component is activated.
+        /// </summary>
+        private void HandleAIComponentActivated()
+        {
+            // Get the highest priority active component
+            IEnemyAIComponent highestPriorityComponent = GetHighestPriorityActiveComponent();
+
+            // Deactivate all other components
+            foreach (var component in aiComponents)
+            {
+                if (component != highestPriorityComponent && IsComponentActive(component))
+                {
+                    DeactivateAIComponent(component);
+                }
+            }
+
+            // Activate the highest priority component
+            if (highestPriorityComponent != null)
+            {
+                ActivateAIComponent(highestPriorityComponent);
+            }
+
+            if (debugMode)
+            {
+                Debug.Log($"[EnemyAI] Activated highest priority component: {highestPriorityComponent?.GetType().Name}");
+            }
+        }
+
+        /// <summary>
+        /// Handles when an AI component is deactivated.
+        /// </summary>
+        private void HandleAIComponentDeactivated()
+        {
+            // Get the highest priority active component
+            IEnemyAIComponent highestPriorityComponent = GetHighestPriorityActiveComponent();
+
+            // Find the next highest priority component among inactive ones
+            IEnemyAIComponent nextHighestComponent = null;
+            int nextHighestPriority = int.MinValue;
+            
+            // Activate the next highest priority component
+            if (highestPriorityComponent != null)
+            {
+
+                foreach (var component in aiComponents)
+                {
+                    if (!IsComponentActive(component))
+                    {
+                        if (component.Priority > nextHighestPriority)
+                        {
+                            nextHighestPriority = component.Priority;
+                            nextHighestComponent = component;
+                        }
+                    }
+                }
+
+                if (nextHighestComponent != null)
+                {
+                    ActivateAIComponent(nextHighestComponent);
+                }
+            }
+
+            if (debugMode)
+            {
+                Debug.Log($"[EnemyAI] Activated next highest priority component: {nextHighestComponent?.GetType().Name}");
+            }
+        }
+
+        /// <summary>
+        /// Activates an AI component via OnStartRunning.
+        /// </summary>
+        private void ActivateAIComponent(IEnemyAIComponent component)
+        {
+            if (component != null && !component.IsRunning)
+            {
+                component.OnStartRunning();
+            }
+        }
+
+        /// <summary>
+        /// Deactivates an AI component via OnExitRunning.
+        /// </summary>
+        private void DeactivateAIComponent(IEnemyAIComponent component)
+        {
+            if (component != null && component.IsRunning)
+            {
+                component.OnExitRunning();
+            }
+        }
+
+        /// <summary>
+        /// Updates AI components to ensure only the highest priority triggered component is running.
+        /// This prevents multiple components from having IsRunning = true simultaneously.
+        /// </summary>
+        private void UpdateAIComponents()
+        {
+            // Find the highest priority component that is triggered
+            IEnemyAIComponent highestPriorityTriggered = null;
+            int highestPriority = int.MinValue;
+    
+            foreach (var component in aiComponents)
+            {
+                if (component.IsTriggered)
+                {
+                    if (component.Priority > highestPriority)
+                    {
+                        highestPriority = component.Priority;
+                        highestPriorityTriggered = component;
+                    }
+                }
+            }
+    
+            // Transition IsRunning for all components based on priority
+            foreach (var component in aiComponents)
+            {
+                bool shouldBeRunning = (component == highestPriorityTriggered);
+                
+                // Only transition if the running state is changing
+                if (component.IsRunning != shouldBeRunning)
+                {
+                    if (shouldBeRunning)
+                    {
+                        component.OnStartRunning();
+                    }
+                    else
+                    {
+                        component.OnExitRunning();
+                    }
+                    
+                    if (debugMode)
+                    {
+                        Debug.Log($"[EnemyAI] {component.GetType().Name} IsRunning set to {shouldBeRunning}");
+                    }
+                }
+            }
+        }
+
         #endregion
 
         #region Protected Methods
@@ -484,18 +707,22 @@ namespace FindersCheesers
         {
             bool wasDetected = IsTargetDetected;
             Transform detectedTarget = FindTarget();
-
+            
             // Update target reference
             if (detectedTarget != null)
             {
                 Target = detectedTarget;
             }
-
+            
             IsTargetDetected = detectedTarget != null;
-
+            
             if (IsTargetDetected && !wasDetected)
             {
                 OnTargetDetected?.Invoke(detectedTarget);
+                
+                // Trigger AI component activation when target is detected
+                HandleAIComponentActivated();
+                
                 if (debugMode)
                 {
                     Debug.Log($"[EnemyAI] Target detected: {detectedTarget.name}");
@@ -504,6 +731,10 @@ namespace FindersCheesers
             else if (!IsTargetDetected && wasDetected)
             {
                 OnTargetLost?.Invoke();
+                
+                // Trigger AI component deactivation when target is lost
+                HandleAIComponentDeactivated();
+                
                 if (debugMode)
                 {
                     Debug.Log($"[EnemyAI] Target lost");
@@ -702,6 +933,11 @@ namespace FindersCheesers
             {
                 Gizmos.DrawLine(points[i], points[i + 1]);
             }
+        }
+
+        protected virtual void OnDestroy()
+        {
+            // Nothing to unsubscribe — UpdateAIComponents() drives all transitions.
         }
 
         #endregion

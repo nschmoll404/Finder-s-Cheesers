@@ -27,8 +27,6 @@ namespace Actions
         [Tooltip("Delay before running actions (in seconds)")]
         public float delay = 0f;
 
-        private bool _hasTriggered = false;
-
         public enum TriggerType
         {
             OnStart,
@@ -167,14 +165,6 @@ namespace Actions
             }
 
             actionRunner.RunAction(index, gameObject);
-        }
-
-        /// <summary>
-        /// Reset the trigger state (for one-time triggers).
-        /// </summary>
-        public void ResetTrigger()
-        {
-            _hasTriggered = false;
         }
 
         /// <summary>

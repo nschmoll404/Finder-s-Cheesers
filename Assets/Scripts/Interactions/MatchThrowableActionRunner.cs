@@ -79,7 +79,7 @@ namespace FindersCheesers
             }
         }
 
-        private new void OnEnable()
+        private void OnEnable()
         {
             // Subscribe to match-specific events
             if (_matchThrowable != null && !_hasSubscribedToMatchEvents)
@@ -90,7 +90,7 @@ namespace FindersCheesers
             }
         }
 
-        private new void OnDisable()
+        private void OnDisable()
         {
             // Unsubscribe from match-specific events
             if (_matchThrowable != null && _hasSubscribedToMatchEvents)

@@ -8,8 +8,38 @@ namespace FindersCheesers
     /// </summary>
     [AddComponentMenu("Finders Cheesers/EnemyAI/DispersingAI")]
     [RequireComponent(typeof(EnemyAI))]
-    public class DispersingAI : MonoBehaviour
+    public class DispersingAI : MonoBehaviour, IEnemyAIComponent
     {
+        #region IEnemyAIComponent Implementation
+
+        public bool IsTriggered => enemyAI != null && enemyAI.IsTargetInAttackRange && targetRatInventory != null && targetRatInventory.Count > 0;
+        public bool IsRunning { get; set; }
+
+        public event System.Action OnActivated;
+        public event System.Action OnDeactivated;
+
+        /// <summary>
+        /// Called by EnemyAI when this component transitions into the running state.
+        /// Starts dispersing behavior.
+        /// </summary>
+        public void OnStartRunning()
+        {
+            IsRunning = true;
+            StartDispersing();
+        }
+
+        /// <summary>
+        /// Called by EnemyAI when this component transitions out of the running state.
+        /// Stops dispersing behavior.
+        /// </summary>
+        public void OnExitRunning()
+        {
+            IsRunning = false;
+            StopDispersing();
+        }
+
+        #endregion
+
         #region Settings
 
         [Header("Disperse Settings")]
@@ -32,6 +62,11 @@ namespace FindersCheesers
         [Tooltip("Whether to disperse all rats when triggered")]
         [SerializeField]
         private bool disperseAllRats = false;
+
+        [Header("Priority Settings")]
+        [Tooltip("Priority of this AI component (higher values take precedence when multiple AI components are triggered)")]
+        [SerializeField]
+        private int priority = 0;
 
         [Header("Debug")]
         [Tooltip("Show debug information in the console")]
@@ -98,6 +133,12 @@ namespace FindersCheesers
             set => disperseCooldown = Mathf.Max(0f, value);
         }
 
+        /// <summary>
+        /// Gets the priority of this AI component.
+        /// Higher priority values take precedence when multiple AI components are triggered.
+        /// </summary>
+        public int Priority => priority;
+
         #endregion
 
         #region Component References
@@ -143,7 +184,7 @@ namespace FindersCheesers
 
         private void Update()
         {
-            if (!enemyAI.IsActive)
+            if (!enemyAI.IsActive || !IsRunning)
             {
                 return;
             }
@@ -211,6 +252,7 @@ namespace FindersCheesers
             IsDispersing = true;
 
             OnDispersingStarted?.Invoke();
+            OnActivated?.Invoke();
 
             if (debugMode)
             {
@@ -231,6 +273,7 @@ namespace FindersCheesers
             IsDispersing = false;
 
             OnDispersingStopped?.Invoke();
+            OnDeactivated?.Invoke();
 
             if (debugMode)
             {

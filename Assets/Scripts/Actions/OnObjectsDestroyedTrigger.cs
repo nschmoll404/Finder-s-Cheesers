@@ -63,7 +63,7 @@ namespace Actions
             if (string.IsNullOrEmpty(autoFindTag))
             {
                 // Find all GameObjects in the scene
-                GameObject[] allObjects = FindObjectsOfType<GameObject>();
+                GameObject[] allObjects = FindObjectsByType<GameObject>(FindObjectsSortMode.None);
                 targetObjects = new List<GameObject>(allObjects);
                 if (debugMode)
                 {

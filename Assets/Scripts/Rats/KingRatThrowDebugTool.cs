@@ -94,10 +94,6 @@ namespace FindersCheesers
         [SerializeField]
         private Vector3 customTargetPosition = Vector3.zero;
 
-        [Tooltip("Target height (Y position) for the throw")]
-        [SerializeField]
-        private float targetHeight = 0f;
-
         #endregion
 
         #region Calculated Properties
@@ -388,7 +384,6 @@ namespace FindersCheesers
             useLocalSpace = true;
             throwDirection = Vector3.forward;
             useCustomTarget = false;
-            targetHeight = 0f;
         }
 
         #endregion

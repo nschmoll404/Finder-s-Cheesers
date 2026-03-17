@@ -30,10 +30,6 @@ namespace FindersCheesers.Splines
         [Tooltip("Layer mask for detecting SplineBegin objects")]
         private LayerMask splineBeginLayerMask = -1;
 
-        [SerializeField]
-        [Tooltip("Should show a prompt when a spline is nearby?")]
-        private bool showPrompt = true;
-
         [Header("Riding Settings")]
         [SerializeField]
         [Tooltip("Should the rider follow the spline's rotation?")]
