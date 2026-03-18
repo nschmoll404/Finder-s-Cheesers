@@ -179,6 +179,7 @@ MonoBehaviour:
   navMeshAngularSpeed: 120
   navMeshStoppingDistance: 0.5
   isActive: 1
+  priority: 0
   debugMode: 0
   showGizmos: 1
 --- !u!114 &7436826930967155130
@@ -204,6 +205,7 @@ MonoBehaviour:
   startPatrollingOnAwake: 1
   stopOnTargetDetected: 1
   resumeOnTargetLost: 1
+  priority: 1
   debugMode: 0
   showGizmos: 1
 --- !u!114 &1172763499980753342
@@ -226,6 +228,7 @@ MonoBehaviour:
   lastKnownPositionThreshold: 1
   chaseSpeedMultiplier: 1.2
   chaseRotationMultiplier: 1.5
+  priority: 2
   debugMode: 0
   showGizmos: 1
 --- !u!114 &5603775158337574162
@@ -248,6 +251,7 @@ MonoBehaviour:
   facingAngleTolerance: 45
   attackTriggerName: Attack
   attackBoolName: IsAttacking
+  priority: 0
   debugMode: 0
   showGizmos: 1
 --- !u!114 &2507059027343776121
@@ -267,6 +271,7 @@ MonoBehaviour:
   stopOnTargetOutOfRange: 1
   disperseCooldown: 2
   disperseAllRats: 0
+  priority: 3
   debugMode: 0
   showGizmos: 1
 --- !u!54 &7651634197138996882
@@ -317,20 +322,21 @@ MonoBehaviour:
   grabDuration: 1
   carryOffset: {x: 0, y: 1.5, z: 0}
   carrySmoothSpeed: 10
-  carryDistance: 10
-  minDistanceFromPlayer: 10
+  carryDistance: 8
+  minDistanceFromPlayer: 5
   carrySpeedMultiplier: 1.5
-  dropDistance: 12
+  dropDistance: 10
   dropDuration: 0.5
-  throwDistance: 5
+  throwDistance: 6
   returnToIdleAfterDrop: 1
-  grabCooldown: 5
+  grabCooldown: 3
   playerTag: Player
   playerDetectionRange: 25
   stopPatrollingWhenSeeking: 1
   resumePatrollingAfterDrop: 1
   maxPickupCount: 3
   pickupCountResetTime: 60
+  priority: 4
   debugMode: 0
   showGizmos: 1
 --- !u!195 &1920169953158654542

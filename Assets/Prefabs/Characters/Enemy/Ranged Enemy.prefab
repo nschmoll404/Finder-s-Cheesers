@@ -133,10 +133,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76ac38d6cc921474b9bc35db08fad01c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.RangedWeapon
-  projectilePrefab: {fileID: 7223600328302441408, guid: 8c8dbed5d85e8e747b51094af306b2a6, type: 3}
+  projectilePrefab: {fileID: 643560161009610544, guid: 3b894d4e53137a348be3076d488bcbc1, type: 3}
   damage: 10
   projectileSpeed: 20
-  fireRate: 0.5
+  fireRate: 1
   maxRange: 100
   automaticFire: 0
   spreadAngle: 0
@@ -241,6 +241,7 @@ MonoBehaviour:
   navMeshAngularSpeed: 120
   navMeshStoppingDistance: 0.5
   isActive: 1
+  priority: 0
   debugMode: 0
   showGizmos: 1
 --- !u!114 &777270176952409419
@@ -266,6 +267,7 @@ MonoBehaviour:
   startPatrollingOnAwake: 1
   stopOnTargetDetected: 1
   resumeOnTargetLost: 1
+  priority: 1
   debugMode: 0
   showGizmos: 1
 --- !u!114 &1165671882059549780
@@ -288,6 +290,7 @@ MonoBehaviour:
   lastKnownPositionThreshold: 1
   chaseSpeedMultiplier: 1.2
   chaseRotationMultiplier: 1.5
+  priority: 4
   debugMode: 0
   showGizmos: 1
 --- !u!114 &6269639766346139912
@@ -310,6 +313,7 @@ MonoBehaviour:
   facingAngleTolerance: 45
   attackTriggerName: Attack
   attackBoolName: IsAttacking
+  priority: 0
   debugMode: 0
   showGizmos: 1
 --- !u!114 &4363341273658796204
@@ -329,6 +333,7 @@ MonoBehaviour:
   stopOnTargetOutOfRange: 1
   disperseCooldown: 2
   disperseAllRats: 0
+  priority: 2
   debugMode: 0
   showGizmos: 1
 --- !u!54 &8943657109663606659
@@ -375,7 +380,7 @@ MonoBehaviour:
   pathPointThreshold: 0.5
   hopForce: 4
   hopHorizontalForce: 2
-  maxHorizontalSpeed: 5
+  maxHorizontalSpeed: 10
   rotationSpeed: 10
   groundCheckDistance: 0.15
   groundLayerMask:
@@ -415,6 +420,7 @@ MonoBehaviour:
   aimSpeed: 90
   aimAtCenter: 1
   aimOffset: {x: 0, y: 0, z: 0}
+  priority: 5
   debugMode: 1
   showGizmos: 1
 --- !u!1 &7709091766209963425
