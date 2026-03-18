@@ -5337,49 +5337,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineHardLookAt
   LookAtOffset: {x: 0, y: 0, z: 0}
---- !u!1 &1636135456 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4868275458856752256, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-  m_PrefabInstance: {fileID: 2937061366349575749}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1636135457
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1636135456}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f16911dc0ef2604e85cff1e6fc6e077, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.GrabKingRatAI
-  kingRatTag: KingRat
-  kingRatLayerMask:
-    serializedVersion: 2
-    m_Bits: 64
-  kingRatDetectionRange: 20
-  grabRange: 2
-  grabDuration: 1
-  carryOffset: {x: 0, y: 1.5, z: 0}
-  carrySmoothSpeed: 10
-  carryDistance: 15
-  minDistanceFromPlayer: 10
-  carrySpeedMultiplier: 1.5
-  dropDistance: 20
-  dropDuration: 0.5
-  throwDistance: 5
-  returnToIdleAfterDrop: 1
-  grabCooldown: 5
-  playerTag: Player
-  playerDetectionRange: 25
-  stopPatrollingWhenSeeking: 1
-  resumePatrollingAfterDrop: 0
-  maxPickupCount: 3
-  pickupCountResetTime: 60
-  priority: 3
-  debugMode: 0
-  showGizmos: 1
 --- !u!1 &1644241500 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8338166939317028711, guid: 0d07811549bba2247a73014ab7d57ec4, type: 3}
@@ -11542,14 +11499,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 679029107821972925, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 14e46e86559220643b50379910b3ba7b, type: 2}
-    - target: {fileID: 697036339095985662, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 748e27d6eda90db4ab502be0a19b52a1, type: 2}
     - target: {fileID: 777270176952409419, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
       propertyPath: 'waypoints.Array.data[0]'
       value: 
@@ -11566,14 +11515,6 @@ PrefabInstance:
       propertyPath: 'waypoints.Array.data[3]'
       value: 
       objectReference: {fileID: 743138241}
-    - target: {fileID: 1165671882059549780, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-      propertyPath: priority
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 2821471157935297425, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-      propertyPath: maxHorizontalSpeed
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 3267506616270974980, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
       propertyPath: m_LocalPosition.x
       value: -7.45
@@ -11614,81 +11555,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3480559542766727397, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.808
-      objectReference: {fileID: 0}
-    - target: {fileID: 3480559542766727397, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.775
-      objectReference: {fileID: 0}
-    - target: {fileID: 3480559542766727397, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.033
-      objectReference: {fileID: 0}
-    - target: {fileID: 3480559542766727397, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.50000036
-      objectReference: {fileID: 0}
-    - target: {fileID: 3480559542766727397, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.49999967
-      objectReference: {fileID: 0}
-    - target: {fileID: 3480559542766727397, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0.49999976
-      objectReference: {fileID: 0}
-    - target: {fileID: 3480559542766727397, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.50000024
-      objectReference: {fileID: 0}
-    - target: {fileID: 3480559542766727397, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 3480559542766727397, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 4195699597309431586, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-      propertyPath: fireRate
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4195699597309431586, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-      propertyPath: projectilePrefab
-      value: 
-      objectReference: {fileID: 643560161009610544, guid: 3b894d4e53137a348be3076d488bcbc1, type: 3}
-    - target: {fileID: 4363341273658796204, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-      propertyPath: priority
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 4868275458856752256, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
       propertyPath: m_Name
       value: Ranged Enemy
       objectReference: {fileID: 0}
-    - target: {fileID: 4868275458856752256, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5667809884761760806, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-      propertyPath: priority
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6484575948445220396, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 748e27d6eda90db4ab502be0a19b52a1, type: 2}
-    - target: {fileID: 7661639043544841509, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 14e46e86559220643b50379910b3ba7b, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4868275458856752256, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1636135457}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
 --- !u!33 &3247726563477165925
 MeshFilter:
@@ -12016,26 +11890,6 @@ PrefabInstance:
       propertyPath: 'waypoints.Array.data[3]'
       value: 
       objectReference: {fileID: 743138241}
-    - target: {fileID: 7740197268098740386, guid: 5963370e8905db74fa7ca615f7e1ac63, type: 3}
-      propertyPath: dropDistance
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 7740197268098740386, guid: 5963370e8905db74fa7ca615f7e1ac63, type: 3}
-      propertyPath: grabCooldown
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7740197268098740386, guid: 5963370e8905db74fa7ca615f7e1ac63, type: 3}
-      propertyPath: carryDistance
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 7740197268098740386, guid: 5963370e8905db74fa7ca615f7e1ac63, type: 3}
-      propertyPath: throwDistance
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 7740197268098740386, guid: 5963370e8905db74fa7ca615f7e1ac63, type: 3}
-      propertyPath: minDistanceFromPlayer
-      value: 5
-      objectReference: {fileID: 0}
     - target: {fileID: 8457421930133807414, guid: 5963370e8905db74fa7ca615f7e1ac63, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.52
