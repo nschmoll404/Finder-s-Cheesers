@@ -53,6 +53,9 @@ MonoBehaviour:
   throwableLayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  producerLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
   detectionBoxSize: {x: 2, y: 2, z: 2}
   detectionBoxOffset: {x: 0, y: 0, z: 1}
   minRatsToCarry: 2
@@ -310,6 +313,11 @@ MonoBehaviour:
   rotationSpeed: 10
   ratInventory: {fileID: 6507795758806245615}
   useGravity: 1
+  gravity: -60
+  groundCheckDistance: 0.1
+  groundLayers:
+    serializedVersion: 2
+    m_Bits: 8
   drag: 3
   debugMode: 0
   visualizeMovement: 1
@@ -325,7 +333,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 425bca4f1040259438d16f6479453767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.RatInventory
-  maxCapacity: 8
+  maxCapacity: 10
   supportRadius: 0.6
   ratPositioningSpeed: 5
   ratPositioningUpdateMode: 1
@@ -364,8 +372,8 @@ MonoBehaviour:
   ratPackController: {fileID: 2527029248512623407}
   dropRatInput: {fileID: 1722914664841557398, guid: 855a47865bf910d4f9b7cf9ee07a6ac6, type: 3}
   dropDistance: 2
-  randomizeDropPosition: 0
-  dropRandomRadius: 0.5
+  randomizeDropPosition: 1
+  dropRandomRadius: 1
 --- !u!114 &7471958214262676170
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -431,7 +439,6 @@ MonoBehaviour:
   splineBeginLayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  showPrompt: 0
   followSplineRotation: 1
   preserveVelocityOnDetach: 1
   detachVelocityMultiplier: 1
