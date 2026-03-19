@@ -107,6 +107,7 @@ GameObject:
   - component: {fileID: 7651634197138996882}
   - component: {fileID: 7740197268098740386}
   - component: {fileID: 1920169953158654542}
+  - component: {fileID: -3201600512368978528}
   m_Layer: 0
   m_Name: Melee Enemy
   m_TagString: Untagged
@@ -361,6 +362,23 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &-3201600512368978528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5774785878994015399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f8a9b2c3d4e5f6a7b8c9d0e1f2a3b4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.Health
+  maxHealth: 100
+  currentHealth: 100
+  destroyOnDeath: 1
+  destroyDelay: 0
+  debugMode: 0
 --- !u!1 &8647355286051480925
 GameObject:
   m_ObjectHideFlags: 0
