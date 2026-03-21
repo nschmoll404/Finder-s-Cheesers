@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1652296782567078908}
+  - component: {fileID: 7471099932698743605}
   m_Layer: 0
   m_Name: Broken_Brick_01
   m_TagString: Untagged
@@ -32,6 +33,27 @@ Transform:
   - {fileID: 8316239465750657876}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 270, z: 0}
+--- !u!65 &7471099932698743605
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7983295341226531814}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 5, y: 2.5, z: 5}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &8422732713086917823
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -41,8 +63,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 1652296782567078908}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 534efe344b4ad12408c8173a19171e76, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 534efe344b4ad12408c8173a19171e76, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 11.38
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 534efe344b4ad12408c8173a19171e76, type: 3}
       propertyPath: m_LocalPosition.y
@@ -50,7 +76,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 534efe344b4ad12408c8173a19171e76, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -34.78
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 534efe344b4ad12408c8173a19171e76, type: 3}
       propertyPath: m_LocalRotation.w
