@@ -25,12 +25,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2005223346406405627}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.016, y: -0.395, z: 0}
-  m_LocalScale: {x: 0.8559375, y: 0.17790346, z: 0.5708333}
+  m_LocalRotation: {x: -1.0165751e-15, y: -1, z: 0.000000021855694, w: 0.00000004371139}
+  m_LocalPosition: {x: 0.0011047011, y: 0.013596243, z: 0}
+  m_LocalScale: {x: 0.059097193, y: 0.023014603, z: 0.039412513}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1338914925947423748}
+  m_Father: {fileID: 4524754004112125464}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &2378994223660809816
 BoxCollider:
@@ -67,7 +67,6 @@ GameObject:
   - component: {fileID: 8542383426825703160}
   - component: {fileID: 4668096654503347065}
   - component: {fileID: 2873338935170824707}
-  - component: {fileID: 3829577981680086644}
   m_Layer: 0
   m_Name: Battery case
   m_TagString: Untagged
@@ -89,8 +88,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4524754004112125464}
-  - {fileID: 1867983543956658975}
-  - {fileID: 9114405104809443842}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4458991695301928042
@@ -169,7 +166,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.51, z: 0}
 --- !u!114 &4668096654503347065
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -208,27 +205,6 @@ MonoBehaviour:
     _json: '{"nest":{"source":"Macro","macro":0,"embed":null}}'
     _objectReferences:
     - {fileID: 11400000, guid: 4cdbb44bab0627c40bcce10f17e27c56, type: 2}
---- !u!65 &3829577981680086644
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6803888044717963051}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7197151294357402919
 GameObject:
   m_ObjectHideFlags: 0
@@ -254,12 +230,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7197151294357402919}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.186}
-  m_LocalScale: {x: 0.8509667, y: 0.97179765, z: 0.23333333}
+  m_LocalRotation: {x: -1.0165751e-15, y: -1, z: 0.000000021855694, w: 0.00000004371139}
+  m_LocalPosition: {x: 0, y: 0.06469569, z: -0.012842153}
+  m_LocalScale: {x: 0.058753993, y: 0.12571727, z: 0.016110225}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1338914925947423748}
+  m_Father: {fileID: 4524754004112125464}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &5797160694474993401
 BoxCollider:
@@ -308,7 +284,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 99972da908f2a584bb5e472da1babc1a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.5000993
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 99972da908f2a584bb5e472da1babc1a, type: 3}
       propertyPath: m_LocalPosition.z
@@ -380,7 +356,13 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 159abfe43fd143541a8acd0d7126c8db, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 99972da908f2a584bb5e472da1babc1a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1867983543956658975}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 99972da908f2a584bb5e472da1babc1a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9114405104809443842}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 99972da908f2a584bb5e472da1babc1a, type: 3}
 --- !u!1 &1688253674671463097 stripped
