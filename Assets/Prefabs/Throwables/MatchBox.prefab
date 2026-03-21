@@ -13,9 +13,10 @@ GameObject:
   - component: {fileID: 4694003473365023293}
   - component: {fileID: 3004499716601683896}
   - component: {fileID: 4400748184052290149}
+  - component: {fileID: 1563070499380211809}
   m_Layer: 10
   m_Name: MatchBox
-  m_TagString: Untagged
+  m_TagString: Match
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -134,6 +135,33 @@ MonoBehaviour:
   maxSpawns: 0
   debugMode: 0
   visualizeSpawnPoint: 1
+--- !u!54 &1563070499380211809
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6910434880184716460}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &8678397223122448161
 PrefabInstance:
   m_ObjectHideFlags: 0
