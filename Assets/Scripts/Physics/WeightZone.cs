@@ -294,6 +294,8 @@ namespace FindersCheesers
 
         #endregion
 
+#if UNITY_EDITOR
+
         #region Editor
 
         /// <summary>
@@ -336,5 +338,6 @@ namespace FindersCheesers
         }
 
         #endregion
+#endif
     }
 }
