@@ -155,6 +155,19 @@ namespace FindersCheesers
         [SerializeField]
         private float launchHeightOffset = 1f;
 
+        [Header("Arc Collision")]
+        [Tooltip("Enable collision detection along the throw arc")]
+        [SerializeField]
+        private bool checkArcCollision = true;
+
+        [Tooltip("Layer mask for detecting obstacles along the throw arc (walls, floors, etc.)")]
+        [SerializeField]
+        private LayerMask arcCollisionLayerMask = -1; // -1 = Everything
+
+        [Tooltip("Color of the arc line when it would hit an obstacle")]
+        [SerializeField]
+        private Color blockedArcColor = Color.red;
+
         [Header("Distance Settings")]
         [Tooltip("Base throw distance without any rats")]
         [SerializeField]
@@ -233,6 +246,13 @@ namespace FindersCheesers
         private Vector3[] arcPoints;
         private bool isTargetValid;
         private Vector3 clampedTargetPosition;
+
+        // Arc collision state
+        private bool isArcBlocked;
+        private Vector3? arcHitPoint;
+        private int arcHitSegment;
+        private Vector3 originalTargetPosition;
+        private bool originalTargetValid; // Track original target validity before collision adjustment
 
         #endregion
 
@@ -402,6 +422,9 @@ namespace FindersCheesers
                 pointerPosition = pointerAction.ReadValue<Vector2>();
             }
 
+            // Update arc visualization first (must be before throw input check to get collision point)
+            UpdateArcVisualization();
+
             // Check for throw input
             if (throwAction != null && !(throwable != null && throwable.IsThrowing))
             {
@@ -416,9 +439,6 @@ namespace FindersCheesers
             {
                 UpdateKingRatPosition();
             }
-
-            // Update arc visualization
-            UpdateArcVisualization();
 
             // Update target reticle position
             UpdateTargetReticle();
@@ -1285,25 +1305,66 @@ namespace FindersCheesers
                 Vector3 start = GetLaunchPosition();
                 Vector3 end = targetPosition.Value;
 
+                // Store original target for collision detection
+                originalTargetPosition = end;
+                // Store original target validity before collision adjustment
+                originalTargetValid = isTargetValid;
+
                 // Calculate arc points
                 CalculateArcPoints(start, end, arcPoints);
 
-                // Update LineRenderer positions
-                for (int i = 0; i < arcPoints.Length; i++)
+                // Check for arc collision if enabled
+                isArcBlocked = false;
+                arcHitPoint = null;
+                arcHitSegment = -1;
+
+                if (checkArcCollision)
                 {
-                    arcLineRenderer.SetPosition(i, arcPoints[i]);
+                    CheckArcCollision(start, end);
                 }
 
-                // Set arc color based on target validity
-                if (lockTargetToMaxDistance || isTargetValid)
+                // If arc is blocked, truncate the arc visualization and update target position
+                int segmentsToDraw = arcPoints.Length;
+                if (isArcBlocked && arcHitPoint.HasValue)
                 {
-                    arcLineRenderer.startColor = arcColor;
-                    arcLineRenderer.endColor = arcColor;
+                    segmentsToDraw = arcHitSegment + 2; // Include the hit point segment
+                    if (segmentsToDraw > arcPoints.Length)
+                    {
+                        segmentsToDraw = arcPoints.Length;
+                    }
+
+                    // Update the target position to the hit point
+                    targetPosition = arcHitPoint.Value;
+                    // Note: isTargetValid is NOT updated here - we preserve originalTargetValid for color priority
                 }
-                else
+
+                // Update LineRenderer position count and positions
+                arcLineRenderer.positionCount = segmentsToDraw;
+                for (int i = 0; i < segmentsToDraw; i++)
+                {
+                    if (i < arcPoints.Length)
+                    {
+                        arcLineRenderer.SetPosition(i, arcPoints[i]);
+                    }
+                }
+
+                // Set arc color based on target validity and collision
+                // Priority: invalid distance > blocked arc > valid
+                // Use originalTargetValid to preserve original target validity before collision adjustment
+                if (!originalTargetValid)
                 {
                     arcLineRenderer.startColor = invalidDistanceColor;
                     arcLineRenderer.endColor = invalidDistanceColor;
+                }
+                else if (isArcBlocked)
+                {
+                    arcLineRenderer.startColor = blockedArcColor;
+                    arcLineRenderer.endColor = blockedArcColor;
+                }
+                else
+                {
+                    arcLineRenderer.startColor = arcColor;
+                    arcLineRenderer.endColor = arcColor;
                 }
 
                 arcLineRenderer.enabled = true;
@@ -1311,6 +1372,39 @@ namespace FindersCheesers
             else
             {
                 arcLineRenderer.enabled = false;
+                isArcBlocked = false;
+                arcHitPoint = null;
+            }
+        }
+
+        /// <summary>
+        /// Checks for collisions along the throw arc.
+        /// </summary>
+        private void CheckArcCollision(Vector3 start, Vector3 end)
+        {
+            // Check each segment of the arc for collisions
+            for (int i = 0; i < arcPoints.Length - 1; i++)
+            {
+                Vector3 segmentStart = arcPoints[i];
+                Vector3 segmentEnd = arcPoints[i + 1];
+                float segmentLength = Vector3.Distance(segmentStart, segmentEnd);
+
+                // Raycast along this segment
+                Vector3 direction = (segmentEnd - segmentStart).normalized;
+                if (Physics.Raycast(segmentStart, direction, out RaycastHit hit, segmentLength, arcCollisionLayerMask, QueryTriggerInteraction.Ignore))
+                {
+                    // Found a collision!
+                    isArcBlocked = true;
+                    arcHitPoint = hit.point;
+                    arcHitSegment = i;
+
+                    if (debugMode)
+                    {
+                        Debug.Log($"[KingRatHandler] Arc collision detected at {hit.point} on segment {i}");
+                    }
+
+                    return; // Stop at first collision
+                }
             }
         }
 
