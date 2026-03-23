@@ -55,6 +55,19 @@ namespace FindersCheesers
         [SerializeField]
         private float dropCooldownDistance = 3f;
 
+        [Header("Stuck Detection Settings")]
+        [Tooltip("If enabled, rats will cancel running away if they get stuck")]
+        [SerializeField]
+        private bool enableStuckDetection = true;
+
+        [Tooltip("Radius within which the rat is considered stuck if it stays too long")]
+        [SerializeField]
+        private float stuckDetectionRadius = 0.5f;
+
+        [Tooltip("Time in seconds before the rat is considered stuck")]
+        [SerializeField]
+        private float stuckDetectionTime = 2f;
+
         [Header("Debug")]
         [Tooltip("Show debug information in the console")]
         [SerializeField]
@@ -72,6 +85,11 @@ namespace FindersCheesers
         private Vector3 dropPosition;
         private float dropTime;
         private bool hasBeenDropped = false;
+
+        // Stuck detection state
+        private Vector3 stuckDetectionStartPosition;
+        private float stuckDetectionTimer = 0f;
+
 
         /// <summary>
         /// Gets the movement speed of this rat.
@@ -284,20 +302,6 @@ namespace FindersCheesers
         /// </summary>
         private void UpdateRunningAway()
         {
-            float distance = Vector3.Distance(transform.position, targetPosition);
-
-            // Check if we've reached the target position
-            if (distance < 0.5f)
-            {
-                isRunningAway = false;
-
-                if (debugMode)
-                {
-                    Debug.Log($"[Rat] Reached target position. Rat ID: {RatId}");
-                }
-                return;
-            }
-
             // Move toward target position
             if (navMeshAgent != null && navMeshAgent.enabled)
             {
@@ -306,13 +310,81 @@ namespace FindersCheesers
                 {
                     navMeshAgent.SetDestination(targetPosition);
                 }
+                
+                // Always sync targetPosition to the actual NavMesh destination
+                // This ensures we're checking against the reachable position on the NavMesh
+                targetPosition = navMeshAgent.destination;
+
+                // Check if we've reached the destination using NavMeshAgent's remainingDistance
+                // This is more reliable than manual distance calculation for NavMesh movement
+                if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
+                {
+                    isRunningAway = false;
+                    ResetStuckDetection();
+
+                    if (debugMode)
+                    {
+                        Debug.Log($"[Rat] Reached target position. Rat ID: {RatId}");
+                    }
+                    return;
+                }
             }
             else
             {
-                // Use direct movement
+                // Use direct movement when NavMeshAgent is not available
+                float distance = Vector3.Distance(transform.position, targetPosition);
+
+                // Check if we've reached the target position
+                if (distance < 0.5f)
+                {
+                    isRunningAway = false;
+                    ResetStuckDetection();
+
+                    if (debugMode)
+                    {
+                        Debug.Log($"[Rat] Reached target position. Rat ID: {RatId}");
+                    }
+                    return;
+                }
+
                 Vector3 direction = (targetPosition - transform.position).normalized;
                 transform.position += direction * movementSpeed * Time.deltaTime;
                 transform.LookAt(targetPosition);
+            }
+
+            // Stuck detection - check if rat has moved outside the detection radius
+            if (enableStuckDetection)
+            {
+                float distanceFromStart = Vector3.Distance(transform.position, stuckDetectionStartPosition);
+                
+                if (distanceFromStart > stuckDetectionRadius)
+                {
+                    // Rat has moved, reset the timer and update start position
+                    stuckDetectionStartPosition = transform.position;
+                    stuckDetectionTimer = 0f;
+                }
+                else
+                {
+                    // Rat is still within the stuck radius, increment timer
+                    stuckDetectionTimer += Time.deltaTime;
+                    
+                    if (stuckDetectionTimer >= stuckDetectionTime)
+                    {
+                        // Rat is stuck, stop running away
+                        isRunningAway = false;
+                        ResetStuckDetection();
+
+                        if (navMeshAgent != null && navMeshAgent.enabled)
+                        {
+                            navMeshAgent.ResetPath();
+                        }
+
+                        if (debugMode)
+                        {
+                            Debug.Log($"[Rat] Stuck detected, stopping run away. Rat ID: {RatId}");
+                        }
+                    }
+                }
             }
         }
 
@@ -377,7 +449,7 @@ namespace FindersCheesers
                 awayDirection = awayDirection.normalized;
             }
 
-            // Set target position
+            // Set target position (NavMeshAgent will snap this to the nearest reachable NavMesh position)
             targetPosition = transform.position + awayDirection * runDistance;
 
             // Unregister from inventory (this will re-enable NavMeshAgent if enabled)
@@ -387,6 +459,13 @@ namespace FindersCheesers
             }
 
             isRunningAway = true;
+
+            // Initialize stuck detection
+            if (enableStuckDetection)
+            {
+                stuckDetectionStartPosition = transform.position;
+                stuckDetectionTimer = 0f;
+            }
 
             if (debugMode)
             {
@@ -552,6 +631,15 @@ namespace FindersCheesers
             {
                 Debug.Log($"[Rat] Drop cooldown reset. Rat ID: {RatId}");
             }
+        }
+
+        /// <summary>
+        /// Resets the stuck detection state.
+        /// </summary>
+        private void ResetStuckDetection()
+        {
+            stuckDetectionStartPosition = Vector3.zero;
+            stuckDetectionTimer = 0f;
         }
 
         private void OnDestroy()
