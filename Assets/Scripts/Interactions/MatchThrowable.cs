@@ -35,6 +35,31 @@ namespace FindersCheesers
         [SerializeField]
         private bool autoLightOnPickup = false;
 
+        [Header("Auto-Light Detection Settings")]
+        [Tooltip("Enable automatic lighting when touching specific layers")]
+        [SerializeField]
+        private bool autoLightOnLayerContact = false;
+
+        [Tooltip("Layers that can light this match on contact (e.g., fire, lit torches)")]
+        [SerializeField]
+        private LayerMask ignitionSourceLayers = 0;
+
+        [Tooltip("Use trigger collisions for layer detection")]
+        [SerializeField]
+        private bool useTriggerDetection = true;
+
+        [Tooltip("Use collision events for layer detection")]
+        [SerializeField]
+        private bool useCollisionDetection = false;
+
+        [Tooltip("Radius for overlap sphere check (used if neither trigger nor collision detection is enabled)")]
+        [SerializeField]
+        private float detectionRadius = 0.5f;
+
+        [Tooltip("How often to check for nearby ignition sources (in seconds)")]
+        [SerializeField]
+        private float detectionCheckInterval = 0.25f;
+
         [Header("Ignition Settings")]
         [Tooltip("Whether the match can ignite FireInteractable objects")]
         [SerializeField]
@@ -120,6 +145,9 @@ namespace FindersCheesers
         // Ignition tracking to avoid igniting the same object multiple times
         private HashSet<IFireInteractable> ignitedObjects = new HashSet<IFireInteractable>();
 
+        // Auto-light detection tracking
+        private float detectionTimer = 0f;
+
         #endregion
 
         #region Unity Lifecycle
@@ -184,6 +212,32 @@ namespace FindersCheesers
                 ApplyFlameDamage();
                 IgniteNearbyObjects();
             }
+
+            // Check for ignition sources if auto-light on layer contact is enabled
+            if (autoLightOnLayerContact && !IsLit && !IsExtinguished)
+            {
+                UpdateIgnitionSourceDetection();
+            }
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (!autoLightOnLayerContact || !useTriggerDetection || IsLit || IsExtinguished)
+            {
+                return;
+            }
+
+            CheckAndLightFromCollision(other.gameObject);
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (!autoLightOnLayerContact || !useCollisionDetection || IsLit || IsExtinguished)
+            {
+                return;
+            }
+
+            CheckAndLightFromCollision(collision.gameObject);
         }
 
         private void OnDrawGizmosSelected()
@@ -205,6 +259,14 @@ namespace FindersCheesers
             {
                 Gizmos.color = Color.orange;
                 Gizmos.DrawWireSphere(flamePos, ignitionRadius);
+            }
+
+            // Draw detection radius for auto-light
+            if (autoLightOnLayerContact && ignitionSourceLayers != 0)
+            {
+                Gizmos.color = Color.cyan;
+                Vector3 detectPos = transform.position;
+                Gizmos.DrawWireSphere(detectPos, detectionRadius);
             }
         }
 
@@ -544,6 +606,88 @@ namespace FindersCheesers
             }
         }
 
+        /// <summary>
+        /// Updates the periodic check for nearby ignition sources.
+        /// </summary>
+        private void UpdateIgnitionSourceDetection()
+        {
+            // Skip if using trigger or collision detection (they handle it via events)
+            if (useTriggerDetection || useCollisionDetection)
+            {
+                return;
+            }
+
+            detectionTimer += Time.deltaTime;
+
+            if (detectionTimer >= detectionCheckInterval)
+            {
+                detectionTimer = 0f;
+                CheckForNearbyIgnitionSources();
+            }
+        }
+
+        /// <summary>
+        /// Checks for nearby ignition sources using overlap sphere.
+        /// </summary>
+        private void CheckForNearbyIgnitionSources()
+        {
+            if (ignitionSourceLayers == 0)
+            {
+                return;
+            }
+
+            Collider[] hitColliders = Physics.OverlapSphere(
+                transform.position,
+                detectionRadius,
+                ignitionSourceLayers,
+                QueryTriggerInteraction.Collide
+            );
+
+            foreach (Collider collider in hitColliders)
+            {
+                // Skip self
+                if (collider.gameObject == gameObject)
+                {
+                    continue;
+                }
+
+                if (debugMode)
+                {
+                    Debug.Log($"[MatchThrowable] Detected ignition source: {collider.gameObject.name} on layer {LayerMask.LayerToName(collider.gameObject.layer)}");
+                }
+
+                // Light the match
+                LightMatch();
+                return; // Only need to light once
+            }
+        }
+
+        /// <summary>
+        /// Checks if a collision object is on an ignition source layer and lights the match if so.
+        /// </summary>
+        /// <param name="collisionObject">The object that was collided with.</param>
+        private void CheckAndLightFromCollision(GameObject collisionObject)
+        {
+            // Skip self
+            if (collisionObject == gameObject)
+            {
+                return;
+            }
+
+            // Check if the object is on an ignition source layer
+            int objectLayer = collisionObject.layer;
+            if ((ignitionSourceLayers.value & (1 << objectLayer)) != 0)
+            {
+                if (debugMode)
+                {
+                    Debug.Log($"[MatchThrowable] Collision with ignition source: {collisionObject.name} on layer {LayerMask.LayerToName(objectLayer)}");
+                }
+
+                // Light the match
+                LightMatch();
+            }
+        }
+
         #endregion
 
         #region Editor
@@ -555,6 +699,8 @@ namespace FindersCheesers
             flameRadius = Mathf.Max(0.1f, flameRadius);
             damagePerSecond = Mathf.Max(0f, damagePerSecond);
             ignitionRadius = Mathf.Max(0.1f, ignitionRadius);
+            detectionRadius = Mathf.Max(0.01f, detectionRadius);
+            detectionCheckInterval = Mathf.Max(0.05f, detectionCheckInterval);
         }
 
         #endregion

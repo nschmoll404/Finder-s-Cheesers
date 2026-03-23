@@ -5,7 +5,7 @@ namespace FindersCheesers
 {
     /// <summary>
     /// A component that runs actions in response to health events.
-    /// Currently supports death events.
+    /// Supports damage, heal, and death events.
     /// </summary>
     [AddComponentMenu("Finders Cheesers/Health Actions")]
     public class HealthActions : MonoBehaviour
@@ -16,6 +16,16 @@ namespace FindersCheesers
         [Tooltip("The Health component to listen to events from. If null, will try to find one on this GameObject.")]
         [SerializeField]
         private Health health;
+
+        [Header("Damage Actions")]
+        [Tooltip("Actions to run when the entity takes damage.")]
+        [SerializeField]
+        private ActionRunner damagedActions = new ActionRunner();
+
+        [Header("Heal Actions")]
+        [Tooltip("Actions to run when the entity is healed.")]
+        [SerializeField]
+        private ActionRunner healActions = new ActionRunner();
 
         [Header("Death Actions")]
         [Tooltip("Actions to run when the entity dies.")]
@@ -30,6 +40,16 @@ namespace FindersCheesers
         /// Gets the Health component being monitored.
         /// </summary>
         public Health Health => health;
+
+        /// <summary>
+        /// Gets the damaged actions runner.
+        /// </summary>
+        public ActionRunner DamagedActions => damagedActions;
+
+        /// <summary>
+        /// Gets the heal actions runner.
+        /// </summary>
+        public ActionRunner HealActions => healActions;
 
         /// <summary>
         /// Gets the death actions runner.
@@ -58,6 +78,8 @@ namespace FindersCheesers
         {
             if (health != null)
             {
+                health.OnDamageTaken += HandleDamaged;
+                health.OnHealed += HandleHeal;
                 health.OnDeath += HandleDeath;
             }
         }
@@ -66,6 +88,8 @@ namespace FindersCheesers
         {
             if (health != null)
             {
+                health.OnDamageTaken -= HandleDamaged;
+                health.OnHealed -= HandleHeal;
                 health.OnDeath -= HandleDeath;
             }
         }
@@ -73,6 +97,30 @@ namespace FindersCheesers
         #endregion
 
         #region Event Handlers
+
+        /// <summary>
+        /// Handles the damage event by running damaged actions.
+        /// </summary>
+        /// <param name="damageAmount">The amount of damage taken.</param>
+        private void HandleDamaged(float damageAmount)
+        {
+            if (damagedActions != null && !damagedActions.IsEmpty())
+            {
+                damagedActions.RunAll(gameObject);
+            }
+        }
+
+        /// <summary>
+        /// Handles the heal event by running heal actions.
+        /// </summary>
+        /// <param name="healAmount">The amount healed.</param>
+        private void HandleHeal(float healAmount)
+        {
+            if (healActions != null && !healActions.IsEmpty())
+            {
+                healActions.RunAll(gameObject);
+            }
+        }
 
         /// <summary>
         /// Handles the death event by running death actions.
@@ -98,6 +146,8 @@ namespace FindersCheesers
             // Unsubscribe from old health if exists
             if (health != null && enabled)
             {
+                health.OnDamageTaken -= HandleDamaged;
+                health.OnHealed -= HandleHeal;
                 health.OnDeath -= HandleDeath;
             }
 
@@ -106,6 +156,8 @@ namespace FindersCheesers
             // Subscribe to new health if exists
             if (health != null && enabled)
             {
+                health.OnDamageTaken += HandleDamaged;
+                health.OnHealed += HandleHeal;
                 health.OnDeath += HandleDeath;
             }
         }

@@ -49,6 +49,8 @@ public class WaypointAnimator : MonoBehaviour
     public UnityEngine.Events.UnityEvent OnPathComplete;
     public UnityEngine.Events.UnityEvent OnMovementStarted;
     public UnityEngine.Events.UnityEvent OnMovementStopped;
+    public UnityEngine.Events.UnityEvent OnMovementResumed;
+    public UnityEngine.Events.UnityEvent OnMovementPaused;
     
     // Public state
     public bool IsPlaying { get; private set; }
@@ -267,7 +269,7 @@ public class WaypointAnimator : MonoBehaviour
         else if (IsPaused)
         {
             IsPaused = false;
-            OnMovementStarted?.Invoke();
+            OnMovementResumed?.Invoke();
         }
     }
     
@@ -279,7 +281,7 @@ public class WaypointAnimator : MonoBehaviour
         if (IsPlaying && !IsPaused)
         {
             IsPaused = true;
-            OnMovementStopped?.Invoke();
+            OnMovementPaused?.Invoke();
         }
     }
     

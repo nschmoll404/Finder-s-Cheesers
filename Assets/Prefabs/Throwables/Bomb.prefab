@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 2471366227612266659}
   - component: {fileID: 837583890695727341}
   - component: {fileID: 7689567006242304214}
-  - component: {fileID: 989906834061211475}
+  - component: {fileID: 7901569413306159954}
   m_Layer: 10
   m_Name: Bomb
   m_TagString: Untagged
@@ -243,7 +243,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &989906834061211475
+--- !u!114 &7901569413306159954
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -252,21 +252,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 2441524768759873828}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f8daa23d5e07b241a332510d977912b, type: 3}
+  m_Script: {fileID: 11500000, guid: ac6c7a246529d8e4ead5b175ec5d205b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.MatchThrowable
-  burnDuration: 10
-  flameRadius: 1
-  damagePerSecond: 10
-  damageableLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  autoLightOnPickup: 0
-  canIgniteObjects: 1
-  ignitionRadius: 1.5
-  flameTipTransform: {fileID: 0}
-  debugMode: 0
-  drawRadii: 1
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.BombActionRunner
+  _pickupActionRunner:
+    _actions: []
+  _throwActionRunner:
+    _actions: []
+  _clearPickupAfterRun: 0
+  _clearThrowAfterRun: 0
+  _debugMode: 0
+  _fuseLitActionRunner:
+    _actions: []
+  _explosionActionRunner:
+    _actions: []
+  _clearFuseLitAfterRun: 0
+  _clearExplosionAfterRun: 0
+  references:
+    version: 2
+    RefIds: []
 --- !u!1 &5750269561027532189
 GameObject:
   m_ObjectHideFlags: 0
