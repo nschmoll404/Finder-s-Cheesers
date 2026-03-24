@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6560043454589225412}
   - component: {fileID: 5298909344850739566}
   - component: {fileID: 8712442019793313259}
+  - component: {fileID: 8776935547985066112}
   m_Layer: 10
   m_Name: Battery
   m_TagString: Battery
@@ -98,6 +99,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.ThrowableObject
   throwDuration: 1
   launchSpeed: 10
+  carryOffset: {x: 0, y: 0, z: 0}
   debugMode: 0
 --- !u!114 &8712442019793313259
 MonoBehaviour:
@@ -116,6 +118,21 @@ MonoBehaviour:
   destroyOnDeath: 1
   destroyDelay: 0
   debugMode: 0
+--- !u!114 &8776935547985066112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4607671066427968602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99d883ab3dc8a5a488a1d4d1f8f7f73d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.ThrowableIcon
+  icon: {fileID: 1450535910, guid: be86a78530f7a14458b829010b2aa79a, type: 3}
+  iconColor: {r: 1, g: 1, b: 1, a: 1}
+  displayName: Battery
 --- !u!1001 &4158982479654469441
 PrefabInstance:
   m_ObjectHideFlags: 0
