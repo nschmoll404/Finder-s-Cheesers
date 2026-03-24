@@ -451,6 +451,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5487342690204273070, guid: d0e5f7bc99c97cb4ea0118ec19a01f4c, type: 3}
+      propertyPath: _data._json
+      value: '{"declarations":{"Kind":"Object","collection":{"$content":[{"name":"Rat
+        Count In Inventory","value":{"$content":0,"$type":"UnityEngine.Object"},"typeHandle":{"Identification":"TMPro.TextMeshProUGUI,
+        Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null","$version":"A"},"$version":"A"},{"name":"RatInventory","value":{"$content":1,"$type":"UnityEngine.Object"},"typeHandle":{"Identification":"UnityEngine.GameObject,
+        UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null","$version":"A"},"$version":"A"}],"$version":"A"},"$version":"A"}}'
+      objectReference: {fileID: 0}
+    - target: {fileID: 5487342690204273070, guid: d0e5f7bc99c97cb4ea0118ec19a01f4c, type: 3}
+      propertyPath: _data._objectReferences.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5487342690204273070, guid: d0e5f7bc99c97cb4ea0118ec19a01f4c, type: 3}
+      propertyPath: '_data._objectReferences.Array.data[1]'
+      value: 
+      objectReference: {fileID: 490458236}
     - target: {fileID: 8773194701152049421, guid: d0e5f7bc99c97cb4ea0118ec19a01f4c, type: 3}
       propertyPath: m_Name
       value: Player UI
@@ -2915,6 +2930,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 472029316}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &490458236 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4623764168444344113, guid: a106c1be4fd2b44478a00877991316c5, type: 3}
+  m_PrefabInstance: {fileID: 1344162295}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &518015741 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1611551548681866465, guid: ef8c0073f6a18e049996864e554e591b, type: 3}
