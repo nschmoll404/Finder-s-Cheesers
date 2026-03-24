@@ -5107,7 +5107,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &484340661
 Transform:
   m_ObjectHideFlags: 0
@@ -5117,7 +5117,7 @@ Transform:
   m_GameObject: {fileID: 484340660}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.07, y: -0.56, z: 0.0000019073486}
+  m_LocalPosition: {x: -0.22, y: -0.55, z: -0.0000019073486}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6211,7 +6211,7 @@ GameObject:
   - component: {fileID: 558207371}
   - component: {fileID: 558207370}
   - component: {fileID: 558207369}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: 1x1x10 (39)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8707,7 +8707,7 @@ Transform:
   m_GameObject: {fileID: 799790727}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 50, y: 0.97, z: -24.399073}
+  m_LocalPosition: {x: 50, y: 6.55, z: -24.399073}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9379,7 +9379,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3661195067282206143, guid: 5028f90d13c591a41ad189c2cac3329a, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3661195067282206143, guid: 5028f90d13c591a41ad189c2cac3329a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4144715907818911493, guid: 5028f90d13c591a41ad189c2cac3329a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -9424,13 +9428,43 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3661195067282206143, guid: 5028f90d13c591a41ad189c2cac3329a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 864933145}
   m_SourcePrefab: {fileID: 100100000, guid: 5028f90d13c591a41ad189c2cac3329a, type: 3}
 --- !u!4 &864933143 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4144715907818911493, guid: 5028f90d13c591a41ad189c2cac3329a, type: 3}
   m_PrefabInstance: {fileID: 864933142}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &864933144 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3661195067282206143, guid: 5028f90d13c591a41ad189c2cac3329a, type: 3}
+  m_PrefabInstance: {fileID: 864933142}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &864933145
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 864933144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93b4ca75ae9428c40b1836254715ba89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.NavMeshTeleportTrigger
+  navMeshAreaMask: -1
+  maxSearchDistance: 10
+  verticalOffset: 0.1
+  preserveRotation: 1
+  teleportableLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  requiredTag: 
+  teleportCooldown: 0.5
+  debugMode: 0
 --- !u!1001 &867463152
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10312,7 +10346,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3661195067282206143, guid: 5028f90d13c591a41ad189c2cac3329a, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3661195067282206143, guid: 5028f90d13c591a41ad189c2cac3329a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4144715907818911493, guid: 5028f90d13c591a41ad189c2cac3329a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -10357,13 +10395,43 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3661195067282206143, guid: 5028f90d13c591a41ad189c2cac3329a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 932530525}
   m_SourcePrefab: {fileID: 100100000, guid: 5028f90d13c591a41ad189c2cac3329a, type: 3}
 --- !u!4 &932530523 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4144715907818911493, guid: 5028f90d13c591a41ad189c2cac3329a, type: 3}
   m_PrefabInstance: {fileID: 932530522}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &932530524 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3661195067282206143, guid: 5028f90d13c591a41ad189c2cac3329a, type: 3}
+  m_PrefabInstance: {fileID: 932530522}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &932530525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 932530524}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93b4ca75ae9428c40b1836254715ba89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.NavMeshTeleportTrigger
+  navMeshAreaMask: -1
+  maxSearchDistance: 10
+  verticalOffset: 0.1
+  preserveRotation: 1
+  teleportableLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  requiredTag: 
+  teleportCooldown: 0.5
+  debugMode: 0
 --- !u!1001 &936052956
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11147,7 +11215,7 @@ GameObject:
   - component: {fileID: 1036466707}
   - component: {fileID: 1036466706}
   - component: {fileID: 1036466705}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: 1x1x10 (40)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11527,7 +11595,7 @@ GameObject:
   - component: {fileID: 1050903110}
   - component: {fileID: 1050903109}
   - component: {fileID: 1050903108}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: 1x1x10 (43)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12704,7 +12772,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1137503528
 Transform:
   m_ObjectHideFlags: 0
@@ -17789,7 +17857,7 @@ GameObject:
   - component: {fileID: 1517988198}
   - component: {fileID: 1517988197}
   - component: {fileID: 1517988196}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: 1x1x10 (42)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21289,7 +21357,7 @@ Transform:
   m_GameObject: {fileID: 1853628743}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 250.53835, y: -1.73, z: 56.26133}
+  m_LocalPosition: {x: 194.8, y: -1.73, z: 56.26133}
   m_LocalScale: {x: 268.97925, y: 1, z: 431.51865}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -22080,7 +22148,7 @@ GameObject:
   - component: {fileID: 1930878900}
   - component: {fileID: 1930878899}
   - component: {fileID: 1930878898}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: 1x1x10 (41)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
