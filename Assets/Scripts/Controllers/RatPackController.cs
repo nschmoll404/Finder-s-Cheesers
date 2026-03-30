@@ -47,6 +47,15 @@ namespace FindersCheesers
         [SerializeField]
         private RatInventory ratInventory;
 
+        [Header("Carry Speed")]
+        [Tooltip("Reference to the KingRatHandler component")]
+        [SerializeField]
+        private KingRatHandler kingRatHandler;
+
+        [Tooltip("Movement speed while carrying an object")]
+        [SerializeField]
+        private float carryingSpeed = 2.5f;
+
         [Header("Physics Settings")]
         [Tooltip("Should the Rigidbody use gravity?")]
         [SerializeField]
@@ -215,6 +224,9 @@ namespace FindersCheesers
 
             Vector3 targetVelocity = Vector3.zero;
 
+            // Determine effective speed: use carrying speed when grabbing, default otherwise
+            float effectiveSpeed = (kingRatHandler != null && kingRatHandler.IsGrabbing) ? carryingSpeed : maxSpeed;
+
             if (isMoving)
             {
                 // Calculate input direction in local space
@@ -228,7 +240,7 @@ namespace FindersCheesers
                 }
                 
                 // Calculate target velocity in world space
-                targetVelocity = inputDirection * maxSpeed;
+                targetVelocity = inputDirection * effectiveSpeed;
                 
                 // Smoothly interpolate current velocity towards target velocity
                 currentVelocity = Vector3.Lerp(
@@ -461,6 +473,7 @@ namespace FindersCheesers
             acceleration = 8f;
             deceleration = 8f;
             rotationSpeed = 10f;
+            carryingSpeed = 2.5f;
             useGravity = true;
             gravity = -20f;
             groundCheckDistance = 0.1f;
