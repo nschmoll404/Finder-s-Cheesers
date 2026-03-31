@@ -252,6 +252,7 @@ GameObject:
   - component: {fileID: 5829397370876133487}
   - component: {fileID: 6427209074995708596}
   - component: {fileID: 7677048252204840739}
+  - component: {fileID: 6164142503886920623}
   m_Layer: 6
   m_Name: KingRat
   m_TagString: KingRat
@@ -322,7 +323,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.8
+  m_Radius: 2
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1.8, z: 0}
@@ -371,7 +372,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 982b13cffc65e25449dabcf88a7e6423, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.GroundPounder
-  detectionRadius: 1
+  detectionRadius: 2
   detectionDistance: 0.3
   minDownwardVelocity: 0.1
   damageableLayers:
@@ -393,6 +394,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.Weight
   weight: 4
+--- !u!114 &6164142503886920623
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4944552254280327239}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99d883ab3dc8a5a488a1d4d1f8f7f73d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.ThrowableIcon
+  icon: {fileID: -2048367132, guid: 49ba07b95217099449f7353192f803b9, type: 3}
+  iconColor: {r: 1, g: 1, b: 1, a: 1}
+  displayName: Throwable
 --- !u!1 &6391445481419123801
 GameObject:
   m_ObjectHideFlags: 0
