@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3004499716601683896}
   - component: {fileID: 4400748184052290149}
   - component: {fileID: 1563070499380211809}
+  - component: {fileID: 2865619349744077011}
   m_Layer: 10
   m_Name: MatchBox
   m_TagString: Match
@@ -112,8 +113,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.1451416, y: 0.74910355, z: 5.4252777}
-  m_Center: {x: 0.030303955, y: -0.12544823, z: 1.0055466}
+  m_Size: {x: 2.6, y: 0.74910355, z: 4.75}
+  m_Center: {x: -0.12, y: 0.47, z: 1.0055466}
 --- !u!114 &4400748184052290149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -162,6 +163,23 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
+--- !u!114 &2865619349744077011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6910434880184716460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 183e16dbc02927e4abdee40fa3973568, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.KinematicSleepController
+  sleepTime: 3
+  positionThreshold: 0.01
+  checkRotation: 0
+  rotationThreshold: 0.1
+  debugMode: 0
 --- !u!1001 &8678397223122448161
 PrefabInstance:
   m_ObjectHideFlags: 0
