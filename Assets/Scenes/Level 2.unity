@@ -33898,6 +33898,116 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 374fdfda297b7414b8bd007bfa109aff, type: 3}
+--- !u!1001 &4653732370369459451
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3701715184753108523, guid: 4f553f0b5f2ff9445b4bf1852d1f629f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 193.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 3701715184753108523, guid: 4f553f0b5f2ff9445b4bf1852d1f629f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 4.2800026
+      objectReference: {fileID: 0}
+    - target: {fileID: 3701715184753108523, guid: 4f553f0b5f2ff9445b4bf1852d1f629f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.57
+      objectReference: {fileID: 0}
+    - target: {fileID: 3701715184753108523, guid: 4f553f0b5f2ff9445b4bf1852d1f629f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.9670395
+      objectReference: {fileID: 0}
+    - target: {fileID: 3701715184753108523, guid: 4f553f0b5f2ff9445b4bf1852d1f629f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3701715184753108523, guid: 4f553f0b5f2ff9445b4bf1852d1f629f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.25462642
+      objectReference: {fileID: 0}
+    - target: {fileID: 3701715184753108523, guid: 4f553f0b5f2ff9445b4bf1852d1f629f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3701715184753108523, guid: 4f553f0b5f2ff9445b4bf1852d1f629f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3701715184753108523, guid: 4f553f0b5f2ff9445b4bf1852d1f629f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 29.503
+      objectReference: {fileID: 0}
+    - target: {fileID: 3701715184753108523, guid: 4f553f0b5f2ff9445b4bf1852d1f629f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8334021527190270488, guid: 4f553f0b5f2ff9445b4bf1852d1f629f, type: 3}
+      propertyPath: m_Name
+      value: Bandit_Fire_Spit (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8334021527190270488, guid: 4f553f0b5f2ff9445b4bf1852d1f629f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4653732370369459454}
+    - targetCorrespondingSourceObject: {fileID: 8334021527190270488, guid: 4f553f0b5f2ff9445b4bf1852d1f629f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4653732370369459453}
+  m_SourcePrefab: {fileID: 100100000, guid: 4f553f0b5f2ff9445b4bf1852d1f629f, type: 3}
+--- !u!1 &4653732370369459452 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8334021527190270488, guid: 4f553f0b5f2ff9445b4bf1852d1f629f, type: 3}
+  m_PrefabInstance: {fileID: 4653732370369459451}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4653732370369459453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4653732370369459452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a8b9c2d3e4f5678901234567890abcf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.HealthActions
+  health: {fileID: 0}
+  damagedActions:
+    _actions:
+    - rid: -2
+  healActions:
+    _actions: []
+  deathActions:
+    _actions: []
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+--- !u!114 &4653732370369459454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4653732370369459452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f8a9b2c3d4e5f6a7b8c9d0e1f2a3b4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.Health
+  maxHealth: 100
+  currentHealth: 100
+  destroyOnDeath: 0
+  destroyDelay: 0
+  debugMode: 0
 --- !u!1001 &5060142147832540355
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -34014,6 +34124,63 @@ PrefabInstance:
     - target: {fileID: 7729715458535814131, guid: 36b3a567401107d47bc2904c445a0f73, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 36b3a567401107d47bc2904c445a0f73, type: 3}
+--- !u!1001 &8385579829468629563
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2023563174420465689, guid: 36b3a567401107d47bc2904c445a0f73, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 143.0079
+      objectReference: {fileID: 0}
+    - target: {fileID: 2023563174420465689, guid: 36b3a567401107d47bc2904c445a0f73, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 4.0049534
+      objectReference: {fileID: 0}
+    - target: {fileID: 2023563174420465689, guid: 36b3a567401107d47bc2904c445a0f73, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -13.075615
+      objectReference: {fileID: 0}
+    - target: {fileID: 2023563174420465689, guid: 36b3a567401107d47bc2904c445a0f73, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2023563174420465689, guid: 36b3a567401107d47bc2904c445a0f73, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2023563174420465689, guid: 36b3a567401107d47bc2904c445a0f73, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2023563174420465689, guid: 36b3a567401107d47bc2904c445a0f73, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2023563174420465689, guid: 36b3a567401107d47bc2904c445a0f73, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2023563174420465689, guid: 36b3a567401107d47bc2904c445a0f73, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2023563174420465689, guid: 36b3a567401107d47bc2904c445a0f73, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7729715458535814131, guid: 36b3a567401107d47bc2904c445a0f73, type: 3}
+      propertyPath: m_Name
+      value: Bandit_Tent (1)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -34330,3 +34497,5 @@ SceneRoots:
   - {fileID: 919096915}
   - {fileID: 5685048399215698605}
   - {fileID: 3373051952926310609}
+  - {fileID: 8385579829468629563}
+  - {fileID: 4653732370369459451}
