@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7207290270556977503}
   - component: {fileID: 6378780274086293682}
+  - component: {fileID: 8763634883348021091}
   m_Layer: 0
   m_Name: CupBottom
   m_TagString: Untagged
@@ -56,6 +57,33 @@ CapsuleCollider:
   m_Height: 1.4556208
   m_Direction: 1
   m_Center: {x: 0, y: 1.3065363, z: 0}
+--- !u!54 &8763634883348021091
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8698649770711556362}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &8299168186832479570
 PrefabInstance:
   m_ObjectHideFlags: 0
