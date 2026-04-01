@@ -512,11 +512,17 @@ MonoBehaviour:
   _explosionActionRunner:
     _actions:
     - rid: 8239213497913966696
+    - rid: 6398154954310942803
   _clearFuseLitAfterRun: 0
   _clearExplosionAfterRun: 0
   references:
     version: 2
     RefIds:
+    - rid: 6398154954310942803
+      type: {class: SetActiveAction, ns: Actions, asm: Assembly-CSharp}
+      data:
+        target: {fileID: 3167455876586027649}
+        setActive: 0
     - rid: 8239213497913966677
       type: {class: SetActiveAction, ns: Actions, asm: Assembly-CSharp}
       data:
@@ -1156,6 +1162,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7925892199302620597, guid: cb26235100af6ef4e9180452398d7d25, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8278534190874798281, guid: cb26235100af6ef4e9180452398d7d25, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -1181,6 +1191,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cb26235100af6ef4e9180452398d7d25, type: 3}
+--- !u!1 &3167455876586027649 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7925892199302620597, guid: cb26235100af6ef4e9180452398d7d25, type: 3}
+  m_PrefabInstance: {fileID: 5047264834955697972}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7365688989106538814 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2320290302082504202, guid: cb26235100af6ef4e9180452398d7d25, type: 3}

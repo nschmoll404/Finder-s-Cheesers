@@ -106,10 +106,12 @@ namespace FindersCheesers
                 return;
             }
 
-            // Make kinematic for the throw arc
+            // Make kinematic for the throw arc and disable collision detection
+            // to prevent triggering OnTriggerEnter/OnTriggerStay events during flight
             if (rb != null)
             {
                 rb.isKinematic = true;
+                rb.detectCollisions = false;
             }
 
             // Initialize throw state
@@ -175,11 +177,12 @@ namespace FindersCheesers
         /// </summary>
         private void FinishThrowAnimation()
         {
-            // Re-enable physics after throw completes
+            // Re-enable physics and collision detection after throw completes
             // Restore to original state from before pickup
             if (rb != null)
             {
                 rb.isKinematic = wasKinematicBeforePickup;
+                rb.detectCollisions = true;
             }
 
             // Fire event
@@ -203,11 +206,12 @@ namespace FindersCheesers
                 return;
             }
 
-            // Re-enable physics
+            // Re-enable physics and collision detection
             // Restore to original state from before pickup
             if (rb != null)
             {
                 rb.isKinematic = wasKinematicBeforePickup;
+                rb.detectCollisions = true;
             }
 
             isThrowing = false;
@@ -229,10 +233,11 @@ namespace FindersCheesers
                 isThrowing = false;
             }
 
-            // Ensure physics is enabled and reset velocity
+            // Ensure physics is enabled, reset velocity, and re-enable collision detection
             if (rb != null)
             {
                 rb.isKinematic = false;
+                rb.detectCollisions = true;
                 rb.linearVelocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
 

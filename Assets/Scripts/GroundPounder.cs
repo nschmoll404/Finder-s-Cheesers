@@ -20,6 +20,10 @@ namespace FindersCheesers
         [SerializeField]
         private float detectionDistance = 2f;
 
+        [Tooltip("Local-space offset applied to the sphere cast origin (e.g. to shift detection to the character's feet)")]
+        [SerializeField]
+        private Vector3 detectionOffset = Vector3.zero;
+
         [Tooltip("The minimum downward velocity required to trigger ground pound damage")]
         [SerializeField]
         private float minDownwardVelocity = 5f;
@@ -104,8 +108,8 @@ namespace FindersCheesers
         /// </summary>
         private void PerformGroundPound()
         {
-            // Cast a sphere downward from the GameObject's position
-            Vector3 origin = transform.position;
+            // Cast a sphere downward from the offset position
+            Vector3 origin = transform.position + transform.TransformDirection(detectionOffset);
             Vector3 direction = Vector3.down;
             
             RaycastHit[] hits = Physics.SphereCastAll(
@@ -165,7 +169,7 @@ namespace FindersCheesers
         private void OnDrawGizmosSelected()
         {
             // Draw the detection sphere in the scene view when the GameObject is selected
-            Vector3 origin = transform.position;
+            Vector3 origin = transform.position + transform.TransformDirection(detectionOffset);
             Vector3 bottom = origin + Vector3.down * detectionDistance;
 
             // Draw the sphere at the bottom of the detection range

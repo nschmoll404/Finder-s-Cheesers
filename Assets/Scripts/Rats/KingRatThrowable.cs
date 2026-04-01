@@ -96,10 +96,12 @@ namespace FindersCheesers
                 return;
             }
 
-            // Make kinematic for the throw arc
+            // Make kinematic for the throw arc and disable collision detection
+            // to prevent triggering OnTriggerEnter/OnTriggerStay events during flight
             if (rb != null)
             {
                 rb.isKinematic = true;
+                rb.detectCollisions = false;
             }
 
             // Enable GroundPounder during throw if the option is enabled
@@ -171,11 +173,12 @@ namespace FindersCheesers
         /// </summary>
         private void FinishThrowAnimation()
         {
-            // Re-enable physics after throw completes
+            // Re-enable physics and collision detection after throw completes
             // Restore to original state from before pickup
             if (rb != null)
             {
                 rb.isKinematic = wasKinematicBeforePickup;
+                rb.detectCollisions = true;
             }
 
             // Disable GroundPounder after throw completes if the option is enabled
@@ -205,11 +208,12 @@ namespace FindersCheesers
                 return;
             }
 
-            // Re-enable physics
+            // Re-enable physics and collision detection
             // Restore to original state from before pickup
             if (rb != null)
             {
                 rb.isKinematic = wasKinematicBeforePickup;
+                rb.detectCollisions = true;
             }
 
             // Disable GroundPounder when throw is cancelled if the option is enabled

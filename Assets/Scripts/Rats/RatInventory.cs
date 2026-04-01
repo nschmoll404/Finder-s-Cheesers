@@ -218,7 +218,7 @@ namespace FindersCheesers
         private float dropRandomRadius = 0.5f;
 
         // Inventory of rats
-        private readonly List<Rat> rats = new List<Rat>();
+        private List<Rat> rats = new List<Rat>();
 
         // Support calculation
         private Vector3 supportCenter;

@@ -1,8 +1,24 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace FindersCheesers
 {
+    /// <summary>
+    /// Maps a layer mask to a specific reticle prefab.
+    /// When the throw target hovers over a collider in the layer mask,
+    /// the associated reticle prefab is displayed instead of the default.
+    /// </summary>
+    [System.Serializable]
+    public class TargetReticleMapping
+    {
+        [Tooltip("Layer mask for detecting which colliders should use this reticle")]
+        public LayerMask layerMask;
+
+        [Tooltip("Reticle prefab to display when hovering over objects in the layer mask")]
+        public GameObject reticlePrefab;
+    }
+
     /// <summary>
     /// Defines when to update the grabbed King Rat's position.
     /// </summary>
@@ -127,9 +143,13 @@ namespace FindersCheesers
         private Color invalidDistanceColor = Color.red;
 
         [Header("Target Reticle")]
-        [Tooltip("UI Document prefab for the target reticle (world space UI)")]
+        [Tooltip("Default reticle prefab shown when no specific layer is detected at the target")]
         [SerializeField]
-        private GameObject targetReticlePrefab;
+        private GameObject defaultReticlePrefab;
+
+        [Tooltip("List of reticle mappings that override the default reticle when the target hovers over a collider in the matching layer")]
+        [SerializeField]
+        private List<TargetReticleMapping> targetReticleMappings = new List<TargetReticleMapping>();
 
         [Tooltip("Base launch speed for the King Rat")]
         [SerializeField]
@@ -218,7 +238,10 @@ namespace FindersCheesers
         private InputAction grabAction;
         private InputAction pointerAction;
         private InputAction throwAction;
-        private GameObject targetReticleInstance;
+        private GameObject defaultReticleInstance;
+        private Dictionary<GameObject, GameObject> reticleInstances = new Dictionary<GameObject, GameObject>();
+        private GameObject activeReticleInstance;
+        private Collider targetHitCollider;
         private IThrowable throwable;
         private GameObject currentThrowableObject; // Track any throwable object being held (not just King Rat)
 
@@ -345,11 +368,23 @@ namespace FindersCheesers
             arcLineRenderer.endColor = arcColor;
             arcLineRenderer.enabled = false;
 
-            // Instantiate target reticle prefab if assigned
-            if (targetReticlePrefab != null)
+            // Instantiate default reticle prefab if assigned
+            if (defaultReticlePrefab != null)
             {
-                targetReticleInstance = Instantiate(targetReticlePrefab);
-                targetReticleInstance.SetActive(false);
+                defaultReticleInstance = Instantiate(defaultReticlePrefab);
+                defaultReticleInstance.SetActive(false);
+                reticleInstances[defaultReticlePrefab] = defaultReticleInstance;
+            }
+
+            // Instantiate reticle prefabs from mappings
+            foreach (var mapping in targetReticleMappings)
+            {
+                if (mapping.reticlePrefab != null && !reticleInstances.ContainsKey(mapping.reticlePrefab))
+                {
+                    GameObject instance = Instantiate(mapping.reticlePrefab);
+                    instance.SetActive(false);
+                    reticleInstances[mapping.reticlePrefab] = instance;
+                }
             }
         }
 
@@ -622,11 +657,17 @@ namespace FindersCheesers
 
         private void OnDestroy()
         {
-            // Clean up target reticle instance
-            if (targetReticleInstance != null)
+            // Clean up all reticle instances
+            foreach (var kvp in reticleInstances)
             {
-                Destroy(targetReticleInstance);
+                if (kvp.Value != null)
+                {
+                    Destroy(kvp.Value);
+                }
             }
+            reticleInstances.Clear();
+            defaultReticleInstance = null;
+            activeReticleInstance = null;
 
             // Unsubscribe from IThrowable events
             if (throwable != null)
@@ -1256,8 +1297,10 @@ namespace FindersCheesers
             // Raycast from camera using the configured layer mask
             Ray ray = mainCamera.ScreenPointToRay(pointerPosition);
 
-            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, targetLayerMask))
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, targetLayerMask, QueryTriggerInteraction.Ignore))
             {
+                // Store the hit collider for reticle layer detection
+                targetHitCollider = hit.collider;
                 Vector3 rawTarget = hit.point;
                 Vector3 launchPos = GetLaunchPosition();
 
@@ -1286,6 +1329,7 @@ namespace FindersCheesers
             {
                 targetPosition = null;
                 isTargetValid = false;
+                targetHitCollider = null;
             }
         }
 
@@ -1410,26 +1454,69 @@ namespace FindersCheesers
 
         /// <summary>
         /// Updates the target reticle position to follow the target destination.
+        /// Selects the appropriate reticle based on the layer of the collider under the target.
         /// </summary>
         private void UpdateTargetReticle()
         {
-            if (targetReticleInstance == null)
-            {
-                return;
-            }
+            // Determine which reticle to show
+            GameObject desiredReticleInstance = null;
 
             // Show reticle when we have a target and King Rat is being grabbed
             if (targetPosition.HasValue && isGrabbing && !(throwable != null && throwable.IsThrowing))
             {
-                targetReticleInstance.SetActive(true);
-                // Position the reticle at the target destination with a slight offset to prevent clipping
-                targetReticleInstance.transform.position = targetPosition.Value + Vector3.up * 0.01f;
-                // Make the reticle face upward (billboard style)
-                targetReticleInstance.transform.rotation = Quaternion.LookRotation(Vector3.up, Vector3.forward);
+                // Check if the target hit collider matches any reticle mapping
+                if (targetHitCollider != null)
+                {
+                    int hitLayer = targetHitCollider.gameObject.layer;
+                    foreach (var mapping in targetReticleMappings)
+                    {
+                        if (mapping.reticlePrefab != null && ((mapping.layerMask.value & (1 << hitLayer)) != 0))
+                        {
+                            if (reticleInstances.TryGetValue(mapping.reticlePrefab, out GameObject instance))
+                            {
+                                desiredReticleInstance = instance;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // Fall back to default reticle if no mapping matched
+                if (desiredReticleInstance == null)
+                {
+                    desiredReticleInstance = defaultReticleInstance;
+                }
+
+                // Activate the desired reticle and deactivate all others
+                foreach (var kvp in reticleInstances)
+                {
+                    if (kvp.Value != null)
+                    {
+                        kvp.Value.SetActive(kvp.Value == desiredReticleInstance);
+                    }
+                }
+
+                activeReticleInstance = desiredReticleInstance;
+
+                if (activeReticleInstance != null)
+                {
+                    // Position the reticle at the target destination with a slight offset to prevent clipping
+                    activeReticleInstance.transform.position = targetPosition.Value + Vector3.up * 0.01f;
+                    // Make the reticle face upward (billboard style)
+                    activeReticleInstance.transform.rotation = Quaternion.LookRotation(Vector3.up, Vector3.forward);
+                }
             }
             else
             {
-                targetReticleInstance.SetActive(false);
+                // Hide all reticles
+                foreach (var kvp in reticleInstances)
+                {
+                    if (kvp.Value != null)
+                    {
+                        kvp.Value.SetActive(false);
+                    }
+                }
+                activeReticleInstance = null;
             }
         }
 

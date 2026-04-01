@@ -68,6 +68,15 @@ namespace FindersCheesers
         [SerializeField]
         private float stuckDetectionTime = 2f;
 
+        [Header("Move To Inventory Settings")]
+        [Tooltip("Maximum time in seconds a rat will try to reach the inventory before being force-added")]
+        [SerializeField]
+        private float moveToInventoryTimeout = 5f;
+
+        [Tooltip("Distance at which the rat is considered close enough to be snap-registered with the inventory")]
+        [SerializeField]
+        private float moveToInventorySnapDistance = 1.5f;
+
         [Header("Debug")]
         [Tooltip("Show debug information in the console")]
         [SerializeField]
@@ -80,6 +89,11 @@ namespace FindersCheesers
         private bool isMovingToInventory = false;
         private bool isRunningAway = false;
         private Vector3 targetPosition;
+
+        // Move to inventory state
+        private float moveToInventoryTimer = 0f;
+        private float moveToInventoryStuckTimer = 0f;
+        private Vector3 moveToInventoryStuckPosition;
 
         // Drop cooldown state
         private Vector3 dropPosition;
@@ -253,6 +267,8 @@ namespace FindersCheesers
 
         /// <summary>
         /// Updates movement toward the inventory.
+        /// Includes timeout, snap distance, and stuck detection to prevent
+        /// rats from getting permanently stuck chasing a moving inventory.
         /// </summary>
         private void UpdateMovementToInventory()
         {
@@ -262,30 +278,69 @@ namespace FindersCheesers
                 return;
             }
 
+            // Track how long we've been trying to reach the inventory
+            moveToInventoryTimer += Time.deltaTime;
+
             Vector3 inventoryPosition = currentRatInventory.transform.position;
             float distance = Vector3.Distance(transform.position, inventoryPosition);
 
-            // Check if we've reached the inventory
+            // Check if we've reached the inventory (tight distance for direct contact)
             if (distance < 0.5f)
             {
-                isMovingToInventory = false;
-                // Register with the inventory
-                RegisterWithRatInventory(currentRatInventory);
-
-                if (debugMode)
-                {
-                    Debug.Log($"[Rat] Reached inventory. Rat ID: {RatId}");
-                }
+                CompleteMoveToInventory("Reached inventory");
                 return;
+            }
+
+            // Check if we're within snap distance — close enough to force-register
+            if (distance <= moveToInventorySnapDistance)
+            {
+                CompleteMoveToInventory("Within snap distance");
+                return;
+            }
+
+            // Check for timeout — force-add if we've been trying too long
+            if (moveToInventoryTimer >= moveToInventoryTimeout)
+            {
+                CompleteMoveToInventory("Move-to-inventory timeout");
+                return;
+            }
+
+            // Stuck detection while moving to inventory
+            if (enableStuckDetection)
+            {
+                float distanceFromStuckPos = Vector3.Distance(transform.position, moveToInventoryStuckPosition);
+
+                if (distanceFromStuckPos > stuckDetectionRadius)
+                {
+                    // Rat has moved, reset stuck tracking
+                    moveToInventoryStuckPosition = transform.position;
+                    moveToInventoryStuckTimer = 0f;
+                }
+                else
+                {
+                    // Rat hasn't moved significantly — increment stuck timer
+                    moveToInventoryStuckTimer += Time.deltaTime;
+
+                    if (moveToInventoryStuckTimer >= stuckDetectionTime)
+                    {
+                        // Rat is stuck — force-register with inventory
+                        CompleteMoveToInventory("Stuck while moving to inventory");
+                        return;
+                    }
+                }
             }
 
             // Move toward inventory
             if (navMeshAgent != null && navMeshAgent.enabled)
             {
-                // Use NavMeshAgent for navigation
-                if (navMeshAgent.destination != inventoryPosition || !navMeshAgent.hasPath)
+                // Use NavMeshAgent for navigation — update destination to track moving inventory
+                navMeshAgent.SetDestination(inventoryPosition);
+
+                // Also check NavMeshAgent's remaining distance as a more reliable arrival check
+                if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance <= moveToInventorySnapDistance)
                 {
-                    navMeshAgent.SetDestination(inventoryPosition);
+                    CompleteMoveToInventory("NavMesh within snap distance");
+                    return;
                 }
             }
             else
@@ -294,6 +349,29 @@ namespace FindersCheesers
                 Vector3 direction = (inventoryPosition - transform.position).normalized;
                 transform.position += direction * movementSpeed * Time.deltaTime;
                 transform.LookAt(inventoryPosition);
+            }
+        }
+
+        /// <summary>
+        /// Completes the move-to-inventory sequence by resetting state and registering the rat.
+        /// </summary>
+        /// <param name="reason">Debug reason for completion.</param>
+        private void CompleteMoveToInventory(string reason)
+        {
+            isMovingToInventory = false;
+            moveToInventoryTimer = 0f;
+            moveToInventoryStuckTimer = 0f;
+
+            if (navMeshAgent != null && navMeshAgent.enabled)
+            {
+                navMeshAgent.ResetPath();
+            }
+
+            RegisterWithRatInventory(currentRatInventory);
+
+            if (debugMode)
+            {
+                Debug.Log($"[Rat] {reason}. Rat ID: {RatId}");
             }
         }
 
@@ -412,6 +490,11 @@ namespace FindersCheesers
 
             currentRatInventory = inventory;
             isMovingToInventory = true;
+
+            // Initialize move-to-inventory tracking
+            moveToInventoryTimer = 0f;
+            moveToInventoryStuckTimer = 0f;
+            moveToInventoryStuckPosition = transform.position;
 
             if (debugMode)
             {
