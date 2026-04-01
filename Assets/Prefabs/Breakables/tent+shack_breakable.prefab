@@ -42,6 +42,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 722829231488432384}
     m_Modifications:
+    - target: {fileID: 1874516463546596119, guid: 9aa4896ae2c904e46b7f8497121d0f9e, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7877084751092103221, guid: 9aa4896ae2c904e46b7f8497121d0f9e, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -125,13 +129,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 722829231488432384}
     m_Modifications:
+    - target: {fileID: 7434077522561591030, guid: 9aa4896ae2c904e46b7f8497121d0f9e, type: 3}
+      propertyPath: managedReferences[4644955585996652648].target
+      value: 
+      objectReference: {fileID: 7773782475941236079}
+    - target: {fileID: 7877084751092103221, guid: 9aa4896ae2c904e46b7f8497121d0f9e, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8525871171211762144, guid: 9aa4896ae2c904e46b7f8497121d0f9e, type: 3}
       propertyPath: m_Name
       value: ratshack_2 (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 8525871171211762144, guid: 9aa4896ae2c904e46b7f8497121d0f9e, type: 3}
-      propertyPath: m_Layer
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9014563801246352218, guid: 9aa4896ae2c904e46b7f8497121d0f9e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -176,94 +184,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8525871171211762144, guid: 9aa4896ae2c904e46b7f8497121d0f9e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2336961370122100487}
-    - targetCorrespondingSourceObject: {fileID: 8525871171211762144, guid: 9aa4896ae2c904e46b7f8497121d0f9e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 5660515081733408202}
-    - targetCorrespondingSourceObject: {fileID: 8525871171211762144, guid: 9aa4896ae2c904e46b7f8497121d0f9e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3468701808901518542}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9aa4896ae2c904e46b7f8497121d0f9e, type: 3}
---- !u!1 &3919051108169876002 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8525871171211762144, guid: 9aa4896ae2c904e46b7f8497121d0f9e, type: 3}
-  m_PrefabInstance: {fileID: 4625969295225199554}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2336961370122100487
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3919051108169876002}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f8a9b2c3d4e5f6a7b8c9d0e1f2a3b4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.Health
-  maxHealth: 5
-  currentHealth: 5
-  destroyOnDeath: 0
-  destroyDelay: 0
-  debugMode: 0
---- !u!114 &5660515081733408202
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3919051108169876002}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a8b9c2d3e4f5678901234567890abcf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.HealthActions
-  health: {fileID: 2336961370122100487}
-  damagedActions:
-    _actions: []
-  healActions:
-    _actions: []
-  deathActions:
-    _actions:
-    - rid: 4644955585996652648
-    - rid: 4644955585996652649
-  references:
-    version: 2
-    RefIds:
-    - rid: 4644955585996652648
-      type: {class: SetActiveAction, ns: Actions, asm: Assembly-CSharp}
-      data:
-        target: {fileID: 7773782475941236079}
-        setActive: 1
-    - rid: 4644955585996652649
-      type: {class: SetActiveAction, ns: Actions, asm: Assembly-CSharp}
-      data:
-        target: {fileID: 3919051108169876002}
-        setActive: 0
---- !u!65 &3468701808901518542
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3919051108169876002}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 2.2575088, y: 3.3138487, z: 1.1802348}
-  m_Center: {x: 1.1210667, y: 0.8159555, z: 0.5901151}
 --- !u!4 &4406935601402697880 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9014563801246352218, guid: 9aa4896ae2c904e46b7f8497121d0f9e, type: 3}
