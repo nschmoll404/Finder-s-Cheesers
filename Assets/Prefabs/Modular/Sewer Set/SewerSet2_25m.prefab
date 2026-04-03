@@ -49,9 +49,13 @@ PrefabInstance:
       value: -90.003
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 79428609b9c78014e8563f8278579c72, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 79428609b9c78014e8563f8278579c72, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: c56eb91c5d4e53d4d89b5f45118d037d, type: 2}
+      objectReference: {fileID: 2100000, guid: aac676f207718a9488e848525f3f967c, type: 2}
     - target: {fileID: 919132149155446097, guid: 79428609b9c78014e8563f8278579c72, type: 3}
       propertyPath: m_Name
       value: SewerSet2_25m
@@ -62,12 +66,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 79428609b9c78014e8563f8278579c72, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6810709332031852673}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 79428609b9c78014e8563f8278579c72, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1913472735287259053}
   m_SourcePrefab: {fileID: 100100000, guid: 79428609b9c78014e8563f8278579c72, type: 3}
+--- !u!4 &3814757333560714111 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 79428609b9c78014e8563f8278579c72, type: 3}
+  m_PrefabInstance: {fileID: 3709282638202045588}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4592384339861551557 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 79428609b9c78014e8563f8278579c72, type: 3}
@@ -94,3 +106,77 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 25.24408, y: 25.000004, z: 5.1857486}
   m_Center: {x: 0.026794434, y: -0.0000019073486, z: 0.15329838}
+--- !u!1001 &6417129676452345706
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3814757333560714111}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 79428609b9c78014e8563f8278579c72, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 79428609b9c78014e8563f8278579c72, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 79428609b9c78014e8563f8278579c72, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 79428609b9c78014e8563f8278579c72, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.00062561035
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 79428609b9c78014e8563f8278579c72, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.00061035156
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 79428609b9c78014e8563f8278579c72, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 79428609b9c78014e8563f8278579c72, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 79428609b9c78014e8563f8278579c72, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 79428609b9c78014e8563f8278579c72, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 79428609b9c78014e8563f8278579c72, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.000024497509
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 79428609b9c78014e8563f8278579c72, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 79428609b9c78014e8563f8278579c72, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 79428609b9c78014e8563f8278579c72, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 79428609b9c78014e8563f8278579c72, type: 3}
+      propertyPath: m_Name
+      value: SewerSet2_25m
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 79428609b9c78014e8563f8278579c72, type: 3}
+--- !u!4 &6810709332031852673 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 79428609b9c78014e8563f8278579c72, type: 3}
+  m_PrefabInstance: {fileID: 6417129676452345706}
+  m_PrefabAsset: {fileID: 0}
