@@ -111,6 +111,76 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1001 &2873429417963224438
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4612234435797035306}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: c38dae5ab3c72ec409cc227d19589bf8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.9999999
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c38dae5ab3c72ec409cc227d19589bf8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.0000001
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c38dae5ab3c72ec409cc227d19589bf8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c38dae5ab3c72ec409cc227d19589bf8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.0000076293945
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c38dae5ab3c72ec409cc227d19589bf8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.0000019073486
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c38dae5ab3c72ec409cc227d19589bf8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c38dae5ab3c72ec409cc227d19589bf8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c38dae5ab3c72ec409cc227d19589bf8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c38dae5ab3c72ec409cc227d19589bf8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.00000023841858
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c38dae5ab3c72ec409cc227d19589bf8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c38dae5ab3c72ec409cc227d19589bf8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c38dae5ab3c72ec409cc227d19589bf8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c38dae5ab3c72ec409cc227d19589bf8, type: 3}
+      propertyPath: m_Name
+      value: SewerSet1_25m
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c38dae5ab3c72ec409cc227d19589bf8, type: 3}
+--- !u!4 &2335892290996247197 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c38dae5ab3c72ec409cc227d19589bf8, type: 3}
+  m_PrefabInstance: {fileID: 2873429417963224438}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5155297439757684417
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -160,6 +230,10 @@ PrefabInstance:
       value: -90
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: c38dae5ab3c72ec409cc227d19589bf8, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: c38dae5ab3c72ec409cc227d19589bf8, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: c56eb91c5d4e53d4d89b5f45118d037d, type: 2}
@@ -177,6 +251,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: c38dae5ab3c72ec409cc227d19589bf8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 934574361486187966}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: c38dae5ab3c72ec409cc227d19589bf8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2335892290996247197}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c38dae5ab3c72ec409cc227d19589bf8, type: 3}
       insertIndex: -1
