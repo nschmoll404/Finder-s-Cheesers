@@ -9,7 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3701715184753108523}
-  m_Layer: 0
+  - component: {fileID: 7772332242983171153}
+  - component: {fileID: 1435876783441470015}
+  - component: {fileID: 8749379122398288612}
+  - component: {fileID: 1667458544434622639}
+  m_Layer: 13
   m_Name: Bandit_Fire_Spit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31,8 +35,108 @@ Transform:
   m_Children:
   - {fileID: 716942000184051189}
   - {fileID: 1995827916801560802}
+  - {fileID: 8852821845926077370}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7772332242983171153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8334021527190270488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f8a9b2c3d4e5f6a7b8c9d0e1f2a3b4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.Health
+  maxHealth: 100
+  currentHealth: 100
+  destroyOnDeath: 0
+  destroyDelay: 0
+  debugMode: 0
+--- !u!114 &1435876783441470015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8334021527190270488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a8b9c2d3e4f5678901234567890abcf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.HealthActions
+  health: {fileID: 0}
+  damagedActions:
+    _actions: []
+  healActions:
+    _actions: []
+  deathActions:
+    _actions:
+    - rid: 8495748390301728771
+    - rid: 8495748390301728772
+    - rid: 8495748390301728774
+  references:
+    version: 2
+    RefIds:
+    - rid: 8495748390301728771
+      type: {class: SetActiveAction, ns: Actions, asm: Assembly-CSharp}
+      data:
+        target: {fileID: 196124698457087823}
+        setActive: 0
+    - rid: 8495748390301728772
+      type: {class: SetActiveAction, ns: Actions, asm: Assembly-CSharp}
+      data:
+        target: {fileID: 1223090442199075416}
+        setActive: 0
+    - rid: 8495748390301728774
+      type: {class: SetActiveAction, ns: Actions, asm: Assembly-CSharp}
+      data:
+        target: {fileID: 8183139736954452224}
+        setActive: 1
+--- !u!114 &8749379122398288612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8334021527190270488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f8a9b2c3d4e5f6a7b8c9d0e1f2a3b4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.Health
+  maxHealth: 100
+  currentHealth: 100
+  destroyOnDeath: 0
+  destroyDelay: 0
+  debugMode: 0
+--- !u!114 &1667458544434622639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8334021527190270488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a8b9c2d3e4f5678901234567890abcf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.HealthActions
+  health: {fileID: 0}
+  damagedActions:
+    _actions:
+    - rid: -2
+  healActions:
+    _actions: []
+  deathActions:
+    _actions: []
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
 --- !u!1001 &1043057813724209694
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -101,11 +205,48 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tent Supports Unwrapped
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6d09292ffed51d6488554012ff55746f, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6d09292ffed51d6488554012ff55746f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6d09292ffed51d6488554012ff55746f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6720620739461374333}
   m_SourcePrefab: {fileID: 100100000, guid: 6d09292ffed51d6488554012ff55746f, type: 3}
+--- !u!1 &196124698457087823 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 6d09292ffed51d6488554012ff55746f, type: 3}
+  m_PrefabInstance: {fileID: 1043057813724209694}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &6720620739461374333
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 196124698457087823}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.988259, y: 4.2217712, z: 5.614292}
+  m_Center: {x: 0.32866958, y: 1.7554209, z: 2.313096}
 --- !u!4 &716942000184051189 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6d09292ffed51d6488554012ff55746f, type: 3}
@@ -179,13 +320,117 @@ PrefabInstance:
       propertyPath: m_Name
       value: Aluminum Foil Cup Unwrapped
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a1df4d6239c377e49bd50652381e6c77, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a1df4d6239c377e49bd50652381e6c77, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a1df4d6239c377e49bd50652381e6c77, type: 3}
+--- !u!1 &1223090442199075416 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a1df4d6239c377e49bd50652381e6c77, type: 3}
+  m_PrefabInstance: {fileID: 2033414363263448841}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1995827916801560802 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a1df4d6239c377e49bd50652381e6c77, type: 3}
   m_PrefabInstance: {fileID: 2033414363263448841}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &9030055824956884049
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3701715184753108523}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.621995
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -4.080003
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.3560503
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -4842408249640254506, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b77fea04775a3fd48a4e3d1a29231ee1, type: 2}
+    - target: {fileID: -4075106920907065551, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 5c372489945891a48b163b9568c69723, type: 2}
+    - target: {fileID: 919132149155446097, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+      propertyPath: m_Name
+      value: Bandit Fire Spit Broken Unwrapped
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4010578487768857281, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 7119407254795749662, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+--- !u!1 &8183139736954452224 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+  m_PrefabInstance: {fileID: 9030055824956884049}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8852821845926077370 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+  m_PrefabInstance: {fileID: 9030055824956884049}
   m_PrefabAsset: {fileID: 0}

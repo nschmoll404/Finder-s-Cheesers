@@ -9,7 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2023563174420465689}
-  m_Layer: 0
+  - component: {fileID: 2073385137814042481}
+  - component: {fileID: 2165732616468610883}
+  m_Layer: 13
   m_Name: Bandit_Tent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31,8 +33,66 @@ Transform:
   m_Children:
   - {fileID: 7315716797386761233}
   - {fileID: 787432360463978733}
+  - {fileID: 4180006979411165502}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2073385137814042481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7729715458535814131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f8a9b2c3d4e5f6a7b8c9d0e1f2a3b4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.Health
+  maxHealth: 100
+  currentHealth: 100
+  destroyOnDeath: 0
+  destroyDelay: 0
+  debugMode: 0
+--- !u!114 &2165732616468610883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7729715458535814131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a8b9c2d3e4f5678901234567890abcf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.HealthActions
+  health: {fileID: 0}
+  damagedActions:
+    _actions: []
+  healActions:
+    _actions: []
+  deathActions:
+    _actions:
+    - rid: 8495748390301728768
+    - rid: 8495748390301728769
+    - rid: 8495748390301728770
+  references:
+    version: 2
+    RefIds:
+    - rid: 8495748390301728768
+      type: {class: SetActiveAction, ns: Actions, asm: Assembly-CSharp}
+      data:
+        target: {fileID: 7984166383617900203}
+        setActive: 0
+    - rid: 8495748390301728769
+      type: {class: SetActiveAction, ns: Actions, asm: Assembly-CSharp}
+      data:
+        target: {fileID: 118876052350700119}
+        setActive: 0
+    - rid: 8495748390301728770
+      type: {class: SetActiveAction, ns: Actions, asm: Assembly-CSharp}
+      data:
+        target: {fileID: 3551526598547381124}
+        setActive: 1
 --- !u!1001 &965807655923169030
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -43,7 +103,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 6bf871b78711c284b8d7d89b8a71a185, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.5078754
+      value: 1.6221724
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 6bf871b78711c284b8d7d89b8a71a185, type: 3}
       propertyPath: m_LocalScale.y
@@ -55,7 +115,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 6bf871b78711c284b8d7d89b8a71a185, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.064349
+      value: -0.065509
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 6bf871b78711c284b8d7d89b8a71a185, type: 3}
       propertyPath: m_LocalPosition.y
@@ -101,15 +161,119 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cloth Unwrapped
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6bf871b78711c284b8d7d89b8a71a185, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6bf871b78711c284b8d7d89b8a71a185, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6bf871b78711c284b8d7d89b8a71a185, type: 3}
+--- !u!1 &118876052350700119 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 6bf871b78711c284b8d7d89b8a71a185, type: 3}
+  m_PrefabInstance: {fileID: 965807655923169030}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &787432360463978733 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6bf871b78711c284b8d7d89b8a71a185, type: 3}
   m_PrefabInstance: {fileID: 965807655923169030}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &4434048155352934101
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2023563174420465689}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 0d40e367b6c11dd41832bf7dbd2b1886, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.008590698
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 0d40e367b6c11dd41832bf7dbd2b1886, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -3.64
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 0d40e367b6c11dd41832bf7dbd2b1886, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.7714949
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 0d40e367b6c11dd41832bf7dbd2b1886, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 0d40e367b6c11dd41832bf7dbd2b1886, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 0d40e367b6c11dd41832bf7dbd2b1886, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 0d40e367b6c11dd41832bf7dbd2b1886, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 0d40e367b6c11dd41832bf7dbd2b1886, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 0d40e367b6c11dd41832bf7dbd2b1886, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 0d40e367b6c11dd41832bf7dbd2b1886, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5295696301023812595, guid: 0d40e367b6c11dd41832bf7dbd2b1886, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 44a6a3b8784fc454f8b713cdc94b8382, type: 2}
+    - target: {fileID: -3412419844201945946, guid: 0d40e367b6c11dd41832bf7dbd2b1886, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: -3376785507192888464, guid: 0d40e367b6c11dd41832bf7dbd2b1886, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b77fea04775a3fd48a4e3d1a29231ee1, type: 2}
+    - target: {fileID: -1124392248746244518, guid: 0d40e367b6c11dd41832bf7dbd2b1886, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0d40e367b6c11dd41832bf7dbd2b1886, type: 3}
+      propertyPath: m_Name
+      value: Bandit Tent Broken_Unwrapped
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0d40e367b6c11dd41832bf7dbd2b1886, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0d40e367b6c11dd41832bf7dbd2b1886, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0d40e367b6c11dd41832bf7dbd2b1886, type: 3}
+--- !u!1 &3551526598547381124 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 0d40e367b6c11dd41832bf7dbd2b1886, type: 3}
+  m_PrefabInstance: {fileID: 4434048155352934101}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4180006979411165502 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 0d40e367b6c11dd41832bf7dbd2b1886, type: 3}
+  m_PrefabInstance: {fileID: 4434048155352934101}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7065053628522152954
 PrefabInstance:
@@ -179,13 +343,50 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tent Supports Unwrapped
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6d09292ffed51d6488554012ff55746f, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6d09292ffed51d6488554012ff55746f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6d09292ffed51d6488554012ff55746f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5648087698927143255}
   m_SourcePrefab: {fileID: 100100000, guid: 6d09292ffed51d6488554012ff55746f, type: 3}
 --- !u!4 &7315716797386761233 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6d09292ffed51d6488554012ff55746f, type: 3}
   m_PrefabInstance: {fileID: 7065053628522152954}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7984166383617900203 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 6d09292ffed51d6488554012ff55746f, type: 3}
+  m_PrefabInstance: {fileID: 7065053628522152954}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &5648087698927143255
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7984166383617900203}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.9882588, y: 4.2217712, z: 5.6142926}
+  m_Center: {x: 0.32866198, y: 1.7554208, z: 2.3130887}
