@@ -328,6 +328,8 @@ MonoBehaviour:
   carryDistance: 8
   minDistanceFromPlayer: 5
   carrySpeedMultiplier: 1.5
+  maxCarryTime: 0
+  throwOnMaxCarryTime: 1
   dropDistance: 10
   dropDuration: 0.5
   throwDistance: 6
@@ -593,15 +595,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 67bf86eaf1b606b46afdce8c760ec7cb, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071068
+      value: 0.9914451
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 67bf86eaf1b606b46afdce8c760ec7cb, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.7071068
+      value: 0.13052452
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 67bf86eaf1b606b46afdce8c760ec7cb, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 67bf86eaf1b606b46afdce8c760ec7cb, type: 3}
       propertyPath: m_LocalRotation.z
@@ -609,7 +611,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 67bf86eaf1b606b46afdce8c760ec7cb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 67bf86eaf1b606b46afdce8c760ec7cb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -619,10 +621,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -5290160059138614871, guid: 67bf86eaf1b606b46afdce8c760ec7cb, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d4e0f9dfa25444e4895661b7540d7187, type: 2}
+    - target: {fileID: -4085252589826517796, guid: 67bf86eaf1b606b46afdce8c760ec7cb, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d4e0f9dfa25444e4895661b7540d7187, type: 2}
     - target: {fileID: 919132149155446097, guid: 67bf86eaf1b606b46afdce8c760ec7cb, type: 3}
       propertyPath: m_Name
       value: Cockroach
       objectReference: {fileID: 0}
+    - target: {fileID: 3586865144546940148, guid: 67bf86eaf1b606b46afdce8c760ec7cb, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d4e0f9dfa25444e4895661b7540d7187, type: 2}
+    - target: {fileID: 8288180867435543432, guid: 67bf86eaf1b606b46afdce8c760ec7cb, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d4e0f9dfa25444e4895661b7540d7187, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
