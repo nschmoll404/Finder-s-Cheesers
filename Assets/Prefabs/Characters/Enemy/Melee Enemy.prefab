@@ -108,9 +108,10 @@ GameObject:
   - component: {fileID: 7740197268098740386}
   - component: {fileID: 1920169953158654542}
   - component: {fileID: -3201600512368978528}
+  - component: {fileID: 5175603235481145301}
   m_Layer: 0
   m_Name: Melee Enemy
-  m_TagString: Untagged
+  m_TagString: Cockroach
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -168,14 +169,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.EnemyAI
   target: {fileID: 0}
-  detectionRange: 15
+  detectionRange: 12
   visionConeAngle: 90
   targetLayerMask:
     serializedVersion: 2
     m_Bits: 128
   targetTag: Player
   useVisionCone: 1
-  attackRange: 10
+  attackRange: 2
   moveSpeed: 3
   rotationSpeed: 5
   navMeshAngularSpeed: 120
@@ -201,7 +202,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  patrolMode: 0
+  patrolMode: 1
   waypointThreshold: 0.5
   waitTimeAtWaypoint: 1
   startPatrollingOnAwake: 1
@@ -380,6 +381,34 @@ MonoBehaviour:
   destroyOnDeath: 1
   destroyDelay: 0
   debugMode: 0
+--- !u!114 &5175603235481145301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5774785878994015399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bd5e5ddd242bd64581fb5ed9c0e0507, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Polybrush::UnityEngine.Polybrush.PolybrushMesh
+  m_PolyMesh:
+    name: 
+    vertices: []
+    normals: []
+    colors: []
+    tangents: []
+    uv0: []
+    uv1: []
+    uv2: []
+    uv3: []
+    m_Triangles: 
+    m_SubMeshes: []
+    m_Mesh: {fileID: 0}
+  m_SkinMeshRef: {fileID: 0}
+  m_OriginalMeshObject: {fileID: 0}
+  m_Mode: 0
 --- !u!1 &8647355286051480925
 GameObject:
   m_ObjectHideFlags: 0
