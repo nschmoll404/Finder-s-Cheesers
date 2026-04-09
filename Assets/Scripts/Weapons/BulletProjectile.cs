@@ -41,10 +41,6 @@ namespace FindersCheesers
         [SerializeField]
         private float maxRange = 100f;
 
-        [Tooltip("Visual speed for the bullet effect (doesn't affect hit detection)")]
-        [SerializeField]
-        private float visualSpeed = 100f;
-
         [Tooltip("Minimum distance to travel before checking for hits (prevents self-collision)")]
         [SerializeField]
         private float minTravelDistance = 0.5f;
@@ -187,7 +183,7 @@ namespace FindersCheesers
             else // TrailingScan
             {
                 // Perform spherecast for trailing detection
-                float moveDistance = visualSpeed * Time.deltaTime;
+                float moveDistance = speed * Time.deltaTime;
                 didHit = Physics.SphereCast(currentPos, 0.1f, direction, out hit, moveDistance, hitLayers);
             }
 
@@ -222,7 +218,7 @@ namespace FindersCheesers
         /// </summary>
         private void MoveBullet()
         {
-            float moveDistance = visualSpeed * Time.deltaTime;
+            float moveDistance = speed * Time.deltaTime;
             distanceTraveled += moveDistance;
 
             // Move the bullet forward

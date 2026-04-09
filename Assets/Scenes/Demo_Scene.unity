@@ -3152,7 +3152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a8b3c9d7e2f4a5b8c6d7e8f9a0b1c2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.ShootingAI
-  rangedWeapon: {fileID: 789478045}
+  rangedWeaponComponent: {fileID: 0}
   autoFindWeapon: 0
   autoShoot: 1
   stopOnTargetOutOfRange: 1
@@ -3195,6 +3195,8 @@ MonoBehaviour:
   carryDistance: 10
   minDistanceFromPlayer: 10
   carrySpeedMultiplier: 1.5
+  maxCarryTime: 0
+  throwOnMaxCarryTime: 1
   dropDistance: 12
   dropDuration: 0.5
   throwDistance: 5
@@ -3656,6 +3658,53 @@ MonoBehaviour:
       data:
         target: {fileID: 2008768697}
         setActive: 1
+--- !u!1 &987760984 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2677677595382615967, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
+  m_PrefabInstance: {fileID: 2937061366349575749}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &987760986 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7490930121869800516, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
+  m_PrefabInstance: {fileID: 2937061366349575749}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &987760987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 987760984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71b7aad5cda2b25418250de5a28eebc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.RangedArcWeapon
+  projectilePrefab: {fileID: 643560161009610544, guid: 3b894d4e53137a348be3076d488bcbc1, type: 3}
+  damage: 10
+  launchSpeed: 20
+  launchAngle: 45
+  gravityMultiplier: 1
+  autoCalculateTrajectory: 1
+  preferHighArc: 0
+  targetTransform: {fileID: 0}
+  minLaunchSpeed: 5
+  maxLaunchSpeed: 50
+  fireRate: 1
+  automaticFire: 0
+  spreadAngle: 0
+  projectilesPerShot: 1
+  muzzleTransform: {fileID: 987760986}
+  fireInFacingDirection: 1
+  fireDirection: {x: 0, y: 0, z: 1}
+  useObjectPooling: 0
+  initialPoolSize: 10
+  muzzleFlashPrefab: {fileID: 0}
+  muzzleFlashDuration: 0.1
+  debugMode: 0
+  showGizmos: 1
+  trajectoryPreviewSteps: 30
+  trajectoryPreviewStep: 0.1
 --- !u!1 &1006218623
 GameObject:
   m_ObjectHideFlags: 0
@@ -11639,18 +11688,38 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4195699597309431586, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
+      propertyPath: fireRate
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 4195699597309431586, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4195699597309431586, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
+      propertyPath: projectileSpeed
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 4868275458856752256, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
       propertyPath: m_Name
       value: Ranged Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 4868275458856752256, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 5667809884761760806, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
+      propertyPath: rangedWeaponComponent
+      value: 
+      objectReference: {fileID: 987760987}
+    m_RemovedComponents:
+    - {fileID: 4195699597309431586, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2677677595382615967, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 987760987}
   m_SourcePrefab: {fileID: 100100000, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
 --- !u!33 &3247726563477165925
 MeshFilter:

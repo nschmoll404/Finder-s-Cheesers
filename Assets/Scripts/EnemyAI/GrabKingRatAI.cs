@@ -106,6 +106,14 @@ namespace FindersCheesers
         private float carrySpeedMultiplier = 1.5f;
 
         [Header("Drop Settings")]
+        [Tooltip("Maximum time to carry king rat before force dropping/throwing (0 = unlimited)")]
+        [SerializeField]
+        private float maxCarryTime = 0f;
+
+        [Tooltip("Whether to throw the king rat when max carry time elapses (false = gentle drop)")]
+        [SerializeField]
+        private bool throwOnMaxCarryTime = true;
+
         [Tooltip("Distance at which to drop king rat")]
         [SerializeField]
         private float dropDistance = 20f;
@@ -271,6 +279,7 @@ namespace FindersCheesers
         private bool isCarryingKingRat = false;
         private float grabTimer = 0f;
         private float dropTimer = 0f;
+        private float carryTimer = 0f;
         private float grabCooldownTimer = 0f;
         private Vector3 dropTargetPosition;
         private int pickupCount = 0;
@@ -558,6 +567,7 @@ namespace FindersCheesers
                 if (PerformGrab())
                 {
                     ChangeState(GrabKingRatState.Carrying);
+                    carryTimer = 0f;
                     OnCarryingStarted?.Invoke(kingRat);
 
                     if (debugMode)
@@ -606,26 +616,26 @@ namespace FindersCheesers
                 return;
             }
 
-            // Calculate direction away from player
-            Vector3 directionAwayFromPlayer = CalculateDirectionAwayFromPlayer();
+            carryTimer += Time.deltaTime;
 
-            if (directionAwayFromPlayer == Vector3.zero)
-            {
-                // No player detected, just move forward
-                directionAwayFromPlayer = transform.forward;
-            }
-
-            // Calculate target position
-            Vector3 targetPosition = transform.position + directionAwayFromPlayer * carryDistance;
-
-            // Check distance to player
             float distanceToPlayer = playerTransform != null
                 ? Vector3.Distance(transform.position, playerTransform.position)
                 : float.MaxValue;
 
-            // Check if we should drop the king rat
-            if (distanceToPlayer >= dropDistance)
+            bool shouldDrop = distanceToPlayer >= dropDistance;
+            bool maxCarryTimeElapsed = maxCarryTime > 0f && carryTimer >= maxCarryTime;
+
+            if (shouldDrop || maxCarryTimeElapsed)
             {
+                if (maxCarryTimeElapsed && !throwOnMaxCarryTime)
+                {
+                    if (kingRatRigidbody != null)
+                    {
+                        kingRatRigidbody.linearVelocity = Vector3.zero;
+                    }
+                    throwDistance = 0f;
+                }
+
                 ChangeState(GrabKingRatState.Dropping);
                 dropTimer = 0f;
                 dropTargetPosition = transform.position;
@@ -638,10 +648,16 @@ namespace FindersCheesers
             }
             else
             {
-                // Only move if target position is valid (prevents NavAgentHoppingController warnings)
+                Vector3 directionAwayFromPlayer = CalculateDirectionAwayFromPlayer();
+                if (directionAwayFromPlayer == Vector3.zero)
+                {
+                    directionAwayFromPlayer = transform.forward;
+                }
+
+                Vector3 targetPosition = transform.position + directionAwayFromPlayer * carryDistance;
+
                 if (IsTargetPositionValid(targetPosition))
                 {
-                    // Move away from player
                     enemyAI.MoveTowards(targetPosition, Time.deltaTime);
                 }
                 enemyAI.FaceTarget(targetPosition, Time.deltaTime);
@@ -1247,6 +1263,7 @@ namespace FindersCheesers
             carryDistance = Mathf.Max(1f, carryDistance);
             minDistanceFromPlayer = Mathf.Max(0f, minDistanceFromPlayer);
             carrySpeedMultiplier = Mathf.Max(0.1f, carrySpeedMultiplier);
+            maxCarryTime = Mathf.Max(0f, maxCarryTime);
             dropDistance = Mathf.Max(1f, dropDistance);
             dropDuration = Mathf.Max(0.1f, dropDuration);
             throwDistance = Mathf.Max(0f, throwDistance);

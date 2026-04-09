@@ -163,8 +163,6 @@ GameObject:
   - component: {fileID: 2243647195022711564}
   - component: {fileID: 777270176952409419}
   - component: {fileID: 1165671882059549780}
-  - component: {fileID: 6269639766346139912}
-  - component: {fileID: 4363341273658796204}
   - component: {fileID: 8943657109663606659}
   - component: {fileID: 2821471157935297425}
   - component: {fileID: 5667809884761760806}
@@ -292,49 +290,6 @@ MonoBehaviour:
   chaseSpeedMultiplier: 1.2
   chaseRotationMultiplier: 1.5
   priority: 4
-  debugMode: 0
-  showGizmos: 1
---- !u!114 &6269639766346139912
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4868275458856752256}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b5819b6786804447b00ea90e622a045, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.AttackingAI
-  attackDamage: 10
-  attackCooldown: 1
-  autoAttack: 1
-  stopOnTargetOutOfRange: 1
-  requireFacingTarget: 1
-  facingAngleTolerance: 45
-  attackTriggerName: Attack
-  attackBoolName: IsAttacking
-  priority: 0
-  debugMode: 0
-  showGizmos: 1
---- !u!114 &4363341273658796204
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4868275458856752256}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a50967d2f3f8b04ab645343791afce2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.DispersingAI
-  ratsToDisperse: 1
-  autoDisperse: 1
-  stopOnTargetOutOfRange: 1
-  disperseCooldown: 2
-  disperseAllRats: 0
-  priority: 2
   debugMode: 0
   showGizmos: 1
 --- !u!54 &8943657109663606659

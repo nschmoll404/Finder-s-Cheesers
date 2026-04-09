@@ -8,7 +8,7 @@ namespace FindersCheesers
     /// Supports both rigidbody and bullet-style projectiles.
     /// </summary>
     [AddComponentMenu("Finders Cheesers/Weapons/RangedWeapon")]
-    public class RangedWeapon : MonoBehaviour
+    public class RangedWeapon : MonoBehaviour, IRangedWeapon
     {
         #region Settings
 

@@ -45,11 +45,13 @@ namespace FindersCheesers
         [Header("Weapon Settings")]
         [Tooltip("The ranged weapon to use for shooting")]
         [SerializeField]
-        private RangedWeapon rangedWeapon;
+        private MonoBehaviour rangedWeaponComponent;
 
-        [Tooltip("Whether to automatically find a RangedWeapon if not assigned")]
+        [Tooltip("Whether to automatically find a ranged weapon if not assigned")]
         [SerializeField]
         private bool autoFindWeapon = true;
+
+        private IRangedWeapon rangedWeapon;
 
         [Header("Shooting Settings")]
         [Tooltip("Whether to auto-shoot when target is in range")]
@@ -154,7 +156,7 @@ namespace FindersCheesers
         /// <summary>
         /// Gets or sets the ranged weapon.
         /// </summary>
-        public RangedWeapon RangedWeapon
+        public IRangedWeapon RangedWeapon
         {
             get => rangedWeapon;
             set => rangedWeapon = value;
@@ -210,7 +212,15 @@ namespace FindersCheesers
                 return;
             }
 
-            // Find ranged weapon if not assigned and auto-find is enabled
+            if (rangedWeaponComponent != null)
+            {
+                rangedWeapon = rangedWeaponComponent as IRangedWeapon;
+                if (rangedWeapon == null)
+                {
+                    Debug.LogError($"[ShootingAI] Assigned component {rangedWeaponComponent.name} does not implement IRangedWeapon!");
+                }
+            }
+
             if (rangedWeapon == null && autoFindWeapon)
             {
                 FindRangedWeapon();
@@ -361,7 +371,7 @@ namespace FindersCheesers
         /// Sets the ranged weapon.
         /// </summary>
         /// <param name="weapon">The new ranged weapon.</param>
-        public void SetRangedWeapon(RangedWeapon weapon)
+        public void SetRangedWeapon(IRangedWeapon weapon)
         {
             rangedWeapon = weapon;
         }
@@ -439,25 +449,33 @@ namespace FindersCheesers
         /// </summary>
         private void FindRangedWeapon()
         {
-            // Try to find on this GameObject first
-            rangedWeapon = GetComponent<RangedWeapon>();
+            var weapon = GetComponent<IRangedWeapon>();
 
-            // If not found, search in children
-            if (rangedWeapon == null)
+            if (weapon == null)
             {
-                rangedWeapon = GetComponentInChildren<RangedWeapon>();
+                var monoBehaviours = GetComponentsInChildren<MonoBehaviour>();
+                foreach (var mb in monoBehaviours)
+                {
+                    if (mb is IRangedWeapon irw)
+                    {
+                        weapon = irw;
+                        break;
+                    }
+                }
             }
+
+            rangedWeapon = weapon;
 
             if (rangedWeapon != null)
             {
                 if (debugMode)
                 {
-                    Debug.Log($"[ShootingAI] Found RangedWeapon: {rangedWeapon.name}");
+                    Debug.Log($"[ShootingAI] Found ranged weapon: {((MonoBehaviour)rangedWeapon).name}");
                 }
             }
             else
             {
-                Debug.LogWarning("[ShootingAI] No RangedWeapon found on this GameObject or its children!");
+                Debug.LogWarning("[ShootingAI] No IRangedWeapon found on this GameObject or its children!");
             }
         }
 

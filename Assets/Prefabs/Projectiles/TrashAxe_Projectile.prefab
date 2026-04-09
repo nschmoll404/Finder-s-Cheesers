@@ -9,7 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5736516348615848718}
-  - component: {fileID: -3398085479548312958}
+  - component: {fileID: 1187044155922661405}
+  - component: {fileID: 284143586626822299}
   m_Layer: 0
   m_Name: TrashAxe_Projectile
   m_TagString: Untagged
@@ -33,7 +34,7 @@ Transform:
   - {fileID: 927672452868396091}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-3398085479548312958
+--- !u!114 &1187044155922661405
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,23 +43,37 @@ MonoBehaviour:
   m_GameObject: {fileID: 643560161009610544}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e98754aa876e6684cbda2c26730f14ac, type: 3}
+  m_Script: {fileID: 11500000, guid: 0576a5b587943344d9f41d6e917e6f6c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.BulletProjectile
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.ProjectileRatDisperser
+  disperseAmount: 1
+  debugMode: 1
+--- !u!114 &284143586626822299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 643560161009610544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2062ee41d6b38c4099e8eec5bdfbfe1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.ArcProjectile
   hitLayers:
     serializedVersion: 2
-    m_Bits: 136
+    m_Bits: 384
   destroyOnImpact: 1
   destroyDelay: 0
-  debugMode: 1
-  detectionMode: 1
-  maxRange: 100
-  visualSpeed: 12
+  debugMode: 0
+  gravityMultiplier: 1
+  rotateToVelocity: 1
+  spinRotationsPerSecond: 2.41
+  maxLifetime: 10
   minTravelDistance: 0.5
+  collisionRadius: 0.2
   showTrail: 1
   trailRenderer: {fileID: 0}
-  lineRenderer: {fileID: 0}
-  hitLineDuration: 0.1
 --- !u!1001 &816691206181336016
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -69,7 +84,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 12fd0ee41763f1845a2ed90e323bc021, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.19967566
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 12fd0ee41763f1845a2ed90e323bc021, type: 3}
       propertyPath: m_LocalPosition.y
@@ -77,7 +92,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 12fd0ee41763f1845a2ed90e323bc021, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.19967508
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 12fd0ee41763f1845a2ed90e323bc021, type: 3}
       propertyPath: m_LocalRotation.w
