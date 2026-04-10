@@ -1026,10 +1026,17 @@ PrefabInstance:
       propertyPath: 'ratsToAddOnStart.Array.data[1]'
       value: 
       objectReference: {fileID: 1646657548}
+    - target: {fileID: 8967682907048756239, guid: a106c1be4fd2b44478a00877991316c5, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 4f4ba468d29371e42a4c5f598a8f2445, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4623764168444344113, guid: a106c1be4fd2b44478a00877991316c5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1093956445}
   m_SourcePrefab: {fileID: 100100000, guid: a106c1be4fd2b44478a00877991316c5, type: 3}
 --- !u!1001 &358947180
 PrefabInstance:
@@ -3948,6 +3955,31 @@ MonoBehaviour:
     - {fileID: 1608688453}
     - {fileID: 1328965286}
     - {fileID: 8973921820411412197, guid: 855a47865bf910d4f9b7cf9ee07a6ac6, type: 3}
+--- !u!1 &1093956444 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4623764168444344113, guid: a106c1be4fd2b44478a00877991316c5, type: 3}
+  m_PrefabInstance: {fileID: 290816275}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1093956445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1093956444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2633c01f027ea5b43868a2c9da3ae5c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.AnimatorVelocity
+  animator: {fileID: 2072284586}
+  trackedTransform: {fileID: 30060209}
+  updateMode: 1
+  velocitySpace: 1
+  smoothingTime: 0
+  xVelocityParam: VelocityX
+  yVelocityParam: VelocityY
+  zVelocityParam: VelocityZ
 --- !u!1 &1139733969 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8338166939317028711, guid: 0d07811549bba2247a73014ab7d57ec4, type: 3}
@@ -11413,6 +11445,11 @@ MonoBehaviour:
   icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   iconColor: {r: 1, g: 1, b: 1, a: 1}
   displayName: Throwable
+--- !u!95 &2072284586 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 8967682907048756239, guid: a106c1be4fd2b44478a00877991316c5, type: 3}
+  m_PrefabInstance: {fileID: 290816275}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2090967324
 GameObject:
   m_ObjectHideFlags: 0
