@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.Animations;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -15,6 +16,7 @@ public class AnimatorVarDrawer : PropertyDrawer
         VisualElement container = new VisualElement();
 
         List<string> paramNames = GetAnimatorParameterNames(property, attr.AnimatorFieldName);
+        string currentHash = string.Join(",", paramNames);
 
         PopupField<string> dropdown = new PopupField<string>(
             property.displayName,
@@ -30,24 +32,31 @@ public class AnimatorVarDrawer : PropertyDrawer
 
         container.Add(dropdown);
 
-        int lastAnimatorInstanceID = animatorProp != null ? animatorProp.objectReferenceInstanceIDValue : 0;
-
         void RefreshDropdown()
         {
             property.serializedObject.UpdateIfRequiredOrScript();
-            int currentID = animatorProp?.objectReferenceInstanceIDValue ?? 0;
-            if (currentID != lastAnimatorInstanceID)
+
+            try
             {
-                lastAnimatorInstanceID = currentID;
-                List<string> newNames = GetAnimatorParameterNames(property, attr.AnimatorFieldName);
-                dropdown.choices = newNames;
-                if (!newNames.Contains(property.stringValue))
+                List<string> names = GetAnimatorParameterNames(property, attr.AnimatorFieldName);
+                string hash = string.Join(",", names);
+
+                if (hash != currentHash)
                 {
-                    string newVal = newNames.FirstOrDefault();
-                    dropdown.SetValueWithoutNotify(newVal);
-                    property.stringValue = newVal;
-                    property.serializedObject.ApplyModifiedProperties();
+                    currentHash = hash;
+                    dropdown.choices = names;
+                    if (!names.Contains(property.stringValue))
+                    {
+                        string newVal = names.FirstOrDefault();
+                        dropdown.SetValueWithoutNotify(newVal);
+                        property.stringValue = newVal;
+                        property.serializedObject.ApplyModifiedProperties();
+                    }
                 }
+            }
+            catch
+            {
+                // Animator controller is being modified, skip this frame
             }
         }
 
@@ -84,12 +93,16 @@ public class AnimatorVarDrawer : PropertyDrawer
                 continue;
 
             Animator animator = field.GetValue(component) as Animator;
-            if (animator == null)
+            if (animator == null || animator.runtimeAnimatorController == null)
                 continue;
 
-            for (int i = 0; i < animator.parameterCount; i++)
+            AnimatorController controller = animator.runtimeAnimatorController as AnimatorController;
+            if (controller == null)
+                continue;
+
+            foreach (AnimatorControllerParameter param in controller.parameters)
             {
-                names.Add(animator.GetParameter(i).name);
+                names.Add(param.name);
             }
         }
 
