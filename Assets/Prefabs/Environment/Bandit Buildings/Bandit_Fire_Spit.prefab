@@ -9,16 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3701715184753108523}
-  - component: {fileID: 7772332242983171153}
-  - component: {fileID: 1435876783441470015}
-  - component: {fileID: 8749379122398288612}
-  - component: {fileID: 1667458544434622639}
   m_Layer: 13
   m_Name: Bandit_Fire_Spit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &3701715184753108523
 Transform:
@@ -38,105 +34,6 @@ Transform:
   - {fileID: 8852821845926077370}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7772332242983171153
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8334021527190270488}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f8a9b2c3d4e5f6a7b8c9d0e1f2a3b4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.Health
-  maxHealth: 100
-  currentHealth: 100
-  destroyOnDeath: 0
-  destroyDelay: 0
-  debugMode: 0
---- !u!114 &1435876783441470015
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8334021527190270488}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a8b9c2d3e4f5678901234567890abcf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.HealthActions
-  health: {fileID: 0}
-  damagedActions:
-    _actions: []
-  healActions:
-    _actions: []
-  deathActions:
-    _actions:
-    - rid: 8495748390301728771
-    - rid: 8495748390301728772
-    - rid: 8495748390301728774
-  references:
-    version: 2
-    RefIds:
-    - rid: 8495748390301728771
-      type: {class: SetActiveAction, ns: Actions, asm: Assembly-CSharp}
-      data:
-        target: {fileID: 196124698457087823}
-        setActive: 0
-    - rid: 8495748390301728772
-      type: {class: SetActiveAction, ns: Actions, asm: Assembly-CSharp}
-      data:
-        target: {fileID: 1223090442199075416}
-        setActive: 0
-    - rid: 8495748390301728774
-      type: {class: SetActiveAction, ns: Actions, asm: Assembly-CSharp}
-      data:
-        target: {fileID: 8183139736954452224}
-        setActive: 1
---- !u!114 &8749379122398288612
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8334021527190270488}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f8a9b2c3d4e5f6a7b8c9d0e1f2a3b4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.Health
-  maxHealth: 100
-  currentHealth: 100
-  destroyOnDeath: 0
-  destroyDelay: 0
-  debugMode: 0
---- !u!114 &1667458544434622639
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8334021527190270488}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a8b9c2d3e4f5678901234567890abcf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.HealthActions
-  health: {fileID: 0}
-  damagedActions:
-    _actions:
-    - rid: -2
-  healActions:
-    _actions: []
-  deathActions:
-    _actions: []
-  references:
-    version: 2
-    RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
 --- !u!1001 &1043057813724209694
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -213,6 +110,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6d09292ffed51d6488554012ff55746f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -220,6 +121,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6d09292ffed51d6488554012ff55746f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6720620739461374333}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6d09292ffed51d6488554012ff55746f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4303505208753682431}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6d09292ffed51d6488554012ff55746f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 862047349987039542}
   m_SourcePrefab: {fileID: 100100000, guid: 6d09292ffed51d6488554012ff55746f, type: 3}
 --- !u!1 &196124698457087823 stripped
 GameObject:
@@ -247,6 +154,63 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.988259, y: 4.2217712, z: 5.614292}
   m_Center: {x: 0.32866958, y: 1.7554209, z: 2.313096}
+--- !u!114 &4303505208753682431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 196124698457087823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f8a9b2c3d4e5f6a7b8c9d0e1f2a3b4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.Health
+  maxHealth: 5
+  currentHealth: 5
+  destroyOnDeath: 0
+  destroyDelay: 0
+  debugMode: 0
+--- !u!114 &862047349987039542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 196124698457087823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a8b9c2d3e4f5678901234567890abcf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.HealthActions
+  health: {fileID: 4303505208753682431}
+  damagedActions:
+    _actions: []
+  healActions:
+    _actions: []
+  deathActions:
+    _actions:
+    - rid: 8495748480953221203
+    - rid: 8495748480953221204
+    - rid: 8495748480953221205
+  references:
+    version: 2
+    RefIds:
+    - rid: 8495748480953221203
+      type: {class: SetActiveAction, ns: Actions, asm: Assembly-CSharp}
+      data:
+        target: {fileID: 196124698457087823}
+        setActive: 0
+    - rid: 8495748480953221204
+      type: {class: SetActiveAction, ns: Actions, asm: Assembly-CSharp}
+      data:
+        target: {fileID: 1223090442199075416}
+        setActive: 0
+    - rid: 8495748480953221205
+      type: {class: SetActiveAction, ns: Actions, asm: Assembly-CSharp}
+      data:
+        target: {fileID: 8183139736954452224}
+        setActive: 1
 --- !u!4 &716942000184051189 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6d09292ffed51d6488554012ff55746f, type: 3}
@@ -327,6 +291,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: a1df4d6239c377e49bd50652381e6c77, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a1df4d6239c377e49bd50652381e6c77, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -411,13 +379,25 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4010578487768857281, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 4010578487768857281, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7119407254795749662, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
       propertyPath: m_Layer
       value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 7119407254795749662, guid: d6315c3180852cd4c86595769f94c9b4, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
