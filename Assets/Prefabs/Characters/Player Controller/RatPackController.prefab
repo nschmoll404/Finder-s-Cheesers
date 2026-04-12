@@ -350,6 +350,8 @@ GameObject:
   - component: {fileID: 7920564177833336463}
   - component: {fileID: 6553029020010655665}
   - component: {fileID: 829128238860773222}
+  - component: {fileID: 6717499113954391034}
+  - component: {fileID: 464758035994666933}
   m_Layer: 7
   m_Name: RatPackController
   m_TagString: Player
@@ -632,6 +634,48 @@ MonoBehaviour:
   PreserveMainColor: 1
   PreserveMainTexture: 1
   CutoutEnabled: 1
+--- !u!114 &6717499113954391034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4623764168444344113}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2633c01f027ea5b43868a2c9da3ae5c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.AnimatorVelocity
+  animator: {fileID: 464758035994666933}
+  trackedTransform: {fileID: 2360136473402032315}
+  updateMode: 2
+  velocitySpace: 1
+  smoothingTime: 0.1
+  xVelocityParam: VelocityX
+  yVelocityParam: VelocityY
+  zVelocityParam: VelocityZ
+--- !u!95 &464758035994666933
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4623764168444344113}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 4908ec0ca985aea44b749395c36dea2d, type: 3}
+  m_Controller: {fileID: 9100000, guid: 4f4ba468d29371e42a4c5f598a8f2445, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &5231091554989860528
 GameObject:
   m_ObjectHideFlags: 0
@@ -1046,7 +1090,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7013105286013671865, guid: 0e8308f84583245418962a091c18df59, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.37
+      value: 0.478
       objectReference: {fileID: 0}
     - target: {fileID: 7013105286013671865, guid: 0e8308f84583245418962a091c18df59, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1084,7 +1128,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: RatPack
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3929961606854701057, guid: 0e8308f84583245418962a091c18df59, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
