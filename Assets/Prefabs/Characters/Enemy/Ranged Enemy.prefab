@@ -98,6 +98,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7490930121869800516}
+  - component: {fileID: 9187238271414892061}
   - component: {fileID: 4195699597309431586}
   m_Layer: 0
   m_Name: RangedWeapon
@@ -121,6 +122,43 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3267506616270974980}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9187238271414892061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2677677595382615967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71b7aad5cda2b25418250de5a28eebc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.RangedArcWeapon
+  projectilePrefab: {fileID: 643560161009610544, guid: 3b894d4e53137a348be3076d488bcbc1, type: 3}
+  damage: 10
+  launchSpeed: 20
+  launchAngle: 45
+  gravityMultiplier: 1
+  autoCalculateTrajectory: 1
+  preferHighArc: 0
+  targetTransform: {fileID: 0}
+  minLaunchSpeed: 5
+  maxLaunchSpeed: 50
+  fireRate: 3
+  automaticFire: 0
+  spreadAngle: 0
+  projectilesPerShot: 1
+  muzzleTransform: {fileID: 7490930121869800516}
+  fireInFacingDirection: 1
+  fireDirection: {x: 0, y: 0, z: 1}
+  useObjectPooling: 0
+  initialPoolSize: 10
+  muzzleFlashPrefab: {fileID: 0}
+  muzzleFlashDuration: 0.1
+  debugMode: 0
+  showGizmos: 1
+  trajectoryPreviewSteps: 30
+  trajectoryPreviewStep: 0.1
 --- !u!114 &4195699597309431586
 MonoBehaviour:
   m_ObjectHideFlags: 0
