@@ -615,6 +615,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.GroundPounder
   detectionRadius: 2
   detectionDistance: 0.3
+  detectionOffset: {x: 0, y: 0, z: 0}
   minDownwardVelocity: 0.1
   damageableLayers:
     serializedVersion: 2
@@ -889,10 +890,18 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: abfd5885ed65f8045b6534e68d2569f9, type: 2}
+    - target: {fileID: -4661147857939300398, guid: 236adff82fc3573439d4b1f10fd58ea2, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7c74f248015f35f4eb68740db32e867e, type: 2}
     - target: {fileID: 919132149155446097, guid: 236adff82fc3573439d4b1f10fd58ea2, type: 3}
       propertyPath: m_Name
       value: RatKing_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 2253934289802702495, guid: 236adff82fc3573439d4b1f10fd58ea2, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: abfd5885ed65f8045b6534e68d2569f9, type: 2}
     - target: {fileID: 2702306775249719375, guid: 236adff82fc3573439d4b1f10fd58ea2, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -901,7 +910,15 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 881fb468db67c784e850e0e1531c1b63, type: 2}
+    - target: {fileID: 7213874592904569531, guid: 236adff82fc3573439d4b1f10fd58ea2, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 881fb468db67c784e850e0e1531c1b63, type: 2}
     - target: {fileID: 7808607004429246286, guid: 236adff82fc3573439d4b1f10fd58ea2, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 59a4daddc10b86e49aeea87666404225, type: 2}
+    - target: {fileID: 7980544750570011703, guid: 236adff82fc3573439d4b1f10fd58ea2, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 59a4daddc10b86e49aeea87666404225, type: 2}

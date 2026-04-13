@@ -3972,7 +3972,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2633c01f027ea5b43868a2c9da3ae5c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.AnimatorVelocity
-  animator: {fileID: 2072284586}
+  animator: {fileID: 0}
   trackedTransform: {fileID: 30060209}
   updateMode: 1
   velocitySpace: 1
@@ -11445,11 +11445,6 @@ MonoBehaviour:
   icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   iconColor: {r: 1, g: 1, b: 1, a: 1}
   displayName: Throwable
---- !u!95 &2072284586 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 8967682907048756239, guid: a106c1be4fd2b44478a00877991316c5, type: 3}
-  m_PrefabInstance: {fileID: 290816275}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2090967324
 GameObject:
   m_ObjectHideFlags: 0
@@ -11743,7 +11738,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4868275458856752256, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5667809884761760806, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
       propertyPath: rangedWeaponComponent
