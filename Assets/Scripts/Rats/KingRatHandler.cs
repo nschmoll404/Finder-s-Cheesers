@@ -1025,6 +1025,12 @@ namespace FindersCheesers
                 }
             }
 
+            KingRatThrowable kingRatThrowable = detectedKingRat.GetComponent<KingRatThrowable>();
+            if (kingRatThrowable != null)
+            {
+                kingRatThrowable.Pickup();
+            }
+
             if (debugMode)
             {
                 Debug.Log("[KingRatHandler] King Rat grabbed!");

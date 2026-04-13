@@ -162,7 +162,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6746495311369545594
 Transform:
   m_ObjectHideFlags: 0
@@ -192,16 +192,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.VisualScripting.Core::Unity.VisualScripting.Variables
   _data:
     _json: '{"declarations":{"Kind":"Object","collection":{"$content":[{"name":"King
-      Rat Handler","value":{"$content":0,"$type":"UnityEngine.Object"},"typeHandle":{"Identification":"UnityEngine.GameObject,
+      Rat Handler","value":null,"typeHandle":{"Identification":"UnityEngine.GameObject,
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null","$version":"A"},"$version":"A"},{"name":"King
-      Rat","value":{"$content":1,"$type":"UnityEngine.Object"},"typeHandle":{"Identification":"UnityEngine.GameObject,
+      Rat","value":{"$content":0,"$type":"UnityEngine.Object"},"typeHandle":{"Identification":"UnityEngine.GameObject,
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null","$version":"A"},"$version":"A"},{"name":"King
-      Rat Animator","value":{"$content":2,"$type":"UnityEngine.Object"},"typeHandle":{"Identification":"UnityEngine.Animator,
+      Rat Animator","value":{"$content":1,"$type":"UnityEngine.Object"},"typeHandle":{"Identification":"UnityEngine.Animator,
       UnityEngine.AnimationModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null","$version":"A"},"$version":"A"},{"name":"Ground
       Pounder Active","value":{"$content":false,"$type":"System.Boolean"},"typeHandle":{"Identification":"System.Boolean,
       mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089","$version":"A"},"$version":"A"}],"$version":"A"},"$version":"A"}}'
     _objectReferences:
-    - {fileID: 0}
     - {fileID: 4944552254280327239}
     - {fileID: 1332060534122817488}
 --- !u!114 &8977677378612484125
@@ -601,6 +600,7 @@ GameObject:
   - component: {fileID: 6427209074995708596}
   - component: {fileID: 7677048252204840739}
   - component: {fileID: 6164142503886920623}
+  - component: {fileID: 4385482511937867983}
   m_Layer: 6
   m_Name: KingRat
   m_TagString: KingRat
@@ -760,6 +760,23 @@ MonoBehaviour:
   icon: {fileID: -2048367132, guid: 49ba07b95217099449f7353192f803b9, type: 3}
   iconColor: {r: 1, g: 1, b: 1, a: 1}
   displayName: Throwable
+--- !u!114 &4385482511937867983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4944552254280327239}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 073ca2afd8f3f8644854f84cc63d3ce7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.AnimatorKingRatThrowable
+  animator: {fileID: 1332060534122817488}
+  kingRatThrowable: {fileID: 5912741348117272508}
+  carryingParam: IsCarry
+  throwingParam: IsThrow
+  landedParam: IsSquash
 --- !u!1 &6391445481419123801
 GameObject:
   m_ObjectHideFlags: 0

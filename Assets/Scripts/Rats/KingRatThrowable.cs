@@ -39,6 +39,17 @@ namespace FindersCheesers
         private bool wasKinematicBeforePickup;
 
         /// <summary>
+        /// Event fired when the King Rat is picked up and starts being carried.
+        /// </summary>
+        public event System.Action OnPickedUp;
+
+        /// <summary>
+        /// Event fired when the King Rat is dropped without being thrown.
+        /// Also fired when a throw is cancelled mid-flight.
+        /// </summary>
+        public event System.Action OnDropped;
+
+        /// <summary>
         /// Event fired when the King Rat is thrown.
         /// </summary>
         public event System.Action<Vector3> OnThrown;
@@ -47,6 +58,11 @@ namespace FindersCheesers
         /// Event fired when the King Rat lands.
         /// </summary>
         public event System.Action<Vector3> OnLanded;
+
+        /// <summary>
+        /// Event fired when the throwing state ends, whether by landing or cancellation.
+        /// </summary>
+        public event System.Action OnThrowEnd;
 
         /// <summary>
         /// Gets whether the King Rat is currently being thrown.
@@ -189,6 +205,7 @@ namespace FindersCheesers
 
             // Fire event
             OnLanded?.Invoke(throwEndPosition);
+            OnThrowEnd?.Invoke();
 
             if (debugMode)
             {
@@ -224,9 +241,24 @@ namespace FindersCheesers
 
             isThrowing = false;
 
+            OnThrowEnd?.Invoke();
+
             if (debugMode)
             {
                 Debug.Log("[KingRatThrowable] Throw cancelled");
+            }
+        }
+
+        /// <summary>
+        /// Called when the King Rat is picked up and starts being carried.
+        /// </summary>
+        public void Pickup()
+        {
+            OnPickedUp?.Invoke();
+
+            if (debugMode)
+            {
+                Debug.Log("[KingRatThrowable] King Rat picked up");
             }
         }
 
@@ -253,6 +285,8 @@ namespace FindersCheesers
             {
                 Debug.Log("[KingRatThrowable] King Rat dropped");
             }
+
+            OnDropped?.Invoke();
         }
 
         /// <summary>
