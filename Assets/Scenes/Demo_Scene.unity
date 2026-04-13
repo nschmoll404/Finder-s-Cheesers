@@ -379,6 +379,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: KingRat
       objectReference: {fileID: 0}
+    - target: {fileID: 6164142503886920623, guid: 01c0c28b4ed6f2046a68b98a26e02aac, type: 3}
+      propertyPath: icon
+      value: 
+      objectReference: {fileID: -1844679274, guid: ab5815dd71a25d84886c333aaf08e0a4, type: 3}
     - target: {fileID: 8024277001596953210, guid: 01c0c28b4ed6f2046a68b98a26e02aac, type: 3}
       propertyPath: '_data._objectReferences.Array.data[0]'
       value: 
@@ -390,10 +394,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4944552254280327239, guid: 01c0c28b4ed6f2046a68b98a26e02aac, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2040798802}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01c0c28b4ed6f2046a68b98a26e02aac, type: 3}
 --- !u!1 &160989957
 GameObject:
@@ -3680,53 +3681,17 @@ MonoBehaviour:
       data:
         target: {fileID: 2008768697}
         setActive: 1
---- !u!1 &987760984 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2677677595382615967, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-  m_PrefabInstance: {fileID: 2937061366349575749}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &987760986 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7490930121869800516, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-  m_PrefabInstance: {fileID: 2937061366349575749}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &987760987
+--- !u!114 &987760987 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 9187238271414892061, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
+  m_PrefabInstance: {fileID: 2937061366349575749}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 987760984}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71b7aad5cda2b25418250de5a28eebc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.RangedArcWeapon
-  projectilePrefab: {fileID: 643560161009610544, guid: 3b894d4e53137a348be3076d488bcbc1, type: 3}
-  damage: 10
-  launchSpeed: 20
-  launchAngle: 45
-  gravityMultiplier: 1
-  autoCalculateTrajectory: 1
-  preferHighArc: 0
-  targetTransform: {fileID: 0}
-  minLaunchSpeed: 5
-  maxLaunchSpeed: 50
-  fireRate: 3
-  automaticFire: 0
-  spreadAngle: 0
-  projectilesPerShot: 1
-  muzzleTransform: {fileID: 987760986}
-  fireInFacingDirection: 1
-  fireDirection: {x: 0, y: 0, z: 1}
-  useObjectPooling: 0
-  initialPoolSize: 10
-  muzzleFlashPrefab: {fileID: 0}
-  muzzleFlashDuration: 0.1
-  debugMode: 0
-  showGizmos: 1
-  trajectoryPreviewSteps: 30
-  trajectoryPreviewStep: 0.1
 --- !u!1 &1006218623
 GameObject:
   m_ObjectHideFlags: 0
@@ -11477,26 +11442,6 @@ MonoBehaviour:
   launchSpeed: 10
   carryOffset: {x: 0, y: 0, z: 0}
   debugMode: 0
---- !u!1 &2040798794 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4944552254280327239, guid: 01c0c28b4ed6f2046a68b98a26e02aac, type: 3}
-  m_PrefabInstance: {fileID: 149540980}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2040798802
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2040798794}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99d883ab3dc8a5a488a1d4d1f8f7f73d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.ThrowableIcon
-  icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
-  iconColor: {r: 1, g: 1, b: 1, a: 1}
-  displayName: Throwable
 --- !u!1 &2090967324
 GameObject:
   m_ObjectHideFlags: 0
@@ -11800,10 +11745,7 @@ PrefabInstance:
     - {fileID: 4195699597309431586, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2677677595382615967, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 987760987}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: edb7191794fa9584e9830cee49dd7f8f, type: 3}
 --- !u!33 &3247726563477165925
 MeshFilter:
