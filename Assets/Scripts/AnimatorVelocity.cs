@@ -40,6 +40,10 @@ namespace FindersCheesers
         [SerializeField]
         private float smoothingTime = 0.1f;
 
+        [Tooltip("Round velocity values to the nearest increment (0 = no rounding).")]
+        [SerializeField]
+        private float roundToNearest = 0.01f;
+
         [Header("Animator Parameter Names")]
         [Tooltip("Name of the float parameter in the Animator for X velocity.")]
         [SerializeField, AnimatorVar("animator")]
@@ -121,6 +125,20 @@ namespace FindersCheesers
             smoothVelocityX = Mathf.SmoothDamp(smoothVelocityX, rawVelocity.x, ref smoothVelocity.x, smoothingTime);
             smoothVelocityY = Mathf.SmoothDamp(smoothVelocityY, rawVelocity.y, ref smoothVelocity.y, smoothingTime);
             smoothVelocityZ = Mathf.SmoothDamp(smoothVelocityZ, rawVelocity.z, ref smoothVelocity.z, smoothingTime);
+
+            if (roundToNearest > 0f)
+            {
+                smoothVelocityX = Mathf.Round(smoothVelocityX / roundToNearest) * roundToNearest;
+                smoothVelocityY = Mathf.Round(smoothVelocityY / roundToNearest) * roundToNearest;
+                smoothVelocityZ = Mathf.Round(smoothVelocityZ / roundToNearest) * roundToNearest;
+            }
+
+            if (roundToNearest > 0f)
+            {
+                smoothVelocityX = Mathf.Round(smoothVelocityX / roundToNearest) * roundToNearest;
+                smoothVelocityY = Mathf.Round(smoothVelocityY / roundToNearest) * roundToNearest;
+                smoothVelocityZ = Mathf.Round(smoothVelocityZ / roundToNearest) * roundToNearest;
+            }
 
             if (!string.IsNullOrEmpty(xVelocityParam))
             {

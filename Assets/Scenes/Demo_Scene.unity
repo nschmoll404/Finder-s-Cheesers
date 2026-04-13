@@ -978,6 +978,10 @@ PrefabInstance:
       propertyPath: RaycastCamera
       value: 
       objectReference: {fileID: 696505769}
+    - target: {fileID: 1222847393151140547, guid: a106c1be4fd2b44478a00877991316c5, type: 3}
+      propertyPath: throwingHoldTime
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 2360136473402032315, guid: a106c1be4fd2b44478a00877991316c5, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4.99
@@ -3981,6 +3985,7 @@ MonoBehaviour:
   updateMode: 1
   velocitySpace: 1
   smoothingTime: 0
+  roundToNearest: 0.01
   xVelocityParam: VelocityX
   yVelocityParam: VelocityY
   zVelocityParam: VelocityZ

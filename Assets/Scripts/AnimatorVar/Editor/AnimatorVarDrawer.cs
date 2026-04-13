@@ -34,6 +34,12 @@ public class AnimatorVarDrawer : PropertyDrawer
 
         void RefreshDropdown()
         {
+            if (property.serializedObject == null || property.serializedObject.targetObject == null)
+            {
+                EditorApplication.update -= RefreshDropdown;
+                return;
+            }
+
             property.serializedObject.UpdateIfRequiredOrScript();
 
             try
