@@ -445,7 +445,6 @@ GameObject:
   - component: {fileID: 2821471157935297425}
   - component: {fileID: 5667809884761760806}
   - component: {fileID: 2235713943407248493}
-  - component: {fileID: 4179468912024338997}
   m_Layer: 0
   m_Name: Ranged Enemy
   m_TagString: Untagged
@@ -677,27 +676,6 @@ MonoBehaviour:
   destroyOnDeath: 1
   destroyDelay: 0
   debugMode: 0
---- !u!114 &4179468912024338997
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4868275458856752256}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2633c01f027ea5b43868a2c9da3ae5c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.AnimatorVelocity
-  animator: {fileID: 7370047239098824786}
-  trackedTransform: {fileID: 3267506616270974980}
-  updateMode: 1
-  velocitySpace: 1
-  smoothingTime: 0
-  roundToNearest: 0.01
-  xVelocityParam: (No Parameters)
-  yVelocityParam: (No Parameters)
-  zVelocityParam: (No Parameters)
 --- !u!1 &7709091766209963425
 GameObject:
   m_ObjectHideFlags: 0
@@ -1322,9 +1300,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0f591a5d993df5b4996ab24372686f56, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7370047239098824786}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0f591a5d993df5b4996ab24372686f56, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2119438850769152365}
   m_SourcePrefab: {fileID: 100100000, guid: 0f591a5d993df5b4996ab24372686f56, type: 3}
 --- !u!1 &8314015291492069293 stripped
 GameObject:
@@ -1353,27 +1328,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2119438850769152365
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8314015291492069293}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2633c01f027ea5b43868a2c9da3ae5c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.AnimatorVelocity
-  animator: {fileID: 7370047239098824786}
-  trackedTransform: {fileID: 3267506616270974980}
-  updateMode: 2
-  velocitySpace: 1
-  smoothingTime: 0.1
-  roundToNearest: 0.01
-  xVelocityParam: VelocityX
-  yVelocityParam: VelocityY
-  zVelocityParam: VelocityZ
 --- !u!4 &8658874482971948311 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 0f591a5d993df5b4996ab24372686f56, type: 3}
