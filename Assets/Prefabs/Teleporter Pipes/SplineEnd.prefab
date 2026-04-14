@@ -51,7 +51,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4390801173826805824}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -150,7 +150,6 @@ MonoBehaviour:
   _actionRunner:
     _actions:
     - rid: 8991196338147819601
-    - rid: 9212867618646261852
   _runOnSuccessOnly: 0
   _clearAfterRun: 0
   references:
@@ -160,8 +159,3 @@ MonoBehaviour:
       type: {class: DropKingRatAction, ns: Actions, asm: Assembly-CSharp}
       data:
         kingRatHandler: {fileID: 0}
-    - rid: 9212867618646261852
-      type: {class: SetActiveAction, ns: Actions, asm: Assembly-CSharp}
-      data:
-        target: {fileID: 0}
-        setActive: 1
