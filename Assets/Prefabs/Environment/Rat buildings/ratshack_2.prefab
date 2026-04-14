@@ -234,6 +234,7 @@ MonoBehaviour:
     _actions:
     - rid: 4644955585996652648
     - rid: 4644955585996652649
+    - rid: 9212867626908516488
   references:
     version: 2
     RefIds:
@@ -247,6 +248,13 @@ MonoBehaviour:
       data:
         target: {fileID: 8525871171211762144}
         setActive: 0
+    - rid: 9212867626908516488
+      type: {class: InstantiateAction, ns: Actions, asm: Assembly-CSharp}
+      data:
+        prefab: {fileID: 3857397918129806358, guid: 261baf5c7a00bb341a9e33c01a3d56c8, type: 3}
+        parent: {fileID: 9014563801246352218}
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 0, y: 0, z: 0, w: 1}
 --- !u!65 &6632122365471447742
 BoxCollider:
   m_ObjectHideFlags: 0
