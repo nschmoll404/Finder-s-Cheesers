@@ -245,9 +245,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.AnimatorKingRatHandler
   animator: {fileID: 8967682907048756239}
   kingRatHandler: {fileID: 6882880625559664742}
-  updateMode: 0
   carryingParam: Carrying
   throwingParam: Throwing
+  throwingHoldTime: 0.15
 --- !u!1 &3695586899011529772
 GameObject:
   m_ObjectHideFlags: 0
@@ -461,13 +461,13 @@ MonoBehaviour:
   moveActionReference: {fileID: -1680190386980627800, guid: 855a47865bf910d4f9b7cf9ee07a6ac6, type: 3}
   usePlayerInputSingleton: 1
   mainCamera: {fileID: 0}
-  maxSpeed: 10
+  maxSpeed: 12
   acceleration: 8
   deceleration: 8
   rotationSpeed: 10
   ratInventory: {fileID: 6507795758806245615}
-  kingRatHandler: {fileID: 0}
-  carryingSpeed: 2.5
+  kingRatHandler: {fileID: 6882880625559664742}
+  carryingSpeed: 10
   useGravity: 1
   gravity: -60
   groundCheckDistance: 0.1
