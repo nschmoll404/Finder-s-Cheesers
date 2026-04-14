@@ -109,7 +109,6 @@ GameObject:
   - component: {fileID: 1920169953158654542}
   - component: {fileID: -3201600512368978528}
   - component: {fileID: 5175603235481145301}
-  - component: {fileID: 7508426325418627939}
   m_Layer: 0
   m_Name: Melee Enemy
   m_TagString: Cockroach
@@ -412,28 +411,6 @@ MonoBehaviour:
   m_SkinMeshRef: {fileID: 0}
   m_OriginalMeshObject: {fileID: 0}
   m_Mode: 0
---- !u!95 &7508426325418627939
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5774785878994015399}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 5a70f78984196404991a3975e4480ad2, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 1
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &8647355286051480925
 GameObject:
   m_ObjectHideFlags: 0
@@ -699,9 +676,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 67bf86eaf1b606b46afdce8c760ec7cb, type: 3}
       insertIndex: -1
       addedObject: {fileID: 687049063663088073}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 67bf86eaf1b606b46afdce8c760ec7cb, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8443341364299045119}
   m_SourcePrefab: {fileID: 100100000, guid: 67bf86eaf1b606b46afdce8c760ec7cb, type: 3}
 --- !u!4 &3873734108912836950 stripped
 Transform:
@@ -735,19 +709,3 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!111 &8443341364299045119
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4506295670526721004}
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Animation: {fileID: 5341466630771960983, guid: 766bad60befdc0d47a9042f8ace999fa, type: 3}
-  m_Animations: []
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_UpdateMode: 0
-  m_CullingType: 0
