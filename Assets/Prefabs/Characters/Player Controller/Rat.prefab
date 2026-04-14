@@ -546,13 +546,42 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7719727464606527681, guid: 0e8308f84583245418962a091c18df59, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7541634769340652962}
   m_SourcePrefab: {fileID: 100100000, guid: 0e8308f84583245418962a091c18df59, type: 3}
 --- !u!4 &2577047477663416873 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7013105286013671865, guid: 0e8308f84583245418962a091c18df59, type: 3}
   m_PrefabInstance: {fileID: 4796348030786968464}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &3004453066691930961 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7719727464606527681, guid: 0e8308f84583245418962a091c18df59, type: 3}
+  m_PrefabInstance: {fileID: 4796348030786968464}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7541634769340652962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3004453066691930961}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2633c01f027ea5b43868a2c9da3ae5c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindersCheesers.AnimatorVelocity
+  animator: {fileID: 8366010653538577297}
+  trackedTransform: {fileID: 6554109488952579476}
+  updateMode: 1
+  velocitySpace: 1
+  smoothingTime: 0
+  roundToNearest: 0.01
+  xVelocityParam: VelocityX
+  yVelocityParam: VelocityY
+  zVelocityParam: VelocityZ
 --- !u!95 &8366010653538577297 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 3929961606854701057, guid: 0e8308f84583245418962a091c18df59, type: 3}
